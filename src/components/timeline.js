@@ -3,7 +3,8 @@ const React = require('react');
 const Timeline = React.createClass({
 
   propTypes: {
-    layers: React.PropTypes.array
+    layers: React.PropTypes.array,
+    layersPanelWidth: React.PropTypes.number
   },
 
   getInitialState: function() {
@@ -21,7 +22,7 @@ const Timeline = React.createClass({
 
   _onScrub: function(event) {
     const playheadPosition = this.refs.playhead.offsetLeft;
-    let playheadFraction = (playheadPosition + event.movementX) / this.refs.workArea.offsetWidth;
+    let playheadFraction = (playheadPosition + event.movementX) / this.refs.timeline.offsetWidth;
     if (playheadFraction < 0) {
       playheadFraction = 0;
     } else if (playheadFraction > 1) {
@@ -37,24 +38,13 @@ const Timeline = React.createClass({
 
   render: function() {
     return (
-      <div className="pl-timeline">
-        <div className="pl-timeline-layers">
-          {this.props.layers.map(function(layer) {
-            return (
-              <div className="pl-timeline-layer" key={layer.id}>
-                <span>{layer.name}</span>
-              </div>
-            );
-          })}
-        </div>
-        <div className="pl-timeline-work-area" ref="workArea">
-          <div className="pl-timeline-work-area-marker"
-              style={{left: `${this.state.playheadLeft}%`}}/>
-          <div className="pl-timeline-work-area-playhead"
-              onMouseDown={this._onPlayheadMouseDown}
-              ref="playhead"
-              style={{left: `${this.state.playheadLeft}%`}}/>
-        </div>
+      <div className="pl-timeline" ref="timeline">
+        <div className="pl-timeline-marker"
+            style={{left: `${this.state.playheadLeft}%`}}/>
+        <div className="pl-timeline-playhead"
+            onMouseDown={this._onPlayheadMouseDown}
+            ref="playhead"
+            style={{left: `${this.state.playheadLeft}%`}}/>
       </div>
     );
   }

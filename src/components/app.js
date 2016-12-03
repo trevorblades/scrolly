@@ -1,8 +1,11 @@
 const React = require('react');
 
 const Canvas = require('./canvas');
+const Footer = require('./footer');
 const Header = require('./header');
+const LayersPanel = require('./layers-panel');
 const Library = require('./library');
+const Sidebar = require('./sidebar');
 const Timeline = require('./timeline');
 
 const App = React.createClass({
@@ -10,9 +13,10 @@ const App = React.createClass({
   getInitialState: function() {
     return {
       assets: [],
-      height: 1080,
+      compositionHeight: 1080,
+      compositionWidth: 1920,
       layers: [],
-      width: 1920
+      sidebarWidth: 360
     };
   },
 
@@ -21,10 +25,17 @@ const App = React.createClass({
       <div className="pl-app">
         <Header/>
         <div className="pl-app-content">
-          <Library assets={this.state.assets}/>
-          <Canvas height={this.state.height} width={this.state.width}/>
+          <Sidebar width={this.state.sidebarWidth}>
+            <Library assets={this.state.assets}/>
+          </Sidebar>
+          <Canvas height={this.state.compositionHeight}
+              width={this.state.compositionWidth}/>
         </div>
-        <Timeline layers={this.state.layers}/>
+        <Footer>
+          <LayersPanel layers={this.state.layers}
+              width={this.state.sidebarWidth}/>
+          <Timeline/>
+        </Footer>
       </div>
     );
   }
