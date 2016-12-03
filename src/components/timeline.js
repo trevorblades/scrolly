@@ -32,6 +32,7 @@ const Timeline = React.createClass({
   },
 
   _onScrubEnd: function() {
+    this.setState({scrubbing: false});
     document.removeEventListener('mousemove', this._onScrub);
     document.removeEventListener('mouseup', this._onScrubEnd);
   },

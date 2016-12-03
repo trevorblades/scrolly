@@ -1,5 +1,7 @@
 const React = require('react');
 
+const Handle = require('./handle');
+
 const Footer = React.createClass({
 
   propTypes: {
@@ -10,6 +12,7 @@ const Footer = React.createClass({
     return (
       <div className="pl-footer">
         {this.props.children}
+        <Handle position="top"/>
       </div>
     );
   }

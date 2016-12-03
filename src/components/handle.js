@@ -12,14 +12,14 @@ const Handle = React.createClass({
     if (this.props.position === 'left' || this.props.position === 'right') {
       handleStyle = {
         height: '100%',
-        cursor: 'ew-resize',
+        cursor: 'col-resize',
         left: `${percent}%`,
         transform: 'translateX(-50%)'
       };
     } else {
       handleStyle = {
         width: '100%',
-        cursor: 'ns-resize',
+        cursor: 'row-resize',
         top: `${percent}%`,
         transform: 'translateY(-50%)'
       };
