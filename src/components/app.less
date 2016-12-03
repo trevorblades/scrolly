@@ -1,0 +1,17 @@
+@import './header';
+@import './timeline';
+
+.pl-app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  .pl-app-content {
+    flex-grow: 1;
+    border-bottom: 1px solid black;
+    background-color: @gray-dark;
+  }
+}
