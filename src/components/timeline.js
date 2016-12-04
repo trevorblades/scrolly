@@ -16,11 +16,11 @@ const Timeline = React.createClass({
 
   _onPlayheadMouseDown: function() {
     this.setState({scrubbing: true});
-    document.addEventListener('mousemove', this._onScrub);
-    document.addEventListener('mouseup', this._onScrubEnd);
+    document.addEventListener('mousemove', this._onPlayheadMouseMove);
+    document.addEventListener('mouseup', this._onPlayheadMouseUp);
   },
 
-  _onScrub: function(event) {
+  _onPlayheadMouseMove: function(event) {
     const playheadPosition = this.refs.playhead.offsetLeft;
     let playheadFraction = (playheadPosition + event.movementX) / this.refs.timeline.offsetWidth;
     if (playheadFraction < 0) {
@@ -31,10 +31,10 @@ const Timeline = React.createClass({
     this.setState({playheadLeft: playheadFraction * 100});
   },
 
-  _onScrubEnd: function() {
+  _onPlayheadMouseUp: function() {
     this.setState({scrubbing: false});
-    document.removeEventListener('mousemove', this._onScrub);
-    document.removeEventListener('mouseup', this._onScrubEnd);
+    document.removeEventListener('mousemove', this._onPlayheadMouseMove);
+    document.removeEventListener('mouseup', this._onPlayheadMouseUp);
   },
 
   render: function() {

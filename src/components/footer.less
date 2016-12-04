@@ -1,11 +1,18 @@
-@footer-height: 12rem;
-
 .pl-footer {
   display: flex;
   flex-shrink: 0;
-  height: @footer-height;
-  border-top: 1px solid @gray;
+  margin-top: @padding-smallest;
+  border-top: 1px solid fade(white, 15%);
   background-color: @gray-dark;
   position: relative;
   z-index: 0;
+  .pl-footer-handle {
+    width: 100%;
+    height: @padding-small;
+    cursor: row-resize;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateY(-50%)
+  }
 }

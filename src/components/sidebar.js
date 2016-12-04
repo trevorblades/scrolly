@@ -1,7 +1,5 @@
 const React = require('react');
 
-const Handle = require('./handle');
-
 const Sidebar = React.createClass({
 
   propTypes: {
@@ -13,7 +11,6 @@ const Sidebar = React.createClass({
     return (
       <div className="pl-sidebar" style={{width: this.props.width}}>
         {this.props.children}
-        <Handle position="right"/>
       </div>
     );
   }

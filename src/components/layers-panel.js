@@ -1,7 +1,5 @@
 const React = require('react');
 
-const Handle = require('./handle');
-
 const LayersPanel = React.createClass({
 
   propTypes: {
@@ -22,7 +20,6 @@ const LayersPanel = React.createClass({
             );
           })}
         </div>
-        <Handle position="right"/>
       </div>
     );
   }
