@@ -3,7 +3,7 @@ const React = require('react');
 const LayersPanel = React.createClass({
 
   propTypes: {
-    layers: React.PropTypes.array,
+    layers: React.PropTypes.object.isRequired,
     width: React.PropTypes.number
   },
 
@@ -12,9 +12,10 @@ const LayersPanel = React.createClass({
       <div className="pl-layers-panel"
           style={{width: this.props.width}}>
         <div className="pl-layers-panel-layers">
-          {this.props.layers.map(function(layer) {
+          {Object.keys(this.props.layers).map(key => {
+            const layer = this.props.layers[key];
             return (
-              <div className="pl-layers-panel-layer" key={layer.id}>
+              <div className="pl-layers-panel-layer" key={key}>
                 <span>{layer.name}</span>
               </div>
             );

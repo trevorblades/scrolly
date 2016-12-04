@@ -3,15 +3,37 @@ const React = require('react');
 const Timeline = React.createClass({
 
   propTypes: {
-    layers: React.PropTypes.array,
-    layersPanelWidth: React.PropTypes.number
+    layers: React.PropTypes.object.isRequired
   },
 
   getInitialState: function() {
     return {
-      playheadFraction: 0,
+      percentPlayed: 0,
       scrubbing: false
     };
+  },
+
+  componentWillMount: function() {
+    window.addEventListener('keydown', this._onKeyDown);
+  },
+
+  componentWillUnmount: function() {
+    window.removeEventListener('keydown', this._onKeyDown);
+  },
+
+  _onKeyDown: function(event) {
+    const tagName = event.target.tagName.toUpperCase();
+    if (tagName !== 'INPUT' &&
+        tagName !== 'TEXTAREA' &&
+        (event.keyCode === 188 || event.keyCode === 190)) { // < or > key pressed
+      event.preventDefault();
+
+      let direction = event.keyCode === 188 ? -1 : 1;
+      if (event.shiftKey) {
+        direction *= 10;
+      }
+      this._setPlayheadLeft(this.state.percentPlayed + direction);
+    }
   },
 
   _onPlayheadMouseDown: function() {
@@ -21,14 +43,8 @@ const Timeline = React.createClass({
   },
 
   _onPlayheadMouseMove: function(event) {
-    const playheadPosition = this.refs.playhead.offsetLeft;
-    let playheadFraction = (playheadPosition + event.movementX) / this.refs.timeline.offsetWidth;
-    if (playheadFraction < 0) {
-      playheadFraction = 0;
-    } else if (playheadFraction > 1) {
-      playheadFraction = 1;
-    }
-    this.setState({playheadLeft: playheadFraction * 100});
+    this._setPlayheadLeft((this.refs.playhead.offsetLeft + event.movementX) /
+        this.refs.timeline.offsetWidth * 100);
   },
 
   _onPlayheadMouseUp: function() {
@@ -37,15 +53,29 @@ const Timeline = React.createClass({
     document.removeEventListener('mouseup', this._onPlayheadMouseUp);
   },
 
+  _setPlayheadLeft: function(value) {
+    if (value < 0) {
+      value = 0;
+    } else if (value > 100) {
+      value = 100;
+    }
+    this.setState({percentPlayed: value});
+  },
+
   render: function() {
     return (
       <div className="pl-timeline" ref="timeline">
+        <div className="pl-timeline-layers">
+          {Object.keys(this.props.layers).map(function(key) {
+            return <div className="pl-timeline-layer" key={key}/>;
+          })}
+        </div>
         <div className="pl-timeline-marker"
-            style={{left: `${this.state.playheadLeft}%`}}/>
+            style={{left: `${this.state.percentPlayed}%`}}/>
         <div className="pl-timeline-playhead"
             onMouseDown={this._onPlayheadMouseDown}
             ref="playhead"
-            style={{left: `${this.state.playheadLeft}%`}}/>
+            style={{left: `${this.state.percentPlayed}%`}}/>
       </div>
     );
   }

@@ -3,6 +3,20 @@
 .pl-layers-panel {
   flex-shrink: 0;
   width: @sidebar-width;
-  border-right: 1px solid @black-faded;
+  border-top: 1px solid @white-faded;
+  border-right: 1px solid @gray-darker;
+  user-select: none;
   position: relative;
+  z-index: 1;
+  .pl-layers-panel-layers {
+    .pl-layers-panel-layer {
+      padding: @padding-base;
+      font-size: @font-size-small;
+      line-height: 1em;
+      color: @gray-light;
+      &:nth-child(2n) {
+        background-color: @white-faded-light;
+      }
+    }
+  }
 }

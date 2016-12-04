@@ -16,7 +16,20 @@ const App = React.createClass({
       assets: [],
       innerHeight: 1080,
       innerWidth: 1920,
-      layers: [],
+      layers: {
+        default: {
+          name: 'Imagery'
+        },
+        text0: {
+          name: 'Some text'
+        },
+        text1: {
+          name: 'Some more text'
+        },
+        text2: {
+          name: 'Even more text'
+        }
+      },
       outerHeight: 0,
       outerWidth: 0
     };
@@ -59,7 +72,7 @@ const App = React.createClass({
             onResize={this._onResize}>
           <LayersPanel layers={this.state.layers}
               width={this.state.sidebarWidth}/>
-          <Timeline/>
+          <Timeline layers={this.state.layers}/>
         </Footer>
       </div>
     );
