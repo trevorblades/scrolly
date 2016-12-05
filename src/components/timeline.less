@@ -1,44 +1,115 @@
+@import (reference) './sidebar';
+
 @timeline-playhead-handle-size: 1rem;
 
 .pl-timeline {
-  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  margin-top: @padding-smallest;
   border-top: 1px solid @white-faded;
+  background-color: @gray-dark;
+  user-select: none;
   position: relative;
-  .pl-timeline-marker {
-    width: 1px;
+  .pl-timeline-scrubber .pl-timeline-scrubber-timer,
+  .pl-timeline-layers .pl-timeline-layer .pl-timeline-layer-info {
+    flex-shrink: 0;
+    width: @sidebar-width;
+    border-right: 1px solid @gray-darker;
+  }
+  .pl-timeline-scrubber .pl-timeline-scrubber-track .pl-timeline-scrubber-track-marker,
+  .pl-timeline-layers .pl-timeline-layer .pl-timeline-layer-track .pl-timeline-layer-track-marker {
+    width: 2px;
     height: 100%;
-    background-color: @brand-warning;
     position: absolute;
     top: 0;
     left: 0;
-    transform: translateX(-50%);
+    transform: translateX(-1px);
   }
-  .pl-timeline-playhead {
-    cursor: ew-resize;
+  .pl-timeline-scrubber {
+    display: flex;
+    flex-shrink: 0;
+    border-bottom: 1px solid black;
+    .pl-timeline-scrubber-timer {
+      flex-shrink: 0;
+      padding: @padding-smaller;
+      font-family: @font-family-monospace;
+      span {
+        display: block;
+        padding: @padding-smaller @padding-small;
+        border-radius: @border-radius-small;
+        font-family: @font-family-monospace;
+        line-height: 1em;
+        background-color: @brand-warning;
+      }
+    }
+    .pl-timeline-scrubber-track {
+      flex-grow: 1;
+      position: relative;
+      .pl-timeline-scrubber-track-marker {
+        background-color: @brand-warning;
+      }
+      .pl-timeline-scrubber-track-playhead {
+        cursor: ew-resize;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        &:before, &:after {
+          content: '';
+          position: absolute;
+          left: @timeline-playhead-handle-size / -2;
+        }
+        &:before {
+          width: @timeline-playhead-handle-size;
+          height: @timeline-playhead-handle-size;
+          border-top-left-radius: @border-radius-small;
+          border-top-right-radius: @border-radius-small;
+          background-color: @brand-warning;
+          top: @timeline-playhead-handle-size / -2;
+        }
+        &:after {
+          border-top: @timeline-playhead-handle-size / 2 solid @brand-warning;
+          border-left: @timeline-playhead-handle-size / 2 solid transparent;
+          border-right: @timeline-playhead-handle-size / 2 solid transparent;
+          top: @timeline-playhead-handle-size / 2;
+        }
+      }
+    }
+  }
+  .pl-timeline-layers {
+    flex-grow: 1;
+    overflow: auto;
+    .pl-timeline-layer {
+      display:flex;
+      &:nth-child(2n) .pl-timeline-layer-info {
+        background-color: @white-faded-light;
+      }
+
+      .pl-timeline-layer-info {
+        flex-shrink: 0;
+        padding: 1rem @padding-base;
+        font-size: @font-size-small;
+        line-height: 1em;
+        color: @gray-light;
+      }
+      .pl-timeline-layer-track {
+        flex-grow: 1;
+        position: relative;
+        .pl-timeline-layer-track-marker {
+          background-color: @gray;
+        }
+      }
+    }
+  }
+  .pl-timeline-handle {
+    width: 100%;
+    height: @padding-small;
+    cursor: row-resize;
     user-select: none;
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1;
-    &:before, &:after {
-      content: '';
-      position: absolute;
-      left: @timeline-playhead-handle-size / -2;
-    }
-    &:before {
-      width: @timeline-playhead-handle-size;
-      height: @timeline-playhead-handle-size;
-      border-top-left-radius: @border-radius-small;
-      border-top-right-radius: @border-radius-small;
-      box-shadow: @box-shadow-small;
-      background-color: @brand-warning;
-      top: @timeline-playhead-handle-size / -2;
-    }
-    &:after {
-      border-top: @timeline-playhead-handle-size / 2 solid @brand-warning;
-      border-left: @timeline-playhead-handle-size / 2 solid transparent;
-      border-right: @timeline-playhead-handle-size / 2 solid transparent;
-      top: @timeline-playhead-handle-size / 2;
-    }
+    transform: translateY(-50%)
   }
 }

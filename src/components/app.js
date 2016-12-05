@@ -2,12 +2,25 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 
 const Canvas = require('./canvas');
-const Footer = require('./footer');
 const Header = require('./header');
-const LayersPanel = require('./layers-panel');
 const Library = require('./library');
 const Sidebar = require('./sidebar');
 const Timeline = require('./timeline');
+
+const TEST_LAYERS = {
+  default: {
+    name: 'Imagery'
+  },
+  text0: {
+    name: 'Some text'
+  },
+  text1: {
+    name: 'Some more text'
+  },
+  text2: {
+    name: 'Even more text'
+  }
+};
 
 const App = React.createClass({
 
@@ -16,22 +29,10 @@ const App = React.createClass({
       assets: [],
       innerHeight: 1080,
       innerWidth: 1920,
-      layers: {
-        default: {
-          name: 'Imagery'
-        },
-        text0: {
-          name: 'Some text'
-        },
-        text1: {
-          name: 'Some more text'
-        },
-        text2: {
-          name: 'Even more text'
-        }
-      },
+      layers: TEST_LAYERS,
       outerHeight: 0,
-      outerWidth: 0
+      outerWidth: 0,
+      timelineMaxHeight: 0
     };
   },
 
@@ -48,9 +49,9 @@ const App = React.createClass({
     const canvas = ReactDOM.findDOMNode(this.refs.canvas);
     const header = ReactDOM.findDOMNode(this.refs.header);
     this.setState({
-      footerMaxHeight: (window.innerHeight - header.offsetHeight) / 2,
       outerHeight: canvas.offsetHeight,
-      outerWidth: canvas.offsetWidth
+      outerWidth: canvas.offsetWidth,
+      timelineMaxHeight: (window.innerHeight - header.offsetHeight) / 2
     });
   },
 
@@ -59,7 +60,7 @@ const App = React.createClass({
       <div className="pl-app">
         <Header ref="header"/>
         <div className="pl-app-content">
-          <Sidebar width={this.state.sidebarWidth}>
+          <Sidebar>
             <Library assets={this.state.assets}/>
           </Sidebar>
           <Canvas innerHeight={this.state.innerHeight}
@@ -68,12 +69,9 @@ const App = React.createClass({
               outerWidth={this.state.outerWidth}
               ref="canvas"/>
         </div>
-        <Footer maxHeight={this.state.footerMaxHeight}
-            onResize={this._onResize}>
-          <LayersPanel layers={this.state.layers}
-              width={this.state.sidebarWidth}/>
-          <Timeline layers={this.state.layers}/>
-        </Footer>
+        <Timeline layers={this.state.layers}
+            maxHeight={this.state.timelineMaxHeight}
+            onResize={this._onResize}/>
       </div>
     );
   }
