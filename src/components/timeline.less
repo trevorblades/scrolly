@@ -11,7 +11,7 @@
   background-color: @gray-dark;
   user-select: none;
   position: relative;
-  .pl-timeline-scrubber .pl-timeline-scrubber-timer,
+  .pl-timeline-scrubber .pl-timeline-scrubber-info,
   .pl-timeline-layers .pl-timeline-layer .pl-timeline-layer-info {
     flex-shrink: 0;
     width: @sidebar-width;
@@ -30,7 +30,7 @@
     display: flex;
     flex-shrink: 0;
     border-bottom: 1px solid black;
-    .pl-timeline-scrubber-timer {
+    .pl-timeline-scrubber-info {
       flex-shrink: 0;
       padding: @padding-smaller;
       font-family: @font-family-monospace;
@@ -79,11 +79,12 @@
   }
   .pl-timeline-layers {
     flex-grow: 1;
+    background-color: fade(black, 20%);
     overflow: auto;
     .pl-timeline-layer {
       display:flex;
       &:nth-child(2n) .pl-timeline-layer-info {
-        background-color: @white-faded-light;
+        background-color: fade(black, 10%);
       }
 
       .pl-timeline-layer-info {

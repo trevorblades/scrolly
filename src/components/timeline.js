@@ -102,7 +102,7 @@ const Timeline = React.createClass({
     return (
       <div className="pl-timeline" style={{height: this.state.height}}>
         <div className="pl-timeline-scrubber">
-          <div className="pl-timeline-scrubber-timer">
+          <div className="pl-timeline-scrubber-info">
             <span>{`${this.state.percentPlayed.toFixed(2)}%`}</span>
           </div>
           <div className="pl-timeline-scrubber-track" ref="track">
