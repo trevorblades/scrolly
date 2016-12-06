@@ -13,32 +13,31 @@ const Canvas = React.createClass({
 
   getInitialState: function() {
     return {
-      selected: null
+      selectedLayer: null
     };
   },
 
-  _onViewportClick: function() {
-    this.setState({selected: null});
+  componentWillMount: function() {
+    window.addEventListener('keydown', this._onKeyDown);
+  },
+
+  componentWillUnmount: function() {
+    window.removeEventListener('keydown', this._onKeyDown);
+  },
+
+  _onKeyDown: function(event) {
+    if (event.keyCode === 27) { // Escape key pressed
+      this._deselectLayer();
+    }
   },
 
   _onLayerClick: function(id, event) {
     event.stopPropagation();
-    this.setState({selected: id});
+    this.setState({selectedLayer: id});
   },
 
-  _onTextLayerBlur: function(event) {
-    this.setState({selected: null});
-    event.target.removeEventListener('keydown', this._onTextLayerKeyDown);
-  },
-
-  _onTextLayerFocus: function(event) {
-    event.target.addEventListener('keydown', this._onTextLayerKeyDown);
-  },
-
-  _onTextLayerKeyDown: function(event) {
-    if (event.keyCode === 27) { // Escape key pressed
-      event.target.blur();
-    }
+  _deselectLayer: function() {
+    this.setState({selectedLayer: null});
   },
 
   render: function() {
@@ -59,7 +58,7 @@ const Canvas = React.createClass({
     return (
       <div className="pl-canvas">
         <div className="pl-canvas-viewport"
-            onClick={this._onViewportClick}
+            onClick={this._deselectLayer}
             style={viewportStyle}>
           {Object.keys(this.props.layers).map(key => {
             const layer = this.props.layers[key];
@@ -69,7 +68,7 @@ const Canvas = React.createClass({
             const style = {transform: `translate(${x}px, ${y}px)`};
             const props = {
               className: classNames('pl-canvas-viewport-layer', {
-                'pl-selected': key === this.state.selected
+                'pl-selected': key === this.state.selectedLayer
               }),
               key: key,
               onClick: this._onLayerClick.bind(this, key),
@@ -82,10 +81,9 @@ const Canvas = React.createClass({
               props.style.fontWeight = layer.fontWeight;
               props.style.fontStyle = layer.fontStyle;
               props.type = 'text';
-              if (key === this.state.selected) {
+              if (key === this.state.selectedLayer) {
                 props.contentEditable = true;
-                props.onBlur = this._onTextLayerBlur;
-                props.onFocus = this._onTextLayerFocus;
+                props.onBlur = this._deselectLayer;
               }
             }
 

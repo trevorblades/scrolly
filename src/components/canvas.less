@@ -12,6 +12,7 @@
     overflow: hidden;
     position: relative;
     .pl-canvas-viewport-layer {
+      border: 1px solid transparent;
       position: absolute;
       top: 0;
       left: 0;
@@ -25,8 +26,11 @@
           cursor: default;
         }
       }
+      &:hover {
+        border-color: fade(red, 25%);
+      }
       &.pl-selected {
-        box-shadow: 0 0 0 1px red;
+        border-color: red;
       }
     }
   }
