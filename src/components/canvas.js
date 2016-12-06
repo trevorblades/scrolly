@@ -66,28 +66,32 @@ const Canvas = React.createClass({
             const x = viewportWidth * layer.x / this.props.innerWidth;
             const y = viewportHeight * layer.y / this.props.innerHeight;
             const style = {transform: `translate(${x}px, ${y}px)`};
-            const props = {
-              className: classNames('pl-canvas-viewport-layer', {
-                'pl-selected': key === this.state.selectedLayer
-              }),
-              key: key,
-              onClick: this._onLayerClick.bind(this, key),
-              style: style
-            };
 
+            let extraProps;
             if (layer.type === 'text') {
-              props.dangerouslySetInnerHTML = {__html: layer.value};
-              props.style.fontSize = layer.fontSize;
-              props.style.fontWeight = layer.fontWeight;
-              props.style.fontStyle = layer.fontStyle;
-              props.type = 'text';
+              style.fontSize = layer.fontSize;
+              style.fontWeight = layer.fontWeight;
+              style.fontStyle = layer.fontStyle;
+              extraProps = {
+                dangerouslySetInnerHTML: {__html: layer.value},
+                type: 'text'
+              };
               if (key === this.state.selectedLayer) {
-                props.contentEditable = true;
-                props.onBlur = this._deselectLayer;
+                extraProps.contentEditable = true;
+                extraProps.onBlur = this._deselectLayer;
               }
             }
 
-            return <div key={key} {...props}/>;
+            const canvasClassName = classNames('pl-canvas-viewport-layer', {
+              'pl-selected': key === this.state.selectedLayer
+            });
+            return (
+              <div className={canvasClassName}
+                  key={key}
+                  onClick={this._onLayerClick.bind(this, key)}
+                  style={style}
+                  {...extraProps}/>
+            );
           })}
         </div>
       </div>
