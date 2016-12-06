@@ -1,24 +1,97 @@
 const React = require('react');
+const classNames = require('classnames');
 
 const Canvas = React.createClass({
 
   propTypes: {
     innerHeight: React.PropTypes.number,
     innerWidth: React.PropTypes.number,
+    layers: React.PropTypes.object,
     outerHeight: React.PropTypes.number,
     outerWidth: React.PropTypes.number
+  },
+
+  getInitialState: function() {
+    return {
+      selected: null
+    };
+  },
+
+  _onViewportClick: function() {
+    this.setState({selected: null});
+  },
+
+  _onLayerClick: function(id, event) {
+    event.stopPropagation();
+    this.setState({selected: id});
+  },
+
+  _onTextLayerBlur: function(event) {
+    this.setState({selected: null});
+    event.target.removeEventListener('keydown', this._onTextLayerKeyDown);
+  },
+
+  _onTextLayerFocus: function(event) {
+    event.target.addEventListener('keydown', this._onTextLayerKeyDown);
+  },
+
+  _onTextLayerKeyDown: function(event) {
+    if (event.keyCode === 27) { // Escape key pressed
+      event.target.blur();
+    }
   },
 
   render: function() {
     const innerAspectRatio = this.props.innerWidth / this.props.innerHeight;
     const outerAspectRatio = this.props.outerWidth / this.props.outerHeight;
-    let viewportStyle = innerAspectRatio > outerAspectRatio ?
-        {height: this.props.outerWidth / innerAspectRatio} :
-        {width: this.props.outerHeight * innerAspectRatio};
+
+    let viewportStyle = {};
+    let viewportHeight = this.props.outerHeight;
+    let viewportWidth = this.props.outerWidth;
+    if (innerAspectRatio > outerAspectRatio) {
+      viewportHeight = this.props.outerWidth / innerAspectRatio;
+      viewportStyle = {height: viewportHeight};
+    } else {
+      viewportWidth = this.props.outerHeight * innerAspectRatio;
+      viewportStyle = {width: viewportWidth};
+    }
+
     return (
       <div className="pl-canvas">
         <div className="pl-canvas-viewport"
-            style={viewportStyle}/>
+            onClick={this._onViewportClick}
+            style={viewportStyle}>
+          {Object.keys(this.props.layers).map(key => {
+            const layer = this.props.layers[key];
+
+            const x = viewportWidth * layer.x / this.props.innerWidth;
+            const y = viewportHeight * layer.y / this.props.innerHeight;
+            const style = {transform: `translate(${x}px, ${y}px)`};
+            const props = {
+              className: classNames('pl-canvas-viewport-layer', {
+                'pl-selected': key === this.state.selected
+              }),
+              key: key,
+              onClick: this._onLayerClick.bind(this, key),
+              style: style
+            };
+
+            if (layer.type === 'text') {
+              props.dangerouslySetInnerHTML = {__html: layer.value};
+              props.style.fontSize = layer.fontSize;
+              props.style.fontWeight = layer.fontWeight;
+              props.style.fontStyle = layer.fontStyle;
+              props.type = 'text';
+              if (key === this.state.selected) {
+                props.contentEditable = true;
+                props.onBlur = this._onTextLayerBlur;
+                props.onFocus = this._onTextLayerFocus;
+              }
+            }
+
+            return <div key={key} {...props}/>;
+          })}
+        </div>
       </div>
     );
   }

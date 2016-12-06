@@ -9,5 +9,25 @@
     margin: 0 auto;
     box-shadow: @box-shadow-large;
     background-color: white;
+    overflow: hidden;
+    position: relative;
+    .pl-canvas-viewport-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      &[type="text"] {
+        padding: @padding-smaller;
+        margin: @padding-smaller * -1;
+        line-height: 1em;
+        background: transparent;
+        outline: none;
+        &:not([contenteditable]) {
+          cursor: default;
+        }
+      }
+      &.pl-selected {
+        box-shadow: 0 0 0 1px red;
+      }
+    }
   }
 }

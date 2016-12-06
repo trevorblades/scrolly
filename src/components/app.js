@@ -9,16 +9,31 @@ const Timeline = require('./timeline');
 
 const TEST_LAYERS = {
   default: {
+    type: 'image',
     name: 'Imagery'
   },
   text0: {
-    name: 'Some text'
+    type: 'text',
+    name: 'Some text',
+    value: 'Hey',
+    x: 100,
+    y: 100,
+    fontSize: 48,
+    fontStyle: 'italic'
   },
   text1: {
-    name: 'Some more text'
+    type: 'text',
+    name: 'Some more text',
+    value: 'Hi',
+    x: 240,
+    y: 400
   },
   text2: {
-    name: 'Even more text'
+    type: 'text',
+    name: 'Even more text',
+    value: 'Ho',
+    x: 960,
+    y: 120
   }
 };
 
@@ -65,6 +80,7 @@ const App = React.createClass({
           </Sidebar>
           <Canvas innerHeight={this.state.innerHeight}
               innerWidth={this.state.innerWidth}
+              layers={this.state.layers}
               outerHeight={this.state.outerHeight}
               outerWidth={this.state.outerWidth}
               ref="canvas"/>
