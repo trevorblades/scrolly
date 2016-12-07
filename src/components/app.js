@@ -70,6 +70,12 @@ const App = React.createClass({
     });
   },
 
+  _onLayerChange: function(id, properties) {
+    const layers = JSON.parse(JSON.stringify(this.state.layers));
+    Object.assign(layers[id], properties);
+    this.setState({layers: layers});
+  },
+
   render: function() {
     return (
       <div className="pl-app">
@@ -81,6 +87,7 @@ const App = React.createClass({
           <Canvas innerHeight={this.state.innerHeight}
               innerWidth={this.state.innerWidth}
               layers={this.state.layers}
+              onLayerChange={this._onLayerChange}
               outerHeight={this.state.outerHeight}
               outerWidth={this.state.outerWidth}
               ref="canvas"/>
