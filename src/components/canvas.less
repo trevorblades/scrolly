@@ -32,6 +32,7 @@
         line-height: 1em;
         background: transparent;
         outline: none;
+        white-space: nowrap;
         &:not([contenteditable]) {
           cursor: default;
         }
@@ -39,14 +40,11 @@
       .pl-canvas-viewport-layer-handles {
         display: none;
         .pl-canvas-viewport-layer-handle {
-          width: 4px;
-          height: 4px;
+          width: 3px;
+          height: 3px;
           background-color: red;
           position: absolute;
           transform: translate(-50%, -50%);
-          &:not(:first-child) {
-            display: none;
-          }
         }
       }
     }

@@ -169,10 +169,10 @@ const Canvas = React.createClass({
               children = (
                 <span className="pl-canvas-viewport-layer-text"
                     contentEditable={editing}
+                    dangerouslySetInnerHTML={{__html: layer.value}}
                     onBlur={editing && this._onTextLayerBlur}
-                    onDoubleClick={this._onTextLayerDoubleClick.bind(null, key)}>
-                  {layer.value}
-                </span>
+                    onDoubleClick={this._onTextLayerDoubleClick.bind(null, key)}
+                    spellCheck={false}/>
               );
             }
 
