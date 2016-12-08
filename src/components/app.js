@@ -10,7 +10,9 @@ const Timeline = require('./timeline');
 const TEST_LAYERS = {
   default: {
     type: 'image',
-    name: 'Imagery'
+    name: 'Imagery',
+    x: 100,
+    y: 100
   },
   text0: {
     type: 'text',
@@ -42,8 +44,8 @@ const App = React.createClass({
   getInitialState: function() {
     return {
       assets: [],
-      innerHeight: 1080,
-      innerWidth: 1920,
+      compositionHeight: 1080,
+      compositionWidth: 1920,
       layers: TEST_LAYERS,
       outerHeight: 0,
       outerWidth: 0,
@@ -84,8 +86,8 @@ const App = React.createClass({
           <Sidebar>
             <Library assets={this.state.assets}/>
           </Sidebar>
-          <Canvas innerHeight={this.state.innerHeight}
-              innerWidth={this.state.innerWidth}
+          <Canvas compositionHeight={this.state.compositionHeight}
+              compositionWidth={this.state.compositionWidth}
               layers={this.state.layers}
               onLayerChange={this._onLayerChange}
               outerHeight={this.state.outerHeight}

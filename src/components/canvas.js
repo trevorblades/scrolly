@@ -1,11 +1,28 @@
 const React = require('react');
 const classNames = require('classnames');
 
+function getViewportDimensions(options) {
+  const compositionAspectRatio = options.compositionWidth / options.compositionHeight;
+  const outerAspectRatio = options.outerWidth / options.outerHeight;
+
+  let viewportHeight = options.outerHeight;
+  let viewportWidth = options.outerWidth;
+  if (compositionAspectRatio > outerAspectRatio) {
+    viewportHeight = options.outerWidth / compositionAspectRatio;
+  } else {
+    viewportWidth = options.outerHeight * compositionAspectRatio;
+  }
+  return {
+    viewportHeight: viewportHeight,
+    viewportWidth: viewportWidth
+  };
+}
+
 const Canvas = React.createClass({
 
   propTypes: {
-    innerHeight: React.PropTypes.number,
-    innerWidth: React.PropTypes.number,
+    compositionHeight: React.PropTypes.number,
+    compositionWidth: React.PropTypes.number,
     layers: React.PropTypes.object,
     onLayerChange: React.PropTypes.func,
     outerHeight: React.PropTypes.number,
@@ -13,14 +30,25 @@ const Canvas = React.createClass({
   },
 
   getInitialState: function() {
-    return {
+    const viewportDimensions = getViewportDimensions(this.props);
+    return Object.assign(viewportDimensions, {
       editingLayer: null,
+      movingLayer: null,
       selectedLayer: null
-    };
+    });
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.compositionHeight !== this.props.compositionHeight ||
+        nextProps.compositionWidth !== this.props.compositionWidth ||
+        nextProps.outerHeight !== this.props.outerHeight ||
+        nextProps.outerWidth !== this.props.outerWidth) {
+      this.setState(getViewportDimensions(nextProps));
+    }
   },
 
   componentWillUnmount: function() {
-    window.removeEventListener('keydown', this._onKeyDown);
+    document.removeEventListener('keydown', this._onKeyDown);
   },
 
   _onKeyDown: function(event) {
@@ -42,8 +70,51 @@ const Canvas = React.createClass({
     event.stopPropagation();
     if (id !== this.state.selectedLayer) {
       this.setState({selectedLayer: id});
-      window.addEventListener('keydown', this._onKeyDown);
+      document.addEventListener('keydown', this._onKeyDown);
     }
+  },
+
+  _onLayerMouseDown: function(id, event) {
+    const layerRect = event.target.getBoundingClientRect();
+    this.setState({
+      movingLayer: id,
+      movingLayerOffsetX: event.clientX - layerRect.left,
+      movingLayerOffsetY: event.clientY - layerRect.top
+    });
+    document.addEventListener('mousemove', this._onLayerMouseMove);
+    document.addEventListener('mouseup', this._onLayerMouseUp);
+  },
+
+  _onLayerMouseMove: function(event) {
+    let layerX = event.clientX - this.refs.viewport.offsetLeft - this.state.movingLayerOffsetX;
+    const minX = this.state.movingLayerOffsetX * -1;
+    const maxX = this.state.viewportWidth - this.state.movingLayerOffsetX;
+    if (layerX < minX) {
+      layerX = minX;
+    } else if (layerX > maxX) {
+      layerX = maxX;
+    }
+
+    let layerY = event.clientY - this.refs.viewport.offsetTop - this.state.movingLayerOffsetY;
+    const minY = this.state.movingLayerOffsetY * -1;
+    const maxY = this.state.viewportHeight - this.state.movingLayerOffsetY;
+    if (layerY < minY) {
+      layerY = minY;
+    } else if (layerY > maxY) {
+      layerY = maxY;
+    }
+
+    const scale = this.props.compositionWidth / this.state.viewportWidth;
+    this.props.onLayerChange(this.state.movingLayer, {
+      x: layerX * scale,
+      y: layerY * scale
+    });
+  },
+
+  _onLayerMouseUp: function() {
+    this.setState({movingLayer: null});
+    document.removeEventListener('mousemove', this._onLayerMouseMove);
+    document.removeEventListener('mouseup', this._onLayerMouseUp);
   },
 
   _onTextLayerBlur: function(event) {
@@ -71,34 +142,25 @@ const Canvas = React.createClass({
   },
 
   render: function() {
-    const innerAspectRatio = this.props.innerWidth / this.props.innerHeight;
-    const outerAspectRatio = this.props.outerWidth / this.props.outerHeight;
-
-    let viewportStyle = {};
-    let viewportHeight = this.props.outerHeight;
-    let viewportWidth = this.props.outerWidth;
-    if (innerAspectRatio > outerAspectRatio) {
-      viewportHeight = this.props.outerWidth / innerAspectRatio;
-      viewportStyle = {height: viewportHeight};
-    } else {
-      viewportWidth = this.props.outerHeight * innerAspectRatio;
-      viewportStyle = {width: viewportWidth};
-    }
-
     return (
       <div className="pl-canvas">
         <div className="pl-canvas-viewport"
             onClick={this._onCanvasClick}
-            style={viewportStyle}>
+            ref="viewport"
+            style={{
+              width: this.state.viewportWidth,
+              height: this.state.viewportHeight
+            }}>
           {Object.keys(this.props.layers).map(key => {
             const layer = this.props.layers[key];
 
-            const x = viewportWidth * layer.x / this.props.innerWidth;
-            const y = viewportHeight * layer.y / this.props.innerHeight;
-            const style = {transform: `translate(${x}px, ${y}px)`};
-
             let extraProps;
             let isText = false;
+            const style = {
+              top: this.state.viewportHeight * layer.y / this.props.compositionHeight,
+              left: this.state.viewportWidth * layer.x / this.props.compositionWidth
+            };
+
             if (layer.type === 'text') {
               isText = true;
               style.fontSize = layer.fontSize;
@@ -106,7 +168,7 @@ const Canvas = React.createClass({
               style.fontStyle = layer.fontStyle;
               extraProps = {
                 dangerouslySetInnerHTML: {__html: layer.value},
-                onDoubleClick: this._onTextLayerDoubleClick.bind(this, key)
+                onDoubleClick: this._onTextLayerDoubleClick.bind(null, key)
               };
               if (key === this.state.editingLayer) {
                 extraProps.contentEditable = true;
@@ -121,7 +183,8 @@ const Canvas = React.createClass({
             return (
               <div className={canvasClassName}
                   key={key}
-                  onClick={this._onLayerClick.bind(this, key)}
+                  onClick={this._onLayerClick.bind(null, key)}
+                  onMouseDown={this._onLayerMouseDown.bind(null, key)}
                   style={style}
                   {...extraProps}/>
             );

@@ -18,7 +18,7 @@ const Timeline = React.createClass({
   },
 
   componentWillMount: function() {
-    window.addEventListener('keydown', this._onKeyDown);
+    document.addEventListener('keydown', this._onKeyDown);
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -33,7 +33,7 @@ const Timeline = React.createClass({
   },
 
   componentWillUnmount: function() {
-    window.removeEventListener('keydown', this._onKeyDown);
+    document.removeEventListener('keydown', this._onKeyDown);
   },
 
   _onKeyDown: function(event) {
