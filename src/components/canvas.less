@@ -18,8 +18,17 @@
       position: absolute;
       top: 0;
       left: 0;
-      &.pl-text {
-        padding: @padding-smaller;
+      &:hover {
+        border-color: fade(red, 25%);
+      }
+      &.pl-selected {
+        border-color: red;
+        .pl-canvas-viewport-layer-handles {
+          display: block;
+        }
+      }
+
+      .pl-canvas-viewport-layer-text {
         line-height: 1em;
         background: transparent;
         outline: none;
@@ -27,11 +36,18 @@
           cursor: default;
         }
       }
-      &:hover {
-        border-color: fade(red, 25%);
-      }
-      &.pl-selected {
-        border-color: red;
+      .pl-canvas-viewport-layer-handles {
+        display: none;
+        .pl-canvas-viewport-layer-handle {
+          width: 4px;
+          height: 4px;
+          background-color: red;
+          position: absolute;
+          transform: translate(-50%, -50%);
+          &:not(:first-child) {
+            display: none;
+          }
+        }
       }
     }
   }

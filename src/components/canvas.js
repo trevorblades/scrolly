@@ -154,39 +154,56 @@ const Canvas = React.createClass({
           {Object.keys(this.props.layers).map(key => {
             const layer = this.props.layers[key];
 
-            let extraProps;
-            let isText = false;
+            let children;
             const style = {
               top: this.state.viewportHeight * layer.y / this.props.compositionHeight,
               left: this.state.viewportWidth * layer.x / this.props.compositionWidth
             };
 
             if (layer.type === 'text') {
-              isText = true;
               style.fontSize = layer.fontSize;
               style.fontWeight = layer.fontWeight;
               style.fontStyle = layer.fontStyle;
-              extraProps = {
-                dangerouslySetInnerHTML: {__html: layer.value},
-                onDoubleClick: this._onTextLayerDoubleClick.bind(null, key)
-              };
-              if (key === this.state.editingLayer) {
-                extraProps.contentEditable = true;
-                extraProps.onBlur = this._onTextLayerBlur;
-              }
+
+              const editing = key === this.state.editingLayer;
+              children = (
+                <span className="pl-canvas-viewport-layer-text"
+                    contentEditable={editing}
+                    onBlur={editing && this._onTextLayerBlur}
+                    onDoubleClick={this._onTextLayerDoubleClick.bind(null, key)}>
+                  {layer.value}
+                </span>
+              );
             }
 
-            const canvasClassName = classNames('pl-canvas-viewport-layer', {
-              'pl-selected': key === this.state.selectedLayer,
-              'pl-text': isText
+
+            const handles = [];
+            for (let i = 0; i < 8; i++) {
+              handles.push(
+                <div className="pl-canvas-viewport-layer-handle"
+                    key={i}
+                    style={{
+                      top: 0,
+                      left: `${(i / 2) * 100}%`
+                    }}/>
+              );
+            }
+
+            const layerClassName = classNames('pl-canvas-viewport-layer', {
+              'pl-selected': key === this.state.selectedLayer
             });
+
             return (
-              <div className={canvasClassName}
+              <div className={layerClassName}
                   key={key}
                   onClick={this._onLayerClick.bind(null, key)}
                   onMouseDown={this._onLayerMouseDown.bind(null, key)}
-                  style={style}
-                  {...extraProps}/>
+                  style={style}>
+                {children}
+                <div className="pl-canvas-viewport-layer-handles">
+                  {handles}
+                </div>
+              </div>
             );
           })}
         </div>
