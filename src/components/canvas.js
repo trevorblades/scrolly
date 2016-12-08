@@ -119,18 +119,25 @@ const Canvas = React.createClass({
   _onLayerHandleMouseDown: function(id, index, event) {
     event.stopPropagation();
     if (!this._boundLayerHandleMouseMove) {
-      const direction = index <= 2 ? -1 : 1;
-      this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, id, direction);
+      this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, id, index);
       document.addEventListener('mousemove', this._boundLayerHandleMouseMove);
       document.addEventListener('mouseup', this._onLayerHandleMouseUp);
     }
   },
 
-  _onLayerHandleMouseMove: function(id, direction, event) {
+  _onLayerHandleMouseMove: function(id, index, event) {
     const layer = this.props.layers[id];
     if (layer.type === 'text') {
+      let layerY = layer.y;
+      let movementY = event.movementY;
+      if (index <= 2) {
+        const scale = this.props.compositionWidth / this.state.viewportWidth;
+        layerY += event.movementY * scale;
+        movementY *= -1;
+      }
       this.props.onLayerChange(id, {
-        fontSize: Math.round(layer.fontSize + event.movementY * direction)
+        y: layerY,
+        fontSize: Math.round(layer.fontSize + movementY)
       });
     }
   },
@@ -199,7 +206,6 @@ const Canvas = React.createClass({
                     spellCheck={false}/>
               );
             }
-
 
             const handles = [];
             for (let i = 0; i < 8; i++) {
