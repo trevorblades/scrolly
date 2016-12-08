@@ -123,11 +123,13 @@ const Canvas = React.createClass({
   },
 
   _onLayerMouseUp: function() {
-    this.props.onLayerChange(this.state.movingLayerId, {
-      x: this.state.movingLayerX,
-      y: this.state.movingLayerY
-    });
-    this.setState({movingLayerId: null});
+    if (this.state.movingLayerId) {
+      this.props.onLayerChange(this.state.movingLayerId, {
+        x: this.state.movingLayerX,
+        y: this.state.movingLayerY
+      });
+      this.setState({movingLayerId: null});
+    }
     document.removeEventListener('mousemove', this._boundLayerMouseMove);
     document.removeEventListener('mouseup', this._onLayerMouseUp);
     delete this._boundLayerMouseMove;
@@ -166,11 +168,13 @@ const Canvas = React.createClass({
   },
 
   _onLayerHandleMouseUp: function() {
-    this.props.onLayerChange(this.state.resizingLayerId, {
-      y: this.state.resizingLayerY,
-      fontSize: this.state.resizingLayerFontSize
-    });
-    this.setState({resizingLayerId: null});
+    if (this.state.resizingLayerId) {
+      this.props.onLayerChange(this.state.resizingLayerId, {
+        y: this.state.resizingLayerY,
+        fontSize: this.state.resizingLayerFontSize
+      });
+      this.setState({resizingLayerId: null});
+    }
     document.removeEventListener('mousemove', this._boundLayerHandleMouseMove);
     document.removeEventListener('mouseup', this._onLayerHandleMouseUp);
     delete this._boundLayerHandleMouseMove;
