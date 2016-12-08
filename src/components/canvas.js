@@ -116,20 +116,21 @@ const Canvas = React.createClass({
     delete this._boundLayerMouseMove;
   },
 
-  _onLayerHandleMouseDown: function(id, event) {
+  _onLayerHandleMouseDown: function(id, index, event) {
     event.stopPropagation();
     if (!this._boundLayerHandleMouseMove) {
-      this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, id);
+      const direction = index <= 2 ? -1 : 1;
+      this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, id, direction);
       document.addEventListener('mousemove', this._boundLayerHandleMouseMove);
       document.addEventListener('mouseup', this._onLayerHandleMouseUp);
     }
   },
 
-  _onLayerHandleMouseMove: function(id, event) {
+  _onLayerHandleMouseMove: function(id, direction, event) {
     const layer = this.props.layers[id];
     if (layer.type === 'text') {
       this.props.onLayerChange(id, {
-        fontSize: Math.round(layer.fontSize + event.movementY)
+        fontSize: Math.round(layer.fontSize + event.movementY * direction)
       });
     }
   },
@@ -205,7 +206,7 @@ const Canvas = React.createClass({
               handles.push(
                 <div className="pl-canvas-viewport-layer-handle"
                     key={i}
-                    onMouseDown={this._onLayerHandleMouseDown.bind(null, id)}/>
+                    onMouseDown={this._onLayerHandleMouseDown.bind(null, id, i)}/>
               );
             }
 
