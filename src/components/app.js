@@ -28,14 +28,16 @@ const TEST_LAYERS = {
     name: 'Some more text',
     value: 'Hi',
     x: 240,
-    y: 400
+    y: 400,
+    fontSize: 24
   },
   text2: {
     type: 'text',
     name: 'Even more text',
     value: 'Ho',
     x: 960,
-    y: 120
+    y: 120,
+    fontSize: 16
   }
 };
 
