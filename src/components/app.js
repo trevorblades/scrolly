@@ -75,6 +75,7 @@ const App = React.createClass({
   },
 
   _onLayerChange: function(id, properties) {
+    console.log('layer changed');
     const layers = JSON.parse(JSON.stringify(this.state.layers));
     Object.assign(layers[id], properties);
     this.setState({layers: layers});
