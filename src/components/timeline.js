@@ -18,7 +18,7 @@ const Timeline = React.createClass({
   },
 
   componentWillMount: function() {
-    document.addEventListener('keydown', this._onKeyDown);
+    window.addEventListener('keydown', this._onKeyDown);
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -33,7 +33,7 @@ const Timeline = React.createClass({
   },
 
   componentWillUnmount: function() {
-    document.removeEventListener('keydown', this._onKeyDown);
+    window.removeEventListener('keydown', this._onKeyDown);
   },
 
   _onKeyDown: function(event) {
@@ -99,6 +99,11 @@ const Timeline = React.createClass({
   },
 
   render: function() {
+    const marker = (
+      <div className="pl-timeline-marker"
+          style={{left: `${this.state.percentPlayed}%`}}/>
+    );
+
     return (
       <div className="pl-timeline" style={{height: this.state.height}}>
         <div className="pl-timeline-scrubber">
@@ -106,8 +111,7 @@ const Timeline = React.createClass({
             <span>{`${this.state.percentPlayed.toFixed(2)}%`}</span>
           </div>
           <div className="pl-timeline-scrubber-track" ref="track">
-            <div className="pl-timeline-scrubber-track-marker"
-                style={{left: `${this.state.percentPlayed}%`}}/>
+            {marker}
             <div className="pl-timeline-scrubber-track-playhead"
                 onMouseDown={this._onPlayheadMouseDown}
                 ref="playhead"
@@ -115,20 +119,26 @@ const Timeline = React.createClass({
           </div>
         </div>
         <div className="pl-timeline-layers">
-          {Object.keys(this.props.layers).map(key => {
-            const layer = this.props.layers[key];
-            return (
-              <div className="pl-timeline-layer" key={key}>
-                <div className="pl-timeline-layer-info">
+          <div className="pl-timeline-layer-labels">
+            {Object.keys(this.props.layers).map(key => {
+              const layer = this.props.layers[key];
+              return (
+                <div className="pl-timeline-layer-label" key={key}>
                   <span>{layer.name}</span>
                 </div>
-                <div className="pl-timeline-layer-track">
-                  <div className="pl-timeline-layer-track-marker"
-                      style={{left: `${this.state.percentPlayed}%`}}/>
+              );
+            })}
+          </div>
+          <div className="pl-timeline-layer-tracks">
+            {Object.keys(this.props.layers).map(key => {
+              return (
+                <div className="pl-timeline-layer-track" key={key}>
+                  <div className="pl-timeline-layer-track-bar"/>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+            {marker}
+          </div>
         </div>
         <div className="pl-timeline-handle"
             onMouseDown={this._onHandleMouseDown}/>
