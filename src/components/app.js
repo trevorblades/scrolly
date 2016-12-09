@@ -12,7 +12,9 @@ const TEST_LAYERS = {
     type: 'image',
     name: 'Imagery',
     x: 100,
-    y: 100
+    y: 100,
+    in: 0,
+    out: 1
   },
   text0: {
     type: 'text',
@@ -20,6 +22,8 @@ const TEST_LAYERS = {
     value: 'Hey',
     x: 100,
     y: 100,
+    in: 0,
+    out: 1,
     fontSize: 48,
     fontStyle: 'italic'
   },
@@ -29,6 +33,8 @@ const TEST_LAYERS = {
     value: 'Hi',
     x: 240,
     y: 400,
+    in: 0,
+    out: 1,
     fontSize: 24
   },
   text2: {
@@ -37,6 +43,8 @@ const TEST_LAYERS = {
     value: 'Ho',
     x: 960,
     y: 120,
+    in: 0,
+    out: 1,
     fontSize: 16
   }
 };
@@ -98,6 +106,7 @@ const App = React.createClass({
         </div>
         <Timeline layers={this.state.layers}
             maxHeight={this.state.timelineMaxHeight}
+            onLayerChange={this._onLayerChange}
             onResize={this._onResize}/>
       </div>
     );

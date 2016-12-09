@@ -7,6 +7,7 @@ const Timeline = React.createClass({
   propTypes: {
     layers: React.PropTypes.object.isRequired,
     maxHeight: React.PropTypes.number,
+    onLayerChange: React.PropTypes.func,
     onResize: React.PropTypes.func
   },
 
@@ -89,6 +90,30 @@ const Timeline = React.createClass({
     document.removeEventListener('mouseup', this._onPlayheadMouseUp);
   },
 
+  _onBarHandleMouseDown: function(id, index) {
+    if (!this._boundBarHandleMouseMove) {
+      this._boundBarHandleMouseMove = this._onBarHandleMouseMove.bind(null, id, index);
+      document.addEventListener('mousemove', this._boundBarHandleMouseMove);
+      document.addEventListener('mouseup', this._onBarHandleMouseUp);
+    }
+  },
+
+  _onBarHandleMouseMove: function(id, index, event) {
+    let position = (event.clientX - this.refs.tracks.offsetLeft) / this.refs.tracks.offsetWidth;
+    if (position < 0) {
+      position = 0;
+    } else if (position > 1) {
+      position = 1;
+    }
+    this.props.onLayerChange(id, {[index ? 'out' : 'in']: position});
+  },
+
+  _onBarHandleMouseUp: function() {
+    document.removeEventListener('mousemove', this._boundBarHandleMouseMove);
+    document.removeEventListener('mouseup', this._onBarHandleMouseUp);
+    delete this._boundBarHandleMouseMove;
+  },
+
   _setPercentPlayed: function(value) {
     if (value < 0) {
       value = 0;
@@ -129,11 +154,27 @@ const Timeline = React.createClass({
               );
             })}
           </div>
-          <div className="pl-timeline-layer-tracks">
+          <div className="pl-timeline-layer-tracks" ref="tracks">
             {Object.keys(this.props.layers).map(key => {
+              const handles = [];
+              for (var i = 0; i < 2; i++) {
+                handles.push(
+                  <div className="pl-timeline-layer-track-bar-handle"
+                      key={i}
+                      onMouseDown={this._onBarHandleMouseDown.bind(null, key, i)}/>
+                );
+              }
+
+              const layer = this.props.layers[key];
               return (
                 <div className="pl-timeline-layer-track" key={key}>
-                  <div className="pl-timeline-layer-track-bar"/>
+                  <div className="pl-timeline-layer-track-bar"
+                      style={{
+                        left: `${layer.in * 100}%`,
+                        right: `${100 - layer.out * 100}%`
+                      }}>
+                    {handles}
+                  </div>
                 </div>
               );
             })}

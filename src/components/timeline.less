@@ -82,7 +82,7 @@
     background-color: fade(black, 20%);
     overflow: auto;
     .pl-timeline-layer-labels .pl-timeline-layer-label {
-      padding: @padding-small @padding-base;
+      margin: @padding-small @padding-base;
       font-size: @font-size-small;
       line-height: @padding-base;
       color: @gray-light;
@@ -91,14 +91,31 @@
       flex-grow: 1;
       position: relative;
       .pl-timeline-layer-track {
-        padding: @padding-small 0;
+        height: @padding-base;
+        margin: @padding-small 0;
+        position: relative;
         .pl-timeline-layer-track-bar {
-          height: @padding-base;
+          height: 100%;
           border: 1px solid @black-faded;
           border-top-color: @white-faded;
           border-left-color: @white-faded;
           border-radius: @border-radius-small;
           background-color: @gray;
+          position: absolute;
+          top: 0;
+          left: 0;
+          .pl-timeline-layer-track-bar-handle {
+            width: 5px;
+            height: 100%;
+            cursor: ew-resize;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translateX(-50%);
+            &:last-child {
+              left: 100%;
+            }
+          }
         }
       }
     }
