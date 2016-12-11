@@ -71,28 +71,32 @@ const Canvas = React.createClass({
     }
   },
 
-  _onLayerClick: function(id, event) {
+  _onLayerClick: function(event) {
     event.stopPropagation();
-    if (id !== this.state.selectedLayerId) {
-      this.setState({selectedLayerId: id});
-      document.addEventListener('keydown', this._onKeyDown);
-    }
   },
 
   _onLayerMouseDown: function(id, event) {
+    const nextState = {};
+    if (id !== this.state.selectedLayerId) {
+      nextState.selectedLayerId = id;
+      document.addEventListener('keydown', this._onKeyDown);
+    }
+
     if (!this._boundLayerMouseMove) {
       const layerRect = event.target.getBoundingClientRect();
       const offsetX = event.clientX - layerRect.left;
       const offsetY = event.clientY - layerRect.top;
       const layer = this.props.layers[id];
-      this.setState({
-        movingLayerId: id,
-        movingLayerX: layer.x,
-        movingLayerY: layer.y
-      });
+      nextState.movingLayerId = id;
+      nextState.movingLayerX = layer.x;
+      nextState.movingLayerY = layer.y;
       this._boundLayerMouseMove = this._onLayerMouseMove.bind(null, id, offsetX, offsetY);
       document.addEventListener('mousemove', this._boundLayerMouseMove);
       document.addEventListener('mouseup', this._onLayerMouseUp);
+    }
+
+    if (Object.keys(nextState).length) {
+      this.setState(nextState);
     }
   },
 
@@ -266,7 +270,7 @@ const Canvas = React.createClass({
             return (
               <div className={layerClassName}
                   key={id}
-                  onClick={this._onLayerClick.bind(null, id)}
+                  onClick={this._onLayerClick}
                   onMouseDown={this._onLayerMouseDown.bind(null, id)}
                   style={style}>
                 {children}

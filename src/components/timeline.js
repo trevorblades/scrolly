@@ -90,7 +90,31 @@ const Timeline = React.createClass({
     document.removeEventListener('mouseup', this._onPlayheadMouseUp);
   },
 
-  _onBarHandleMouseDown: function(id, index) {
+  _onBarMouseDown: function(id) {
+    if (!this._boundBarMouseMove) {
+      this._boundBarMouseMove = this._onBarMouseMove.bind(null, id);
+      document.addEventListener('mousemove', this._boundBarMouseMove);
+      document.addEventListener('mouseup', this._onBarMouseUp);
+    }
+  },
+
+  _onBarMouseMove: function(id, event) {
+    const layer = this.props.layers[id];
+    const percentMoved = event.movementX / this.refs.track.offsetWidth;
+    this.props.onLayerChange(id, {
+      in: layer.in + percentMoved,
+      out: layer.out + percentMoved
+    });
+  },
+
+  _onBarMouseUp: function() {
+    document.removeEventListener('mousemove', this._boundBarMouseMove);
+    document.removeEventListener('mouseup', this._onBarMouseUp);
+    delete this._boundBarMouseMove;
+  },
+
+  _onBarHandleMouseDown: function(id, index, event) {
+    event.stopPropagation();
     if (!this._boundBarHandleMouseMove) {
       this._boundBarHandleMouseMove = this._onBarHandleMouseMove.bind(null, id, index);
       document.addEventListener('mousemove', this._boundBarHandleMouseMove);
@@ -99,7 +123,7 @@ const Timeline = React.createClass({
   },
 
   _onBarHandleMouseMove: function(id, index, event) {
-    let position = (event.clientX - this.refs.tracks.offsetLeft) / this.refs.tracks.offsetWidth;
+    let position = (event.clientX - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
     if (position < 0) {
       position = 0;
     } else if (position > 1) {
@@ -131,54 +155,57 @@ const Timeline = React.createClass({
 
     return (
       <div className="pl-timeline" style={{height: this.state.height}}>
-        <div className="pl-timeline-scrubber">
-          <div className="pl-timeline-scrubber-info">
+        <div className="pl-timeline-header">
+          <div className="pl-timeline-header-status">
             <span>{`${this.state.percentPlayed.toFixed(2)}%`}</span>
           </div>
-          <div className="pl-timeline-scrubber-track" ref="track">
+          <div className="pl-timeline-header-track" ref="track">
             {marker}
-            <div className="pl-timeline-scrubber-track-playhead"
+            <div className="pl-timeline-header-track-playhead"
                 onMouseDown={this._onPlayheadMouseDown}
                 ref="playhead"
                 style={{left: `${this.state.percentPlayed}%`}}/>
           </div>
         </div>
-        <div className="pl-timeline-layers">
-          <div className="pl-timeline-layer-labels">
+        <div className="pl-timeline-content">
+          <div className="pl-timeline-layers">
             {Object.keys(this.props.layers).map(key => {
               const layer = this.props.layers[key];
               return (
-                <div className="pl-timeline-layer-label" key={key}>
+                <div className="pl-timeline-layer" key={key}>
                   <span>{layer.name}</span>
                 </div>
               );
             })}
           </div>
-          <div className="pl-timeline-layer-tracks" ref="tracks">
-            {Object.keys(this.props.layers).map(key => {
-              const handles = [];
-              for (var i = 0; i < 2; i++) {
-                handles.push(
-                  <div className="pl-timeline-layer-track-bar-handle"
-                      key={i}
-                      onMouseDown={this._onBarHandleMouseDown.bind(null, key, i)}/>
-                );
-              }
+          <div className="pl-timeline-tracks">
+            <div className="pl-timeline-tracks-wrapper">
+              {Object.keys(this.props.layers).map(id => {
+                const handles = [];
+                for (var i = 0; i < 2; i++) {
+                  handles.push(
+                    <div className="pl-timeline-track-bar-handle"
+                        key={i}
+                        onMouseDown={this._onBarHandleMouseDown.bind(null, id, i)}/>
+                  );
+                }
 
-              const layer = this.props.layers[key];
-              return (
-                <div className="pl-timeline-layer-track" key={key}>
-                  <div className="pl-timeline-layer-track-bar"
-                      style={{
-                        left: `${layer.in * 100}%`,
-                        right: `${100 - layer.out * 100}%`
-                      }}>
-                    {handles}
+                const layer = this.props.layers[id];
+                return (
+                  <div className="pl-timeline-track" key={id}>
+                    <div className="pl-timeline-track-bar"
+                        onMouseDown={this._onBarMouseDown.bind(null, id)}
+                        style={{
+                          left: `${layer.in * 100}%`,
+                          right: `${100 - layer.out * 100}%`
+                        }}>
+                      {handles}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-            {marker}
+                );
+              })}
+              {marker}
+            </div>
           </div>
         </div>
         <div className="pl-timeline-handle"

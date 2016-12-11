@@ -11,29 +11,16 @@
   border-top: 1px solid @white-faded;
   background-color: @gray-dark;
   position: relative;
-  .pl-timeline-scrubber .pl-timeline-scrubber-info,
-  .pl-timeline-layers .pl-timeline-layer-labels {
+  .pl-timeline-header .pl-timeline-header-status, .pl-timeline-layers {
+    flex-shrink: 0;
     width: @sidebar-width;
     border-right: 1px solid @gray-darker;
   }
-  .pl-timeline-scrubber .pl-timeline-scrubber-track,
-  .pl-timeline-layer-tracks {
-    margin: 0 @padding-small;
-  }
-  .pl-timeline-marker {
-    width: 1px;
-    height: 100%;
-    background-color: @brand-warning;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  .pl-timeline-scrubber {
+  .pl-timeline-header {
     display: flex;
     flex-shrink: 0;
     border-bottom: 1px solid black;
-    .pl-timeline-scrubber-info {
-      flex-shrink: 0;
+    .pl-timeline-header-status {
       padding: @padding-smaller;
       font-family: @font-family-monospace;
       span {
@@ -45,10 +32,11 @@
         background-color: @brand-warning;
       }
     }
-    .pl-timeline-scrubber-track {
+    .pl-timeline-header-track {
       flex-grow: 1;
+      margin: 0 @padding-small;
       position: relative;
-      .pl-timeline-scrubber-track-playhead {
+      .pl-timeline-header-track-playhead {
         cursor: ew-resize;
         position: absolute;
         top: 0;
@@ -76,57 +64,99 @@
       }
     }
   }
-  .pl-timeline-layers {
+  .pl-timeline-content {
     display: flex;
     flex-grow: 1;
-    background-color: fade(black, 20%);
+    background-color: @gray-darker;
     overflow: auto;
-    .pl-timeline-layer-labels .pl-timeline-layer-label {
-      margin: @padding-small @padding-base;
+    position: relative;
+  }
+  .pl-timeline-layers {
+    padding-top: @padding-small;
+    border-color: black;
+    .pl-timeline-layer {
+      padding: 0 @padding-base;
+      margin-bottom: @padding-small;
       font-size: @font-size-small;
       line-height: @padding-base;
       color: @gray-light;
     }
-    .pl-timeline-layer-tracks {
+  }
+  .pl-timeline-tracks {
+    display: flex;
+    flex-grow: 1;
+    padding: 0 @padding-small;
+    overflow: hidden;
+    position: relative;
+    z-index: 0;
+    &:before, &:after {
+      content: '';
+      width: @padding-small;
+      height: 100%;
+      background-color: fade(@gray-darker, 80%);
+      position: absolute;
+      top: 0;
+      z-index: 1;
+    }
+    &:before {
+      left: 0;
+    }
+    &:after {
+      right: 0;
+    }
+
+    .pl-timeline-tracks-wrapper {
       flex-grow: 1;
+      padding-top: @padding-small;
       position: relative;
-      .pl-timeline-layer-track {
-        height: @padding-base;
-        margin: @padding-small 0;
-        position: relative;
-        .pl-timeline-layer-track-bar {
-          height: 100%;
-          border: 1px solid @black-faded;
-          border-top-color: @white-faded;
-          border-left-color: @white-faded;
-          border-radius: @border-radius-small;
+    }
+    .pl-timeline-track {
+      height: @padding-base;
+      margin-bottom: @padding-small;
+      position: relative;
+      .pl-timeline-track-bar {
+        height: 100%;
+        border: 1px solid @black-faded;
+        border-top-color: @white-faded;
+        border-left-color: @white-faded;
+        border-radius: @border-radius-small;
+        background-color: @gray-dark;
+        position: absolute;
+        top: 0;
+        left: 0;
+        &:active {
           background-color: @gray;
+        }
+
+        .pl-timeline-track-bar-handle {
+          width: 5px;
+          height: 100%;
+          cursor: ew-resize;
           position: absolute;
           top: 0;
           left: 0;
-          .pl-timeline-layer-track-bar-handle {
-            width: 5px;
-            height: 100%;
-            cursor: ew-resize;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform: translateX(-50%);
-            &:last-child {
-              left: 100%;
-            }
+          transform: translateX(-50%);
+          &:last-child {
+            left: 100%;
           }
         }
       }
     }
   }
+  .pl-timeline-marker, .pl-timeline-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .pl-timeline-marker {
+    width: 1px;
+    height: 100%;
+    background-color: @brand-warning;
+  }
   .pl-timeline-handle {
     width: 100%;
     height: @padding-small;
     cursor: row-resize;
-    position: absolute;
-    top: 0;
-    left: 0;
     transform: translateY(-50%)
   }
 }
