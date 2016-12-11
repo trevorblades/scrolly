@@ -2,6 +2,7 @@
 
 @timeline-playhead-handle-size: 18px;
 @timeline-playhead-arrow-size: @timeline-playhead-handle-size / 2;
+@timeline-track-padding: 0 13px 0 12px;
 
 .pl-timeline {
   display: flex;
@@ -34,7 +35,7 @@
     }
     .pl-timeline-header-track {
       flex-grow: 1;
-      margin: 0 @padding-small;
+      margin: @timeline-track-padding;
       position: relative;
       .pl-timeline-header-track-playhead {
         cursor: ew-resize;
@@ -85,7 +86,7 @@
   .pl-timeline-tracks {
     display: flex;
     flex-grow: 1;
-    padding: 0 @padding-small;
+    padding: @timeline-track-padding;
     overflow: hidden;
     position: relative;
     z-index: 0;
@@ -116,10 +117,8 @@
       position: relative;
       .pl-timeline-track-bar {
         height: 100%;
-        border: 1px solid @black-faded;
-        border-top-color: @white-faded;
-        border-left-color: @white-faded;
         border-radius: @border-radius-small;
+        box-shadow: 0 1px 1px @black-faded;
         background-color: @gray-dark;
         position: absolute;
         top: 0;
@@ -157,6 +156,6 @@
     width: 100%;
     height: @padding-small;
     cursor: row-resize;
-    transform: translateY(-50%)
+    transform: translateY(-50%);
   }
 }

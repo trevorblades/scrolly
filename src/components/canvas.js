@@ -26,7 +26,8 @@ const Canvas = React.createClass({
     layers: React.PropTypes.object,
     onLayerChange: React.PropTypes.func,
     outerHeight: React.PropTypes.number,
-    outerWidth: React.PropTypes.number
+    outerWidth: React.PropTypes.number,
+    percentPlayed: React.PropTypes.number
   },
 
   getInitialState: function() {
@@ -220,8 +221,12 @@ const Canvas = React.createClass({
             }}>
           {Object.keys(this.props.layers).map(id => {
             const layer = this.props.layers[id];
-            const isResizing = id === this.state.resizingLayerId;
+            if (layer.in > this.props.percentPlayed ||
+                layer.out < this.props.percentPlayed) {
+              return null;
+            }
 
+            const isResizing = id === this.state.resizingLayerId;
             let children;
             let layerX = layer.x;
             let layerY = layer.y;

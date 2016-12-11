@@ -59,6 +59,7 @@ const App = React.createClass({
       layers: TEST_LAYERS,
       outerHeight: 0,
       outerWidth: 0,
+      percentPlayed: 0,
       timelineMaxHeight: 0
     };
   },
@@ -88,6 +89,15 @@ const App = React.createClass({
     this.setState({layers: layers});
   },
 
+  _onPercentPlayedChange: function(value) {
+    if (value < 0) {
+      value = 0;
+    } else if (value > 1) {
+      value = 1;
+    }
+    this.setState({percentPlayed: value});
+  },
+
   render: function() {
     return (
       <div className="pl-app">
@@ -102,12 +112,15 @@ const App = React.createClass({
               onLayerChange={this._onLayerChange}
               outerHeight={this.state.outerHeight}
               outerWidth={this.state.outerWidth}
+              percentPlayed={this.state.percentPlayed}
               ref="canvas"/>
         </div>
         <Timeline layers={this.state.layers}
             maxHeight={this.state.timelineMaxHeight}
             onLayerChange={this._onLayerChange}
-            onResize={this._onResize}/>
+            onPercentPlayedChange={this._onPercentPlayedChange}
+            onResize={this._onResize}
+            percentPlayed={this.state.percentPlayed}/>
       </div>
     );
   }

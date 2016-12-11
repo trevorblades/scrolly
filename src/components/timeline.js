@@ -8,13 +8,14 @@ const Timeline = React.createClass({
     layers: React.PropTypes.object.isRequired,
     maxHeight: React.PropTypes.number,
     onLayerChange: React.PropTypes.func,
-    onResize: React.PropTypes.func
+    onPercentPlayedChange: React.PropTypes.func,
+    onResize: React.PropTypes.func,
+    percentPlayed: React.PropTypes.number
   },
 
   getInitialState: function() {
     return {
-      height: 200,
-      percentPlayed: 0
+      height: 200
     };
   },
 
@@ -46,9 +47,9 @@ const Timeline = React.createClass({
 
       let direction = event.keyCode === 188 ? -1 : 1;
       if (event.shiftKey) {
-        direction *= 10;
+        direction *= 0.1;
       }
-      this._setPercentPlayed(this.state.percentPlayed + direction);
+      this.onPercentPlayedChange(this.props.percentPlayed + direction);
     }
   },
 
@@ -80,8 +81,8 @@ const Timeline = React.createClass({
   },
 
   _onPlayheadMouseMove: function(event) {
-    this._setPercentPlayed((this.refs.playhead.offsetLeft + event.movementX) /
-        this.refs.track.offsetWidth * 100);
+    this.props.onPercentPlayedChange((this.refs.playhead.offsetLeft + event.movementX) /
+        this.refs.track.offsetWidth);
   },
 
   _onPlayheadMouseUp: function() {
@@ -138,33 +139,25 @@ const Timeline = React.createClass({
     delete this._boundBarHandleMouseMove;
   },
 
-  _setPercentPlayed: function(value) {
-    if (value < 0) {
-      value = 0;
-    } else if (value > 100) {
-      value = 100;
-    }
-    this.setState({percentPlayed: value});
-  },
-
   render: function() {
+    const percentPlayed = this.props.percentPlayed * 100;
     const marker = (
       <div className="pl-timeline-marker"
-          style={{left: `${this.state.percentPlayed}%`}}/>
+          style={{left: `${percentPlayed}%`}}/>
     );
 
     return (
       <div className="pl-timeline" style={{height: this.state.height}}>
         <div className="pl-timeline-header">
           <div className="pl-timeline-header-status">
-            <span>{`${this.state.percentPlayed.toFixed(2)}%`}</span>
+            <span>{`${percentPlayed.toFixed(2)}%`}</span>
           </div>
           <div className="pl-timeline-header-track" ref="track">
             {marker}
             <div className="pl-timeline-header-track-playhead"
                 onMouseDown={this._onPlayheadMouseDown}
                 ref="playhead"
-                style={{left: `${this.state.percentPlayed}%`}}/>
+                style={{left: `${percentPlayed}%`}}/>
           </div>
         </div>
         <div className="pl-timeline-content">
