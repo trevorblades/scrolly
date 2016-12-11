@@ -1,40 +1,41 @@
 const React = require('react');
+const ReactDOM = require('react-dom');
 const classNames = require('classnames');
 
 function getViewportDimensions(options) {
   const compositionAspectRatio = options.compositionWidth / options.compositionHeight;
-  const outerAspectRatio = options.outerWidth / options.outerHeight;
+  const outerAspectRatio = options.wrapperWidth / options.wrapperHeight;
 
-  let viewportHeight = options.outerHeight;
-  let viewportWidth = options.outerWidth;
+  let height = options.wrapperHeight;
+  let width = options.wrapperWidth;
   if (compositionAspectRatio > outerAspectRatio) {
-    viewportHeight = options.outerWidth / compositionAspectRatio;
+    height = options.wrapperWidth / compositionAspectRatio;
   } else {
-    viewportWidth = options.outerHeight * compositionAspectRatio;
+    width = options.wrapperHeight * compositionAspectRatio;
   }
   return {
-    viewportHeight: viewportHeight,
-    viewportWidth: viewportWidth
+    height: height,
+    width: width
   };
 }
 
-const Canvas = React.createClass({
+const Viewport = React.createClass({
 
   propTypes: {
     compositionHeight: React.PropTypes.number,
     compositionWidth: React.PropTypes.number,
     layers: React.PropTypes.object,
     onLayerChange: React.PropTypes.func,
-    outerHeight: React.PropTypes.number,
-    outerWidth: React.PropTypes.number,
     percentPlayed: React.PropTypes.number,
     selectLayer: React.PropTypes.func,
-    selectedLayer: React.PropTypes.string
+    selectedLayer: React.PropTypes.string,
+    wrapperHeight: React.PropTypes.number,
+    wrapperWidth: React.PropTypes.number
   },
 
   getInitialState: function() {
-    const viewportDimensions = getViewportDimensions(this.props);
-    return Object.assign(viewportDimensions, {
+    const dimensions = getViewportDimensions(this.props);
+    return Object.assign(dimensions, {
       editingLayer: null,
       movingLayer: null,
       movingLayerX: null,
@@ -48,13 +49,13 @@ const Canvas = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     if (nextProps.compositionHeight !== this.props.compositionHeight ||
         nextProps.compositionWidth !== this.props.compositionWidth ||
-        nextProps.outerHeight !== this.props.outerHeight ||
-        nextProps.outerWidth !== this.props.outerWidth) {
+        nextProps.wrapperHeight !== this.props.wrapperHeight ||
+        nextProps.wrapperWidth !== this.props.wrapperWidth) {
       this.setState(getViewportDimensions(nextProps));
     }
   },
 
-  _onCanvasClick: function() {
+  _onViewportClick: function() {
     if (this.props.selectedLayer) {
       this.props.selectLayer(null);
     }
@@ -86,25 +87,27 @@ const Canvas = React.createClass({
   },
 
   _onLayerMouseMove: function(id, offsetX, offsetY, event) {
-    let layerX = event.clientX - this.refs.viewport.offsetLeft - offsetX;
+    const node = ReactDOM.findDOMNode(this);
+    const scale = this.props.compositionWidth / this.state.width;
+
+    let layerX = event.clientX - node.offsetLeft - offsetX;
     const minX = offsetX * -1;
-    const maxX = this.state.viewportWidth - offsetX;
+    const maxX = this.state.width - offsetX;
     if (layerX < minX) {
       layerX = minX;
     } else if (layerX > maxX) {
       layerX = maxX;
     }
 
-    let layerY = event.clientY - this.refs.viewport.offsetTop - offsetY;
+    let layerY = event.clientY - node.offsetTop - offsetY;
     const minY = offsetY * -1;
-    const maxY = this.state.viewportHeight - offsetY;
+    const maxY = this.state.height - offsetY;
     if (layerY < minY) {
       layerY = minY;
     } else if (layerY > maxY) {
       layerY = maxY;
     }
 
-    const scale = this.props.compositionWidth / this.state.viewportWidth;
     this.setState({
       movingLayerX: layerX * scale,
       movingLayerY: layerY * scale
@@ -145,7 +148,7 @@ const Canvas = React.createClass({
       let layerY = this.state.resizingLayerY;
       let movementY = event.movementY;
       if (index <= 2) {
-        const scale = this.props.compositionWidth / this.state.viewportWidth;
+        const scale = this.props.compositionWidth / this.state.width;
         layerY += event.movementY * scale;
         movementY *= -1;
       }
@@ -187,84 +190,81 @@ const Canvas = React.createClass({
 
   render: function() {
     return (
-      <div className="pl-canvas">
-        <div className="pl-canvas-viewport"
-            onClick={this._onCanvasClick}
-            ref="viewport"
-            style={{
-              width: this.state.viewportWidth,
-              height: this.state.viewportHeight
-            }}>
-          {Object.keys(this.props.layers).map(id => {
-            const layer = this.props.layers[id];
-            if (layer.in > this.props.percentPlayed ||
-                layer.out < this.props.percentPlayed) {
-              return null;
-            }
+      <div className="pl-viewport"
+          onClick={this._onViewportClick}
+          style={{
+            width: this.state.width,
+            height: this.state.height
+          }}>
+        {Object.keys(this.props.layers).map(id => {
+          const layer = this.props.layers[id];
+          if (layer.in > this.props.percentPlayed ||
+              layer.out < this.props.percentPlayed) {
+            return null;
+          }
 
-            const isResizing = id === this.state.resizingLayer;
-            let children;
-            let layerX = layer.x;
-            let layerY = layer.y;
-            if (id === this.state.movingLayer) {
-              layerX = this.state.movingLayerX;
-              layerY = this.state.movingLayerY;
-            } else if (isResizing) {
-              layerY = this.state.resizingLayerY;
-            }
-            const style = {
-              top: this.state.viewportHeight * layerY / this.props.compositionHeight,
-              left: this.state.viewportWidth * layerX / this.props.compositionWidth
-            };
+          const isResizing = id === this.state.resizingLayer;
+          let children;
+          let layerX = layer.x;
+          let layerY = layer.y;
+          if (id === this.state.movingLayer) {
+            layerX = this.state.movingLayerX;
+            layerY = this.state.movingLayerY;
+          } else if (isResizing) {
+            layerY = this.state.resizingLayerY;
+          }
+          const style = {
+            top: this.state.height * layerY / this.props.compositionHeight,
+            left: this.state.width * layerX / this.props.compositionWidth
+          };
 
-            if (layer.type === 'text') {
-              style.fontSize = isResizing ?
-                  this.state.resizingLayerFontSize :
-                  layer.fontSize;
-              style.fontWeight = layer.fontWeight;
-              style.fontStyle = layer.fontStyle;
+          if (layer.type === 'text') {
+            style.fontSize = isResizing ?
+                this.state.resizingLayerFontSize :
+                layer.fontSize;
+            style.fontWeight = layer.fontWeight;
+            style.fontStyle = layer.fontStyle;
 
-              const isEditing = id === this.state.editingLayer;
-              children = (
-                <div className="pl-canvas-viewport-layer-text"
-                    contentEditable={isEditing}
-                    dangerouslySetInnerHTML={{__html: layer.value}}
-                    onBlur={isEditing && this._onTextLayerBlur}
-                    onDoubleClick={this._onTextLayerDoubleClick.bind(null, id)}
-                    spellCheck={false}/>
-              );
-            }
-
-            const handles = [];
-            for (let i = 0; i < 8; i++) {
-              handles.push(
-                <div className="pl-canvas-viewport-layer-handle"
-                    key={i}
-                    onMouseDown={this._onLayerHandleMouseDown.bind(null, id, i)}/>
-              );
-            }
-
-            const layerClassName = classNames('pl-canvas-viewport-layer', {
-              'pl-selected': id === this.props.selectedLayer
-            });
-
-            return (
-              <div className={layerClassName}
-                  key={id}
-                  onClick={this._onLayerClick}
-                  onMouseDown={this._onLayerMouseDown.bind(null, id)}
-                  style={style}>
-                {children}
-                <div className="pl-canvas-viewport-layer-handles">
-                  {handles}
-                </div>
-              </div>
+            const isEditing = id === this.state.editingLayer;
+            children = (
+              <div className="pl-viewport-layer-text"
+                  contentEditable={isEditing}
+                  dangerouslySetInnerHTML={{__html: layer.value}}
+                  onBlur={isEditing && this._onTextLayerBlur}
+                  onDoubleClick={this._onTextLayerDoubleClick.bind(null, id)}
+                  spellCheck={false}/>
             );
-          })}
-        </div>
+          }
+
+          const handles = [];
+          for (let i = 0; i < 8; i++) {
+            handles.push(
+              <div className="pl-viewport-layer-handle"
+                  key={i}
+                  onMouseDown={this._onLayerHandleMouseDown.bind(null, id, i)}/>
+            );
+          }
+
+          const layerClassName = classNames('pl-viewport-layer', {
+            'pl-selected': id === this.props.selectedLayer
+          });
+
+          return (
+            <div className={layerClassName}
+                key={id}
+                onClick={this._onLayerClick}
+                onMouseDown={this._onLayerMouseDown.bind(null, id)}
+                style={style}>
+              {children}
+              <div className="pl-viewport-layer-handles">
+                {handles}
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   }
 });
 
-module.exports = Canvas;
+module.exports = Viewport;

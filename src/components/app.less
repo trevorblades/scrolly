@@ -1,8 +1,8 @@
-@import './canvas';
 @import './header';
 @import './library';
 @import './sidebar';
 @import './timeline';
+@import './viewport';
 
 .pl-app {
   display: flex;
@@ -18,5 +18,13 @@
     flex-grow: 1;
     border-bottom: 1px solid black;
     background-color: @gray-dark;
+  }
+  .pl-app-viewport-wrapper {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    box-sizing: content-box;
+    padding: @padding-largest;
+    overflow: hidden;
   }
 }

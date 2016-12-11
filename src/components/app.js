@@ -1,11 +1,11 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const Canvas = require('./canvas');
 const Header = require('./header');
 const Library = require('./library');
 const Sidebar = require('./sidebar');
 const Timeline = require('./timeline');
+const Viewport = require('./viewport');
 
 const TEST_LAYERS = {
   default: {
@@ -57,8 +57,8 @@ const App = React.createClass({
       compositionHeight: 1080,
       compositionWidth: 1920,
       layers: TEST_LAYERS,
-      outerHeight: 0,
-      outerWidth: 0,
+      viewportWrapperHeight: 0,
+      viewportWrapperWidth: 0,
       percentPlayed: 0,
       selectedLayer: null,
       timelineMaxHeight: 0
@@ -74,6 +74,16 @@ const App = React.createClass({
     window.removeEventListener('resize', this._onResize);
   },
 
+  _onResize: function() {
+    const header = ReactDOM.findDOMNode(this.refs.header);
+    const viewportWrapperStyle = getComputedStyle(this.refs.viewportWrapper, null);
+    this.setState({
+      viewportWrapperHeight: parseFloat(viewportWrapperStyle.height),
+      viewportWrapperWidth: parseFloat(viewportWrapperStyle.width),
+      timelineMaxHeight: (window.innerHeight - header.offsetHeight) / 2
+    });
+  },
+
   _onKeyDown: function(event) {
     if (event.keyCode === 27) { // Escape key pressed
       if (event.target.contentEditable === 'true') { // It happened on a text layer
@@ -81,16 +91,6 @@ const App = React.createClass({
       }
       this._selectLayer(null);
     }
-  },
-
-  _onResize: function() {
-    const canvas = ReactDOM.findDOMNode(this.refs.canvas);
-    const header = ReactDOM.findDOMNode(this.refs.header);
-    this.setState({
-      outerHeight: canvas.offsetHeight,
-      outerWidth: canvas.offsetWidth,
-      timelineMaxHeight: (window.innerHeight - header.offsetHeight) / 2
-    });
   },
 
   _onLayerChange: function(id, properties) {
@@ -126,16 +126,17 @@ const App = React.createClass({
           <Sidebar>
             <Library assets={this.state.assets}/>
           </Sidebar>
-          <Canvas compositionHeight={this.state.compositionHeight}
-              compositionWidth={this.state.compositionWidth}
-              layers={this.state.layers}
-              onLayerChange={this._onLayerChange}
-              outerHeight={this.state.outerHeight}
-              outerWidth={this.state.outerWidth}
-              percentPlayed={this.state.percentPlayed}
-              ref="canvas"
-              selectLayer={this._selectLayer}
-              selectedLayer={this.state.selectedLayer}/>
+          <div className="pl-app-viewport-wrapper" ref="viewportWrapper">
+            <Viewport compositionHeight={this.state.compositionHeight}
+                compositionWidth={this.state.compositionWidth}
+                layers={this.state.layers}
+                onLayerChange={this._onLayerChange}
+                percentPlayed={this.state.percentPlayed}
+                selectLayer={this._selectLayer}
+                selectedLayer={this.state.selectedLayer}
+                wrapperHeight={this.state.viewportWrapperHeight}
+                wrapperWidth={this.state.viewportWrapperWidth}/>
+          </div>
         </div>
         <Timeline layers={this.state.layers}
             maxHeight={this.state.timelineMaxHeight}
