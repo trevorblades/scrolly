@@ -64,6 +64,11 @@ const Timeline = React.createClass({
     }
   },
 
+  _onHeaderTrackClick: function(event) {
+    const percentPlayed = (event.clientX - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
+    this.props.setPercentPlayed(percentPlayed);
+  },
+
   _onHandleMouseDown: function() {
     document.addEventListener('mousemove', this._onHandleMouseMove);
     document.addEventListener('mouseup', this._onHandleMouseUp);
@@ -171,7 +176,9 @@ const Timeline = React.createClass({
           <div className="pl-timeline-header-status">
             <span>{`${percentPlayed.toFixed(2)}%`}</span>
           </div>
-          <div className="pl-timeline-header-track" ref="track">
+          <div className="pl-timeline-header-track"
+              onClick={this._onHeaderTrackClick}
+              ref="track">
             <div className="pl-timeline-header-track-ticks">
               {ticks.map(function(tick, index) {
                 return <div className="pl-timeline-header-track-tick" key={index}/>;
