@@ -14,7 +14,8 @@ const TEST_LAYERS = {
     x: 100,
     y: 100,
     in: 0,
-    out: 1
+    out: 1,
+    visible: true
   },
   text0: {
     type: 'text',
@@ -24,6 +25,7 @@ const TEST_LAYERS = {
     y: 100,
     in: 0,
     out: 1,
+    visible: true,
     fontSize: 48,
     fontStyle: 'italic'
   },
@@ -35,6 +37,7 @@ const TEST_LAYERS = {
     y: 400,
     in: 0,
     out: 1,
+    visible: true,
     fontSize: 24
   },
   text2: {
@@ -45,6 +48,7 @@ const TEST_LAYERS = {
     y: 120,
     in: 0,
     out: 1,
+    visible: true,
     fontSize: 16
   }
 };
@@ -93,7 +97,7 @@ const App = React.createClass({
     }
   },
 
-  _onLayerChange: function(id, properties) {
+  _setLayerProperties: function(id, properties) {
     const layers = JSON.parse(JSON.stringify(this.state.layers));
     Object.assign(layers[id], properties);
     this.setState({layers: layers});
@@ -130,21 +134,21 @@ const App = React.createClass({
             <Viewport compositionHeight={this.state.compositionHeight}
                 compositionWidth={this.state.compositionWidth}
                 layers={this.state.layers}
-                onLayerChange={this._onLayerChange}
                 percentPlayed={this.state.percentPlayed}
                 selectLayer={this._selectLayer}
                 selectedLayer={this.state.selectedLayer}
+                setLayerProperties={this._setLayerProperties}
                 wrapperHeight={this.state.viewportWrapperHeight}
                 wrapperWidth={this.state.viewportWrapperWidth}/>
           </div>
         </div>
         <Timeline layers={this.state.layers}
             maxHeight={this.state.timelineMaxHeight}
-            onLayerChange={this._onLayerChange}
             onResize={this._onResize}
             percentPlayed={this.state.percentPlayed}
             selectLayer={this._selectLayer}
             selectedLayer={this.state.selectedLayer}
+            setLayerProperties={this._setLayerProperties}
             setPercentPlayed={this._setPercentPlayed}/>
       </div>
     );

@@ -1,6 +1,8 @@
 const React = require('react');
 const classNames = require('classnames');
 
+const Icon = require('./icon');
+
 const MIN_HEIGHT = 100;
 let NUM_TICKS = 17;
 
@@ -14,11 +16,11 @@ const Timeline = React.createClass({
   propTypes: {
     layers: React.PropTypes.object.isRequired,
     maxHeight: React.PropTypes.number,
-    onLayerChange: React.PropTypes.func,
     onResize: React.PropTypes.func,
     percentPlayed: React.PropTypes.number,
     selectLayer: React.PropTypes.func,
     selectedLayer: React.PropTypes.string,
+    setLayerProperties: React.PropTypes.func,
     setPercentPlayed: React.PropTypes.func
   },
 
@@ -115,7 +117,7 @@ const Timeline = React.createClass({
   _onBarMouseMove: function(id, event) {
     const layer = this.props.layers[id];
     const percentMoved = event.movementX / this.refs.track.offsetWidth;
-    this.props.onLayerChange(id, {
+    this.props.setLayerProperties(id, {
       in: layer.in + percentMoved,
       out: layer.out + percentMoved
     });
@@ -143,13 +145,17 @@ const Timeline = React.createClass({
     } else if (position > 1) {
       position = 1;
     }
-    this.props.onLayerChange(id, {[index ? 'out' : 'in']: position});
+    this.props.setLayerProperties(id, {[index ? 'out' : 'in']: position});
   },
 
   _onBarHandleMouseUp: function() {
     document.removeEventListener('mousemove', this._boundBarHandleMouseMove);
     document.removeEventListener('mouseup', this._onBarHandleMouseUp);
     delete this._boundBarHandleMouseMove;
+  },
+
+  _onLayerVisibilityToggle: function(id) {
+    this.props.setLayerProperties(id, {visible: !this.props.layers[id].visible});
   },
 
   render: function() {
@@ -180,11 +186,22 @@ const Timeline = React.createClass({
         </div>
         <div className="pl-timeline-content">
           <div className="pl-timeline-layers">
-            {Object.keys(this.props.layers).map(key => {
-              const layer = this.props.layers[key];
+            {Object.keys(this.props.layers).map(id => {
+              const layer = this.props.layers[id];
+              const layerClassName = classNames('pl-timeline-layer', {
+                'pl-hidden': !layer.visible
+              });
               return (
-                <div className="pl-timeline-layer" key={key}>
-                  <span>{layer.name}</span>
+                <div className={layerClassName} key={id}>
+                  <div className="pl-timeline-layer-name">
+                    {layer.name}
+                  </div>
+                  <div className="pl-timeline-layer-actions">
+                    <div className="pl-timeline-layer-action"
+                        onClick={this._onLayerVisibilityToggle.bind(null, id)}>
+                      <Icon name={layer.visible ? 'visible' : 'invisible'}/>
+                    </div>
+                  </div>
                 </div>
               );
             })}
@@ -203,12 +220,14 @@ const Timeline = React.createClass({
 
                 const layer = this.props.layers[id];
                 const barClassName = classNames('pl-timeline-track-bar', {
-                  'pl-selected': id === this.props.selectedLayer
+                  'pl-selected': id === this.props.selectedLayer,
+                  'pl-hidden': !layer.visible
                 });
+
                 return (
                   <div className="pl-timeline-track" key={id}>
                     <div className={barClassName}
-                        onMouseDown={this._onBarMouseDown.bind(null, id)}
+                        onMouseDown={layer.visible && this._onBarMouseDown.bind(null, id)}
                         style={{
                           left: `${layer.in * 100}%`,
                           right: `${100 - layer.out * 100}%`

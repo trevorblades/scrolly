@@ -25,10 +25,10 @@ const Viewport = React.createClass({
     compositionHeight: React.PropTypes.number,
     compositionWidth: React.PropTypes.number,
     layers: React.PropTypes.object,
-    onLayerChange: React.PropTypes.func,
     percentPlayed: React.PropTypes.number,
     selectLayer: React.PropTypes.func,
     selectedLayer: React.PropTypes.string,
+    setLayerProperties: React.PropTypes.func,
     wrapperHeight: React.PropTypes.number,
     wrapperWidth: React.PropTypes.number
   },
@@ -116,7 +116,7 @@ const Viewport = React.createClass({
 
   _onLayerMouseUp: function() {
     if (this.state.movingLayer) {
-      this.props.onLayerChange(this.state.movingLayer, {
+      this.props.setLayerProperties(this.state.movingLayer, {
         x: this.state.movingLayerX,
         y: this.state.movingLayerY
       });
@@ -161,7 +161,7 @@ const Viewport = React.createClass({
 
   _onLayerHandleMouseUp: function() {
     if (this.state.resizingLayer) {
-      this.props.onLayerChange(this.state.resizingLayer, {
+      this.props.setLayerProperties(this.state.resizingLayer, {
         y: this.state.resizingLayerY,
         fontSize: this.state.resizingLayerFontSize
       });
@@ -173,7 +173,7 @@ const Viewport = React.createClass({
   },
 
   _onTextLayerBlur: function(event) {
-    this.props.onLayerChange(this.props.selectedLayer, {value: event.target.innerHTML});
+    this.props.setLayerProperties(this.props.selectedLayer, {value: event.target.innerHTML});
     this.setState({editingLayer: null}, this.props.selectLayer);
   },
 
@@ -198,7 +198,8 @@ const Viewport = React.createClass({
           }}>
         {Object.keys(this.props.layers).map(id => {
           const layer = this.props.layers[id];
-          if (layer.in > this.props.percentPlayed ||
+          if (!layer.visible ||
+              layer.in > this.props.percentPlayed ||
               layer.out < this.props.percentPlayed) {
             return null;
           }

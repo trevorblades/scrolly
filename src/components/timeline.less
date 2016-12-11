@@ -41,7 +41,7 @@
         content: '';
         height: 50%;
         border-top: 1px solid @gray-darker;
-        background-color: @gray;
+        background-color: fade(white, 10%);
         position: absolute;
         bottom: 0;
         left: @padding-small * -1;
@@ -60,7 +60,7 @@
         .pl-timeline-header-track-tick {
           width: 1px;
           height: 100%;
-          background-color: @gray-darker;
+          background-color: black;
           &:last-child {
             margin-right: -1px;
           }
@@ -115,11 +115,37 @@
     padding-top: @padding-small;
     border-color: black;
     .pl-timeline-layer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 0 @padding-base;
       margin-bottom: @padding-small;
       font-size: @font-size-small;
       line-height: @padding-base;
       color: @gray-light;
+      &.pl-hidden .pl-timeline-layer-name {
+        text-decoration: line-through;
+        opacity: 0.5;
+      }
+
+      .pl-timeline-layer-name {
+        .pl-ellipsized;
+        flex-grow: 1;
+      }
+      .pl-timeline-layer-actions {
+        flex-shrink: 0;
+        .pl-timeline-layer-action {
+          margin-left: @padding-small;
+          cursor: pointer;
+          &:hover .pl-icon {
+            fill: @gray-light;
+          }
+
+          .pl-icon {
+            fill: @gray;
+          }
+        }
+      }
     }
   }
   .pl-timeline-tracks {
@@ -165,8 +191,16 @@
         position: absolute;
         top: 0;
         left: 0;
-        &:active, &.pl-selected {
-          background-color: @gray;
+        &:not(.pl-hidden) {
+          &:hover {
+            background-color: lighten(@gray-dark, 10%);
+          }
+          &:active, &.pl-selected {
+            background-color: @gray;
+          }
+        }
+        &.pl-hidden {
+          opacity: 0.5;
         }
 
         .pl-timeline-track-bar-handle {

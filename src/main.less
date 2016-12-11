@@ -1,4 +1,5 @@
 @import '../node_modules/planet-css/lib/main';
+@import './components/icon';
 @import './components/app';
 
 @gray-dark: lighten(@gray-darker, 10%);
@@ -8,4 +9,10 @@
 body {
   background-color: @gray-darker;
   overflow: hidden;
+}
+
+.pl-ellipsized {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
