@@ -2,6 +2,12 @@ const React = require('react');
 const classNames = require('classnames');
 
 const MIN_HEIGHT = 100;
+let NUM_TICKS = 17;
+
+const ticks = [];
+for (var i = 0; i < NUM_TICKS; i++) {
+  ticks.push({});
+}
 
 const Timeline = React.createClass({
 
@@ -160,6 +166,11 @@ const Timeline = React.createClass({
             <span>{`${percentPlayed.toFixed(2)}%`}</span>
           </div>
           <div className="pl-timeline-header-track" ref="track">
+            <div className="pl-timeline-header-track-ticks">
+              {ticks.map(function(tick, index) {
+                return <div className="pl-timeline-header-track-tick" key={index}/>;
+              })}
+            </div>
             {marker}
             <div className="pl-timeline-header-track-playhead"
                 onMouseDown={this._onPlayheadMouseDown}
