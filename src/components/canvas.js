@@ -27,20 +27,21 @@ const Canvas = React.createClass({
     onLayerChange: React.PropTypes.func,
     outerHeight: React.PropTypes.number,
     outerWidth: React.PropTypes.number,
-    percentPlayed: React.PropTypes.number
+    percentPlayed: React.PropTypes.number,
+    selectLayer: React.PropTypes.func,
+    selectedLayer: React.PropTypes.string
   },
 
   getInitialState: function() {
     const viewportDimensions = getViewportDimensions(this.props);
     return Object.assign(viewportDimensions, {
-      editingLayerId: null,
-      movingLayerId: null,
+      editingLayer: null,
+      movingLayer: null,
       movingLayerX: null,
       movingLayerY: null,
       resizingLayerFontSize: null,
-      resizingLayerId: null,
-      resizingLayerY: null,
-      selectedLayerId: null
+      resizingLayer: null,
+      resizingLayerY: null
     });
   },
 
@@ -53,22 +54,9 @@ const Canvas = React.createClass({
     }
   },
 
-  componentWillUnmount: function() {
-    document.removeEventListener('keydown', this._onKeyDown);
-  },
-
-  _onKeyDown: function(event) {
-    if (event.keyCode === 27) { // Escape key pressed
-      if (event.target.contentEditable === 'true') { // It happened on a text layer
-        return event.target.blur();
-      }
-      this._deselectLayer();
-    }
-  },
-
   _onCanvasClick: function() {
-    if (this.state.selectedLayerId) {
-      this._deselectLayer();
+    if (this.props.selectedLayer) {
+      this.props.selectLayer(null);
     }
   },
 
@@ -77,10 +65,8 @@ const Canvas = React.createClass({
   },
 
   _onLayerMouseDown: function(id, event) {
-    const nextState = {};
-    if (id !== this.state.selectedLayerId) {
-      nextState.selectedLayerId = id;
-      document.addEventListener('keydown', this._onKeyDown);
+    if (id !== this.props.selectedLayer) {
+      this.props.selectLayer(id);
     }
 
     if (!this._boundLayerMouseMove) {
@@ -88,16 +74,14 @@ const Canvas = React.createClass({
       const offsetX = event.clientX - layerRect.left;
       const offsetY = event.clientY - layerRect.top;
       const layer = this.props.layers[id];
-      nextState.movingLayerId = id;
-      nextState.movingLayerX = layer.x;
-      nextState.movingLayerY = layer.y;
+      this.setState({
+        movingLayer: id,
+        movingLayerX: layer.x,
+        movingLayerY: layer.y
+      });
       this._boundLayerMouseMove = this._onLayerMouseMove.bind(null, id, offsetX, offsetY);
       document.addEventListener('mousemove', this._boundLayerMouseMove);
       document.addEventListener('mouseup', this._onLayerMouseUp);
-    }
-
-    if (Object.keys(nextState).length) {
-      this.setState(nextState);
     }
   },
 
@@ -128,12 +112,12 @@ const Canvas = React.createClass({
   },
 
   _onLayerMouseUp: function() {
-    if (this.state.movingLayerId) {
-      this.props.onLayerChange(this.state.movingLayerId, {
+    if (this.state.movingLayer) {
+      this.props.onLayerChange(this.state.movingLayer, {
         x: this.state.movingLayerX,
         y: this.state.movingLayerY
       });
-      this.setState({movingLayerId: null});
+      this.setState({movingLayer: null});
     }
     document.removeEventListener('mousemove', this._boundLayerMouseMove);
     document.removeEventListener('mouseup', this._onLayerMouseUp);
@@ -146,7 +130,7 @@ const Canvas = React.createClass({
       const layer = this.props.layers[id];
       this.setState({
         resizingLayerFontSize: layer.fontSize,
-        resizingLayerId: id,
+        resizingLayer: id,
         resizingLayerY: layer.y
       });
       this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, index);
@@ -156,7 +140,7 @@ const Canvas = React.createClass({
   },
 
   _onLayerHandleMouseMove: function(index, event) {
-    const layer = this.props.layers[this.state.resizingLayerId];
+    const layer = this.props.layers[this.state.resizingLayer];
     if (layer.type === 'text') {
       let layerY = this.state.resizingLayerY;
       let movementY = event.movementY;
@@ -173,12 +157,12 @@ const Canvas = React.createClass({
   },
 
   _onLayerHandleMouseUp: function() {
-    if (this.state.resizingLayerId) {
-      this.props.onLayerChange(this.state.resizingLayerId, {
+    if (this.state.resizingLayer) {
+      this.props.onLayerChange(this.state.resizingLayer, {
         y: this.state.resizingLayerY,
         fontSize: this.state.resizingLayerFontSize
       });
-      this.setState({resizingLayerId: null});
+      this.setState({resizingLayer: null});
     }
     document.removeEventListener('mousemove', this._boundLayerHandleMouseMove);
     document.removeEventListener('mouseup', this._onLayerHandleMouseUp);
@@ -186,27 +170,19 @@ const Canvas = React.createClass({
   },
 
   _onTextLayerBlur: function(event) {
-    this.props.onLayerChange(this.state.selectedLayerId, {value: event.target.innerHTML});
-    this._deselectLayer();
+    this.props.onLayerChange(this.props.selectedLayer, {value: event.target.innerHTML});
+    this.setState({editingLayer: null}, this.props.selectLayer);
   },
 
   _onTextLayerDoubleClick: function(id, event) {
     event.stopPropagation();
     const target = event.target;
-    if (id !== this.state.editingLayerId) {
-      this.setState({editingLayerId: id}, function() {
+    if (id !== this.state.editingLayer) {
+      this.setState({editingLayer: id}, function() {
         target.focus();
         document.execCommand('selectAll', false, null);
       });
     }
-  },
-
-  _deselectLayer: function() {
-    this.setState({
-      editingLayerId: null,
-      selectedLayerId: null
-    }, this._onLayerMouseUp);
-    window.removeEventListener('keydown', this._onKeyDown);
   },
 
   render: function() {
@@ -226,11 +202,11 @@ const Canvas = React.createClass({
               return null;
             }
 
-            const isResizing = id === this.state.resizingLayerId;
+            const isResizing = id === this.state.resizingLayer;
             let children;
             let layerX = layer.x;
             let layerY = layer.y;
-            if (id === this.state.movingLayerId) {
+            if (id === this.state.movingLayer) {
               layerX = this.state.movingLayerX;
               layerY = this.state.movingLayerY;
             } else if (isResizing) {
@@ -248,7 +224,7 @@ const Canvas = React.createClass({
               style.fontWeight = layer.fontWeight;
               style.fontStyle = layer.fontStyle;
 
-              const isEditing = id === this.state.editingLayerId;
+              const isEditing = id === this.state.editingLayer;
               children = (
                 <div className="pl-canvas-viewport-layer-text"
                     contentEditable={isEditing}
@@ -269,7 +245,7 @@ const Canvas = React.createClass({
             }
 
             const layerClassName = classNames('pl-canvas-viewport-layer', {
-              'pl-selected': id === this.state.selectedLayerId
+              'pl-selected': id === this.props.selectedLayer
             });
 
             return (

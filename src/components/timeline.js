@@ -1,4 +1,5 @@
 const React = require('react');
+const classNames = require('classnames');
 
 const MIN_HEIGHT = 100;
 
@@ -8,9 +9,11 @@ const Timeline = React.createClass({
     layers: React.PropTypes.object.isRequired,
     maxHeight: React.PropTypes.number,
     onLayerChange: React.PropTypes.func,
-    onPercentPlayedChange: React.PropTypes.func,
     onResize: React.PropTypes.func,
-    percentPlayed: React.PropTypes.number
+    percentPlayed: React.PropTypes.number,
+    selectLayer: React.PropTypes.func,
+    selectedLayer: React.PropTypes.string,
+    setPercentPlayed: React.PropTypes.func
   },
 
   getInitialState: function() {
@@ -49,7 +52,7 @@ const Timeline = React.createClass({
       if (event.shiftKey) {
         direction *= 0.1;
       }
-      this.onPercentPlayedChange(this.props.percentPlayed + direction);
+      this.setPercentPlayed(this.props.percentPlayed + direction);
     }
   },
 
@@ -81,7 +84,7 @@ const Timeline = React.createClass({
   },
 
   _onPlayheadMouseMove: function(event) {
-    this.props.onPercentPlayedChange((this.refs.playhead.offsetLeft + event.movementX) /
+    this.props.setPercentPlayed((this.refs.playhead.offsetLeft + event.movementX) /
         this.refs.track.offsetWidth);
   },
 
@@ -92,6 +95,10 @@ const Timeline = React.createClass({
   },
 
   _onBarMouseDown: function(id) {
+    if (id !== this.props.selectedLayer) {
+      this.props.selectLayer(id);
+    }
+
     if (!this._boundBarMouseMove) {
       this._boundBarMouseMove = this._onBarMouseMove.bind(null, id);
       document.addEventListener('mousemove', this._boundBarMouseMove);
@@ -184,9 +191,12 @@ const Timeline = React.createClass({
                 }
 
                 const layer = this.props.layers[id];
+                const barClassName = classNames('pl-timeline-track-bar', {
+                  'pl-selected': id === this.props.selectedLayer
+                });
                 return (
                   <div className="pl-timeline-track" key={id}>
-                    <div className="pl-timeline-track-bar"
+                    <div className={barClassName}
                         onMouseDown={this._onBarMouseDown.bind(null, id)}
                         style={{
                           left: `${layer.in * 100}%`,

@@ -60,6 +60,7 @@ const App = React.createClass({
       outerHeight: 0,
       outerWidth: 0,
       percentPlayed: 0,
+      selectedLayer: null,
       timelineMaxHeight: 0
     };
   },
@@ -71,6 +72,15 @@ const App = React.createClass({
 
   componentWillUnmount: function() {
     window.removeEventListener('resize', this._onResize);
+  },
+
+  _onKeyDown: function(event) {
+    if (event.keyCode === 27) { // Escape key pressed
+      if (event.target.contentEditable === 'true') { // It happened on a text layer
+        return event.target.blur();
+      }
+      this._selectLayer(null);
+    }
   },
 
   _onResize: function() {
@@ -89,13 +99,23 @@ const App = React.createClass({
     this.setState({layers: layers});
   },
 
-  _onPercentPlayedChange: function(value) {
+  _setPercentPlayed: function(value) {
     if (value < 0) {
       value = 0;
     } else if (value > 1) {
       value = 1;
     }
     this.setState({percentPlayed: value});
+  },
+
+  _selectLayer: function(id) {
+    this.setState({selectedLayer: id}, function() {
+      if (this.state.selectedLayer) {
+        document.addEventListener('keydown', this._onKeyDown);
+      } else {
+        document.removeEventListener('keydown', this._onKeyDown);
+      }
+    });
   },
 
   render: function() {
@@ -113,14 +133,18 @@ const App = React.createClass({
               outerHeight={this.state.outerHeight}
               outerWidth={this.state.outerWidth}
               percentPlayed={this.state.percentPlayed}
-              ref="canvas"/>
+              ref="canvas"
+              selectLayer={this._selectLayer}
+              selectedLayer={this.state.selectedLayer}/>
         </div>
         <Timeline layers={this.state.layers}
             maxHeight={this.state.timelineMaxHeight}
             onLayerChange={this._onLayerChange}
-            onPercentPlayedChange={this._onPercentPlayedChange}
             onResize={this._onResize}
-            percentPlayed={this.state.percentPlayed}/>
+            percentPlayed={this.state.percentPlayed}
+            selectLayer={this._selectLayer}
+            selectedLayer={this.state.selectedLayer}
+            setPercentPlayed={this._setPercentPlayed}/>
       </div>
     );
   }
