@@ -18,21 +18,17 @@ const Layer = function(options) {
     out: 'out' in options ? options.out : 1
   };
 
-  function getProp(prop) {
-    return layer[prop];
-  }
-
-  function setProp(prop, value) {
-    layer[prop] = value;
-    if (this.onChange) {
-      this.onChange();
-    }
-  }
-
   const properties = Object.keys(layer).reduce((obj, prop) => {
     obj[prop] = {
-      get: getProp.bind(this, prop),
-      set: setProp.bind(this, prop)
+      get: function() {
+        return layer[prop];
+      },
+      set: value => {
+        layer[prop] = value;
+        if (this.onChange) {
+          this.onChange();
+        }
+      }
     };
     return obj;
   }, {});
