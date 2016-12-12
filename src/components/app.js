@@ -2,6 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 
 const Header = require('./header');
+const Inspector = require('./inspector');
 const Library = require('./library');
 const Sidebar = require('./sidebar');
 const Timeline = require('./timeline');
@@ -9,6 +10,7 @@ const Viewport = require('./viewport');
 
 const TEST_LAYERS = {
   default: {
+    id: 'default',
     type: 'image',
     name: 'Imagery',
     x: 100,
@@ -18,6 +20,7 @@ const TEST_LAYERS = {
     visible: true
   },
   text0: {
+    id: 'text0',
     type: 'text',
     name: 'Some text',
     value: 'Hey',
@@ -30,6 +33,7 @@ const TEST_LAYERS = {
     fontStyle: 'italic'
   },
   text1: {
+    id: 'text1',
     type: 'text',
     name: 'Some more text',
     value: 'Hi',
@@ -41,6 +45,7 @@ const TEST_LAYERS = {
     fontSize: 24
   },
   text2: {
+    id: 'text2',
     type: 'text',
     name: 'Even more text',
     value: 'Ho',
@@ -129,6 +134,9 @@ const App = React.createClass({
         <div className="pl-app-content">
           <Sidebar>
             <Library assets={this.state.assets}/>
+            {this.state.selectedLayer &&
+              <Inspector layer={this.state.layers[this.state.selectedLayer]}
+                  setLayerProperties={this._setLayerProperties}/>}
           </Sidebar>
           <div className="pl-app-viewport-wrapper" ref="viewportWrapper">
             <Viewport compositionHeight={this.state.compositionHeight}
