@@ -9,6 +9,7 @@ const Layer = function(options) {
     throw new Error('Layer instantiated with no type');
   }
 
+  // Define core properties
   const layer = {
     name: options.name || `${upperCaseFirst(options.type)} layer`,
     visible: true,
@@ -17,7 +18,11 @@ const Layer = function(options) {
     in: 'in' in options ? options.in : 0,
     out: 'out' in options ? options.out : 1
   };
+  if (options.properties) { // Add additional properties if provided
+    Object.assign(layer, options.properties);
+  }
 
+  // These properties are mutable and will trigger onChange functions
   const properties = Object.keys(layer).reduce((obj, prop) => {
     obj[prop] = {
       get: function() {
@@ -32,11 +37,13 @@ const Layer = function(options) {
     };
     return obj;
   }, {});
+
+  // These properties are immutable
   properties.id = {value: new Date().valueOf() + layerIndex};
   properties.type = {value: options.type};
   properties.properties = {value: layer};
-  Object.defineProperties(this, properties);
 
+  Object.defineProperties(this, properties);
   layerIndex++;
 };
 
