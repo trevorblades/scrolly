@@ -32,17 +32,37 @@ const Inspector = React.createClass({
     if (!isNaN(event.target.value) &&
         (event.keyCode === 38 || event.keyCode === 40)) {
       event.preventDefault();
-      let direction = event.keyCode === 38 ? 1 : -1;
-      if (property === 'in' || property === 'out') {
-        direction /= 100;
-      }
+      let movement = event.keyCode === 38 ? 1 : -1;
       if (event.shiftKey) {
-        direction *= 10;
+        movement *= 10;
       }
-      this.props.dispatch(setLayerProperties(this.state.id, {
-        [property]: parseFloat(event.target.value) + direction
-      }));
+      this._incrementProperty(property, movement);
     }
+  },
+
+  _onLabelMouseDown: function(property) {
+    this._boundLabelMouseMove = this._onLabelMouseMove.bind(null, property);
+    document.addEventListener('mousemove', this._boundLabelMouseMove);
+    document.addEventListener('mouseup', this._onLabelMouseUp);
+  },
+
+  _onLabelMouseMove: function(property, event) {
+    this._incrementProperty(property, event.movementX);
+  },
+
+  _onLabelMouseUp: function() {
+    document.removeEventListener('mousemove', this._boundLabelMouseMove);
+    document.removeEventListener('mouseup', this._onLabelMouseUp);
+    delete this._boundLabelMouseMove;
+  },
+
+  _incrementProperty: function(property, value) {
+    if (property === 'in' || property === 'out') {
+      value /= 100;
+    }
+    this.props.dispatch(setLayerProperties(this.state.id, {
+      [property]: this.state[property] + value
+    }));
   },
 
   render: function() {
@@ -56,19 +76,28 @@ const Inspector = React.createClass({
         </div>
         <div className="pl-inspector-properties">
           {properties.map(property => {
+            let labelProps;
             let value = this.state[property];
             const isNumber = !isNaN(value);
             if (isNumber) {
               value = Math.round(value * 100) / 100;
+              labelProps = {
+                onMouseDown: this._onLabelMouseDown.bind(null, property),
+                style: {
+                  cursor: 'ew-resize'
+                }
+              };
             }
             return (
               <div className="pl-inspector-property"
                   key={property}>
-                <label>{sentenceCase(property)}</label>
                 <input onChange={this._onPropertyChange.bind(null, property)}
                     onKeyDown={this._onInputKeyDown.bind(null, property)}
                     type={isNumber ? 'number' : 'text'}
                     value={value}/>
+                <label {...labelProps}>
+                  {sentenceCase(property)}
+                </label>
                 <span/>
               </div>
             );
