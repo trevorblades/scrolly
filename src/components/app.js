@@ -1,5 +1,6 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
+const {createStore} = require('redux');
 
 const Header = require('./header');
 const Inspector = require('./inspector');
@@ -8,70 +9,26 @@ const Sidebar = require('./sidebar');
 const Timeline = require('./timeline');
 const Viewport = require('./viewport');
 
-const TEST_LAYERS = {
-  default: {
-    id: 'default',
-    type: 'image',
-    name: 'Imagery',
-    x: 100,
-    y: 100,
-    in: 0,
-    out: 1,
-    visible: true
-  },
-  text0: {
-    id: 'text0',
-    type: 'text',
-    name: 'Some text',
-    value: 'Hey',
-    x: 100,
-    y: 100,
-    in: 0,
-    out: 1,
-    visible: true,
-    fontSize: 48,
-    fontStyle: 'italic'
-  },
-  text1: {
-    id: 'text1',
-    type: 'text',
-    name: 'Some more text',
-    value: 'Hi',
-    x: 240,
-    y: 400,
-    in: 0,
-    out: 1,
-    visible: true,
-    fontSize: 24
-  },
-  text2: {
-    id: 'text2',
-    type: 'text',
-    name: 'Even more text',
-    value: 'Ho',
-    x: 960,
-    y: 120,
-    in: 0,
-    out: 1,
-    visible: true,
-    fontSize: 16
-  }
-};
+const app = require('../reducers/app');
+const store = createStore(app);
 
 const App = React.createClass({
 
   getInitialState: function() {
-    return {
+    return Object.assign({
       assets: [],
       compositionHeight: 1080,
       compositionWidth: 1920,
-      layers: TEST_LAYERS,
       viewportWrapperHeight: 0,
       viewportWrapperWidth: 0,
       percentPlayed: 0,
-      selectedLayer: null,
+      selectedLayerId: null,
       timelineMaxHeight: 0
-    };
+    }, store.getState());
+  },
+
+  componentWillMount: function() {
+    this._unsubscribe = store.subscribe(this._onStoreChange);
   },
 
   componentDidMount: function() {
@@ -81,6 +38,11 @@ const App = React.createClass({
 
   componentWillUnmount: function() {
     window.removeEventListener('resize', this._onResize);
+    this._unsubscribe();
+  },
+
+  _onStoreChange: function() {
+    this.setState(store.getState());
   },
 
   _onResize: function() {
@@ -118,8 +80,8 @@ const App = React.createClass({
   },
 
   _selectLayer: function(id) {
-    this.setState({selectedLayer: id}, function() {
-      if (this.state.selectedLayer) {
+    this.setState({selectedLayerId: id}, function() {
+      if (this.state.selectedLayerId !== null) {
         document.addEventListener('keydown', this._onKeyDown);
       } else {
         document.removeEventListener('keydown', this._onKeyDown);
@@ -128,34 +90,37 @@ const App = React.createClass({
   },
 
   render: function() {
+    const layer = this.state.layers.filter(l => l.id === this.state.selectedLayerId)[0];
     return (
       <div className="pl-app">
         <Header ref="header"/>
         <div className="pl-app-content">
           <Sidebar>
             <Library assets={this.state.assets}/>
-            {this.state.selectedLayer &&
-              <Inspector layer={this.state.layers[this.state.selectedLayer]}
+            {layer &&
+              <Inspector layer={layer}
                   setLayerProperties={this._setLayerProperties}/>}
           </Sidebar>
           <div className="pl-app-viewport-wrapper" ref="viewportWrapper">
             <Viewport compositionHeight={this.state.compositionHeight}
                 compositionWidth={this.state.compositionWidth}
+                dispatch={store.dispatch}
                 layers={this.state.layers}
                 percentPlayed={this.state.percentPlayed}
                 selectLayer={this._selectLayer}
-                selectedLayer={this.state.selectedLayer}
+                selectedLayerId={this.state.selectedLayerId}
                 setLayerProperties={this._setLayerProperties}
                 wrapperHeight={this.state.viewportWrapperHeight}
                 wrapperWidth={this.state.viewportWrapperWidth}/>
           </div>
         </div>
-        <Timeline layers={this.state.layers}
+        <Timeline dispatch={store.dispatch}
+            layers={this.state.layers}
             maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}
             percentPlayed={this.state.percentPlayed}
             selectLayer={this._selectLayer}
-            selectedLayer={this.state.selectedLayer}
+            selectedLayerId={this.state.selectedLayerId}
             setLayerProperties={this._setLayerProperties}
             setPercentPlayed={this._setPercentPlayed}/>
       </div>

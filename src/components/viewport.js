@@ -2,6 +2,8 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const classNames = require('classnames');
 
+const {setLayerProperties} = require('../actions');
+
 function getViewportDimensions(options) {
   const compositionAspectRatio = options.compositionWidth / options.compositionHeight;
   const outerAspectRatio = options.wrapperWidth / options.wrapperHeight;
@@ -22,27 +24,27 @@ function getViewportDimensions(options) {
 const Viewport = React.createClass({
 
   propTypes: {
-    compositionHeight: React.PropTypes.number,
-    compositionWidth: React.PropTypes.number,
-    layers: React.PropTypes.object,
-    percentPlayed: React.PropTypes.number,
-    selectLayer: React.PropTypes.func,
-    selectedLayer: React.PropTypes.string,
-    setLayerProperties: React.PropTypes.func,
-    wrapperHeight: React.PropTypes.number,
-    wrapperWidth: React.PropTypes.number
+    compositionHeight: React.PropTypes.number.isRequired,
+    compositionWidth: React.PropTypes.number.isRequired,
+    dispatch: React.PropTypes.func.isRequired,
+    layers: React.PropTypes.array.isRequired,
+    percentPlayed: React.PropTypes.number.isRequired,
+    selectLayer: React.PropTypes.func.isRequired,
+    selectedLayerId: React.PropTypes.number,
+    wrapperHeight: React.PropTypes.number.isRequired,
+    wrapperWidth: React.PropTypes.number.isRequired
   },
 
   getInitialState: function() {
     const dimensions = getViewportDimensions(this.props);
     return Object.assign(dimensions, {
-      editingLayer: null,
-      movingLayer: null,
-      movingLayerX: null,
-      movingLayerY: null,
-      resizingLayerFontSize: null,
-      resizingLayer: null,
-      resizingLayerY: null
+      editingLayerId: null,
+      moveX: null,
+      moveY: null,
+      movingLayerId: null,
+      resizeFontSize: null,
+      resizeY: null,
+      resizingLayerId: null
     });
   },
 
@@ -56,7 +58,7 @@ const Viewport = React.createClass({
   },
 
   _onViewportClick: function() {
-    if (this.props.selectedLayer) {
+    if (this.props.selectedLayerId !== null) {
       this.props.selectLayer(null);
     }
   },
@@ -65,28 +67,26 @@ const Viewport = React.createClass({
     event.stopPropagation();
   },
 
-  _onLayerMouseDown: function(id, event) {
-    if (id !== this.props.selectedLayer) {
-      this.props.selectLayer(id);
+  _onLayerMouseDown: function(layer, event) {
+    if (layer.id !== this.props.selectedLayerId) {
+      this.props.selectLayer(layer.id);
     }
+    this.setState({
+      moveX: layer.x,
+      moveY: layer.y,
+      movingLayerId: layer.id
+    });
 
-    if (!this._boundLayerMouseMove) {
-      const layerRect = event.target.getBoundingClientRect();
-      const offsetX = event.clientX - layerRect.left;
-      const offsetY = event.clientY - layerRect.top;
-      const layer = this.props.layers[id];
-      this.setState({
-        movingLayer: id,
-        movingLayerX: layer.x,
-        movingLayerY: layer.y
-      });
-      this._boundLayerMouseMove = this._onLayerMouseMove.bind(null, id, offsetX, offsetY);
-      document.addEventListener('mousemove', this._boundLayerMouseMove);
-      document.addEventListener('mouseup', this._onLayerMouseUp);
-    }
+    const layerRect = event.target.getBoundingClientRect();
+    const offsetX = event.clientX - layerRect.left;
+    const offsetY = event.clientY - layerRect.top;
+    this._boundLayerMouseMove = this._onLayerMouseMove.bind(null, offsetX, offsetY);
+    this._boundLayerMouseUp = this._onLayerMouseUp.bind(null, layer.x, layer.y);
+    document.addEventListener('mousemove', this._boundLayerMouseMove);
+    document.addEventListener('mouseup', this._boundLayerMouseUp);
   },
 
-  _onLayerMouseMove: function(id, offsetX, offsetY, event) {
+  _onLayerMouseMove: function(offsetX, offsetY, event) {
     const node = ReactDOM.findDOMNode(this);
     const scale = this.props.compositionWidth / this.state.width;
 
@@ -109,79 +109,75 @@ const Viewport = React.createClass({
     }
 
     this.setState({
-      movingLayerX: layerX * scale,
-      movingLayerY: layerY * scale
+      moveX: layerX * scale,
+      moveY: layerY * scale
     });
   },
 
-  _onLayerMouseUp: function() {
-    if (this.state.movingLayer) {
-      this.props.setLayerProperties(this.state.movingLayer, {
-        x: this.state.movingLayerX,
-        y: this.state.movingLayerY
-      });
-      this.setState({movingLayer: null});
+  _onLayerMouseUp: function(originX, originY) {
+    if (originX !== this.state.moveX || originY !== this.state.moveY) {
+      this.props.dispatch(setLayerProperties(this.state.movingLayerId, {
+        x: this.state.moveX,
+        y: this.state.moveY
+      }));
     }
+    this.setState({movingLayerId: null});
+
     document.removeEventListener('mousemove', this._boundLayerMouseMove);
-    document.removeEventListener('mouseup', this._onLayerMouseUp);
+    document.removeEventListener('mouseup', this._boundLayerMouseUp);
     delete this._boundLayerMouseMove;
+    delete this._boundLayerMouseUp;
   },
 
-  _onLayerHandleMouseDown: function(id, index, event) {
+  _onLayerHandleMouseDown: function(layer, index, event) {
     event.stopPropagation();
-    if (!this._boundLayerHandleMouseMove) {
-      const layer = this.props.layers[id];
-      this.setState({
-        resizingLayerFontSize: layer.fontSize,
-        resizingLayer: id,
-        resizingLayerY: layer.y
-      });
-      this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, index);
-      document.addEventListener('mousemove', this._boundLayerHandleMouseMove);
-      document.addEventListener('mouseup', this._onLayerHandleMouseUp);
-    }
+    this.setState({
+      resizeFontSize: layer.fontSize,
+      resizeY: layer.y,
+      resizingLayerId: layer.id
+    });
+
+    this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, index);
+    document.addEventListener('mousemove', this._boundLayerHandleMouseMove);
+    document.addEventListener('mouseup', this._onLayerHandleMouseUp);
   },
 
   _onLayerHandleMouseMove: function(index, event) {
-    const layer = this.props.layers[this.state.resizingLayer];
-    if (layer.type === 'text') {
-      let layerY = this.state.resizingLayerY;
-      let movementY = event.movementY;
-      if (index <= 2) {
-        const scale = this.props.compositionWidth / this.state.width;
-        layerY += event.movementY * scale;
-        movementY *= -1;
-      }
-      return this.setState({
-        resizingLayerY: layerY,
-        resizingLayerFontSize: Math.round(this.state.resizingLayerFontSize + movementY)
-      });
+    let layerY = this.state.resizeY;
+    let movementY = event.movementY;
+    if (index <= 2) {
+      const scale = this.props.compositionWidth / this.state.width;
+      layerY += event.movementY * scale;
+      movementY *= -1;
     }
+    return this.setState({
+      resizeY: layerY,
+      resizeFontSize: Math.round(this.state.resizeFontSize + movementY)
+    });
   },
 
   _onLayerHandleMouseUp: function() {
-    if (this.state.resizingLayer) {
-      this.props.setLayerProperties(this.state.resizingLayer, {
-        y: this.state.resizingLayerY,
-        fontSize: this.state.resizingLayerFontSize
-      });
-      this.setState({resizingLayer: null});
-    }
+    this.props.dispatch(setLayerProperties(this.state.resizingLayerId, {
+      y: this.state.resizeY,
+      fontSize: this.state.resizeFontSize
+    }));
+    this.setState({resizingLayerId: null});
+
     document.removeEventListener('mousemove', this._boundLayerHandleMouseMove);
     document.removeEventListener('mouseup', this._onLayerHandleMouseUp);
     delete this._boundLayerHandleMouseMove;
   },
 
   _onTextLayerBlur: function(event) {
-    this.props.setLayerProperties(this.props.selectedLayer, {value: event.target.innerHTML});
-    this.setState({editingLayer: null}, this.props.selectLayer);
+    this.props.dispatch(setLayerProperties(this.state.editingLayerId, {value: event.target.innerHTML}));
+    this.setState({editingLayerId: null}, this.props.selectLayer);
   },
 
   _onTextLayerDoubleClick: function(id, event) {
     event.stopPropagation();
     const target = event.target;
-    if (id !== this.state.editingLayer) {
-      this.setState({editingLayer: id}, function() {
+    if (id !== this.state.editingLayerId) {
+      this.setState({editingLayerId: id}, function() {
         target.focus();
         document.execCommand('selectAll', false, null);
       });
@@ -196,23 +192,22 @@ const Viewport = React.createClass({
             width: this.state.width,
             height: this.state.height
           }}>
-        {Object.keys(this.props.layers).map(id => {
-          const layer = this.props.layers[id];
+        {this.props.layers.map(layer => {
           if (!layer.visible ||
               layer.in > this.props.percentPlayed ||
               layer.out < this.props.percentPlayed) {
             return null;
           }
 
-          const isResizing = id === this.state.resizingLayer;
+          const isResizing = layer.id === this.state.resizingLayerId;
           let children;
           let layerX = layer.x;
           let layerY = layer.y;
-          if (id === this.state.movingLayer) {
-            layerX = this.state.movingLayerX;
-            layerY = this.state.movingLayerY;
+          if (layer.id === this.state.movingLayerId) {
+            layerX = this.state.moveX;
+            layerY = this.state.moveY;
           } else if (isResizing) {
-            layerY = this.state.resizingLayerY;
+            layerY = this.state.resizeY;
           }
           const style = {
             top: this.state.height * layerY / this.props.compositionHeight,
@@ -221,18 +216,18 @@ const Viewport = React.createClass({
 
           if (layer.type === 'text') {
             style.fontSize = isResizing ?
-                this.state.resizingLayerFontSize :
+                this.state.resizeFontSize :
                 layer.fontSize;
             style.fontWeight = layer.fontWeight;
             style.fontStyle = layer.fontStyle;
 
-            const isEditing = id === this.state.editingLayer;
+            const isEditing = layer.id === this.state.editingLayerId;
             children = (
               <div className="pl-viewport-layer-text"
                   contentEditable={isEditing}
                   dangerouslySetInnerHTML={{__html: layer.value}}
                   onBlur={isEditing && this._onTextLayerBlur}
-                  onDoubleClick={this._onTextLayerDoubleClick.bind(null, id)}
+                  onDoubleClick={this._onTextLayerDoubleClick.bind(null, layer.id)}
                   spellCheck={false}/>
             );
           }
@@ -242,19 +237,19 @@ const Viewport = React.createClass({
             handles.push(
               <div className="pl-viewport-layer-handle"
                   key={i}
-                  onMouseDown={this._onLayerHandleMouseDown.bind(null, id, i)}/>
+                  onMouseDown={this._onLayerHandleMouseDown.bind(null, layer, i)}/>
             );
           }
 
           const layerClassName = classNames('pl-viewport-layer', {
-            'pl-selected': id === this.props.selectedLayer
+            'pl-selected': layer.id === this.props.selectedLayerId
           });
 
           return (
             <div className={layerClassName}
-                key={id}
+                key={layer.id}
                 onClick={this._onLayerClick}
-                onMouseDown={this._onLayerMouseDown.bind(null, id)}
+                onMouseDown={this._onLayerMouseDown.bind(null, layer)}
                 style={style}>
               {children}
               <div className="pl-viewport-layer-handles">
