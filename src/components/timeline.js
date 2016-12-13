@@ -55,12 +55,9 @@ const Timeline = React.createClass({
         tagName !== 'TEXTAREA' &&
         (event.keyCode === 188 || event.keyCode === 190)) { // < or > key pressed
       event.preventDefault();
-
-      let direction = event.keyCode === 188 ? -1 : 1;
-      if (event.shiftKey) {
-        direction *= 0.1;
-      }
-      this.setPercentPlayed(this.props.percentPlayed + direction);
+      let movement = event.keyCode === 188 ? -1 : 1;
+      movement /= event.shiftKey ? 10 : 100;
+      this.props.setPercentPlayed(this.props.percentPlayed + movement);
     }
   },
 
