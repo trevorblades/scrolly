@@ -15,7 +15,6 @@
   .pl-timeline-header .pl-timeline-header-status, .pl-timeline-layers {
     flex-shrink: 0;
     width: @sidebar-width;
-    border-right: 1px solid @gray-darker;
   }
   .pl-timeline-header {
     display: flex;
@@ -23,6 +22,7 @@
     border-bottom: 1px solid black;
     .pl-timeline-header-status {
       padding: @padding-smaller;
+      border-right: 1px solid @gray-darker;
       font-family: @font-family-monospace;
       span {
         display: block;
@@ -114,7 +114,6 @@
   }
   .pl-timeline-layers {
     padding-top: @padding-small;
-    border-color: black;
     .pl-timeline-layer {
       display: flex;
       justify-content: space-between;
@@ -151,10 +150,14 @@
   }
   .pl-timeline-tracks {
     display: flex;
-    flex-grow: 1;
+    min-height: 100%;
     padding: @timeline-track-padding;
+    box-shadow: -1px 0 black;
     overflow: hidden;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: @sidebar-width;
+    right: 0;
     z-index: 0;
     &:before, &:after {
       content: '';
