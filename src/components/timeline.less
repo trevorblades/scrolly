@@ -9,7 +9,7 @@
   flex-direction: column;
   flex-shrink: 0;
   margin-top: @padding-smallest;
-  border-top: 1px solid @white-faded;
+  border-top: 1px solid @gray;
   background-color: @gray-dark;
   position: relative;
   .pl-timeline-header .pl-timeline-header-status, .pl-timeline-layers {
@@ -23,7 +23,7 @@
     .pl-timeline-header-status {
       display: flex;
       padding: @padding-smaller;
-      border-right: 1px solid @gray-darker;
+      border-right: 1px solid @black-faded-dark;
       font-family: @font-family-monospace;
       .pl-timeline-header-status-indicator {
         flex-grow: 1;
@@ -36,6 +36,13 @@
       }
       .pl-timeline-header-status-add {
         flex-shrink: 0;
+        position: relative;
+        .pl-icon {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
       }
     }
     .pl-timeline-header-track {
@@ -46,8 +53,8 @@
       &:before {
         content: '';
         height: 50%;
-        border-top: 1px solid @gray-darker;
-        background-color: fade(white, 10%);
+        border-top: 1px solid @black-faded-dark;
+        background-color: @gray;
         position: absolute;
         bottom: 0;
         left: @padding-small * -1;
@@ -119,6 +126,7 @@
   }
   .pl-timeline-layers {
     padding-top: @padding-small;
+    color: @gray-lightest;
     .pl-timeline-layer {
       display: flex;
       justify-content: space-between;
@@ -127,7 +135,6 @@
       margin-bottom: @padding-small;
       font-size: @font-size-small;
       line-height: @padding-base;
-      color: @gray-light;
       &.pl-hidden .pl-timeline-layer-name {
         text-decoration: line-through;
         opacity: 0.5;
@@ -140,14 +147,16 @@
       .pl-timeline-layer-actions {
         flex-shrink: 0;
         .pl-timeline-layer-action {
+          display: inline-block;
+          vertical-align: top;
           margin-left: @padding-small;
           cursor: pointer;
           &:hover .pl-icon {
-            fill: @gray-light;
+            fill: @gray-lightest;
           }
 
           .pl-icon {
-            fill: @gray;
+            fill: @gray-lighter;
           }
         }
       }
@@ -157,7 +166,7 @@
     display: flex;
     min-height: 100%;
     padding: @timeline-track-padding;
-    box-shadow: -1px 0 black;
+    box-shadow: -1px 0 @black-faded-dark;
     overflow: hidden;
     position: absolute;
     top: 0;
@@ -195,17 +204,17 @@
       .pl-timeline-track-bar {
         height: 100%;
         border-radius: @border-radius-small;
-        box-shadow: 0 1px 1px @black-faded;
-        background-color: @gray-dark;
+        box-shadow: 0 1px 1px @black-faded-dark;
+        background-color: @gray;
         position: absolute;
         top: 0;
         left: 0;
         &:not(.pl-hidden) {
           &:hover {
-            background-color: lighten(@gray-dark, 10%);
+            background-color: mix(@gray-light, @gray);
           }
           &:active, &.pl-selected {
-            background-color: @gray;
+            background-color: @gray-light;
           }
         }
         &.pl-hidden {

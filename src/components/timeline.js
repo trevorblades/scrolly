@@ -4,7 +4,12 @@ const classNames = require('classnames');
 const Button = require('./button');
 const Icon = require('./icon');
 
-const {addLayer, toggleLayerVisibility, setLayerProperties} = require('../actions');
+const {
+  addLayer,
+  deleteLayer,
+  setLayerProperties,
+  toggleLayerVisibility
+} = require('../actions');
 
 const MIN_HEIGHT = 100;
 let NUM_TICKS = 17;
@@ -161,12 +166,16 @@ const Timeline = React.createClass({
     delete this._boundBarHandleMouseMove;
   },
 
+  _onAddClick: function() {
+    this.props.dispatch(addLayer());
+  },
+
   _onLayerVisibilityToggle: function(id) {
     this.props.dispatch(toggleLayerVisibility(id));
   },
 
-  _onAddClick: function() {
-    this.props.dispatch(addLayer());
+  _onLayerDelete: function(id) {
+    this.props.dispatch(deleteLayer(id));
   },
 
   render: function() {
@@ -216,6 +225,10 @@ const Timeline = React.createClass({
                     <div className="pl-timeline-layer-action"
                         onClick={this._onLayerVisibilityToggle.bind(null, layer.id)}>
                       <Icon name={layer.visible ? 'visible' : 'invisible'}/>
+                    </div>
+                    <div className="pl-timeline-layer-action"
+                        onClick={this._onLayerDelete.bind(null, layer.id)}>
+                      <Icon name="delete"/>
                     </div>
                   </div>
                 </div>

@@ -7,6 +7,13 @@ function addLayer() {
   };
 }
 
+function deleteLayer(id) {
+  return {
+    type: 'DELETE_LAYER',
+    id
+  };
+}
+
 function toggleLayerVisibility(id) {
   return {
     type: 'TOGGLE_LAYER_VISIBILITY',
@@ -22,4 +29,9 @@ function setLayerProperties(id, properties) {
   };
 }
 
-module.exports = {addLayer, toggleLayerVisibility, setLayerProperties};
+module.exports = {
+  addLayer,
+  deleteLayer,
+  toggleLayerVisibility,
+  setLayerProperties
+};
