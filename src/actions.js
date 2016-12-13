@@ -14,13 +14,6 @@ function deleteLayer(id) {
   };
 }
 
-function toggleLayerVisibility(id) {
-  return {
-    type: 'TOGGLE_LAYER_VISIBILITY',
-    id
-  };
-}
-
 function setLayerProperties(id, properties) {
   return {
     type: 'SET_LAYER_PROPERTIES',
@@ -29,9 +22,25 @@ function setLayerProperties(id, properties) {
   };
 }
 
+function incrementLayerProperties(id, properties) {
+  return {
+    type: 'INCREMENT_LAYER_PROPERTIES',
+    id,
+    properties
+  };
+}
+
+function toggleLayerVisibility(id) {
+  return {
+    type: 'TOGGLE_LAYER_VISIBILITY',
+    id
+  };
+}
+
 module.exports = {
   addLayer,
   deleteLayer,
-  toggleLayerVisibility,
-  setLayerProperties
+  setLayerProperties,
+  incrementLayerProperties,
+  toggleLayerVisibility
 };

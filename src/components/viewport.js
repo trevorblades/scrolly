@@ -266,5 +266,5 @@ let Viewport = React.createClass({
 });
 
 module.exports = connect(function(state) {
-  return {layers: state.layers.filter(layer => layer.visible)};
+  return {layers: state.layers.present.filter(layer => layer.visible)};
 })(Viewport);

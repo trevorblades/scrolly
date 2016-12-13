@@ -13,8 +13,9 @@ function layers(state = [], action) {
         }
       }
       return [...state.slice(0, index), ...state.slice(index + 1)];
-    case 'TOGGLE_LAYER_VISIBILITY':
     case 'SET_LAYER_PROPERTIES':
+    case 'INCREMENT_LAYER_PROPERTIES':
+    case 'TOGGLE_LAYER_VISIBILITY':
       return state.map(l => layer(l, action));
     default:
       return state;

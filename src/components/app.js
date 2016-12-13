@@ -1,6 +1,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
+const {ActionCreators} = require('redux-undo');
 
 const Header = require('./header');
 const Inspector = require('./inspector');
@@ -12,6 +13,7 @@ const Viewport = require('./viewport');
 let App = React.createClass({
 
   propTypes: {
+    dispatch: React.PropTypes.func.isRequired,
     layers: React.PropTypes.array.isRequired
   },
 
@@ -29,12 +31,30 @@ let App = React.createClass({
   },
 
   componentDidMount: function() {
+    window.addEventListener('keydown', this._onKeyDown);
     window.addEventListener('resize', this._onResize);
     this._onResize();
   },
 
   componentWillUnmount: function() {
+    window.removeEventListener('keydown', this._onKeyDown);
     window.removeEventListener('resize', this._onResize);
+  },
+
+  _onKeyDown: function(event) {
+    if (event.keyCode === 90 && event.metaKey) {
+      const action = event.shiftKey ?
+          ActionCreators.redo() :
+          ActionCreators.undo();
+      this.props.dispatch(action);
+    } else if (this.state.selectedLayerId !== null &&
+        event.keyCode === 27) { // Escape key pressed
+      if (event.target.contentEditable === 'true' ||
+          event.target.tagName.toUpperCase() === 'INPUT') {
+        return event.target.blur();
+      }
+      this._selectLayer(null);
+    }
   },
 
   _onResize: function() {
@@ -47,16 +67,6 @@ let App = React.createClass({
     });
   },
 
-  _onKeyDown: function(event) {
-    if (event.keyCode === 27) { // Escape key pressed
-      if (event.target.contentEditable === 'true' ||
-          event.target.tagName.toUpperCase() === 'INPUT') {
-        return event.target.blur();
-      }
-      this._selectLayer(null);
-    }
-  },
-
   _setPercentPlayed: function(value) {
     if (value < 0) {
       value = 0;
@@ -67,13 +77,7 @@ let App = React.createClass({
   },
 
   _selectLayer: function(id) {
-    this.setState({selectedLayerId: id}, function() {
-      if (this.state.selectedLayerId !== null) {
-        document.addEventListener('keydown', this._onKeyDown);
-      } else {
-        document.removeEventListener('keydown', this._onKeyDown);
-      }
-    });
+    this.setState({selectedLayerId: id});
   },
 
   render: function() {
@@ -108,5 +112,5 @@ let App = React.createClass({
 });
 
 module.exports = connect(function(state) {
-  return {layers: state.layers};
+  return {layers: state.layers.present};
 })(App);

@@ -9,6 +9,7 @@ const {
   addLayer,
   deleteLayer,
   setLayerProperties,
+  incrementLayerProperties,
   toggleLayerVisibility
 } = require('../actions');
 
@@ -126,11 +127,10 @@ let Timeline = React.createClass({
   },
 
   _onBarMouseMove: function(id, event) {
-    const layer = this.props.layers[id];
     const percentMoved = event.movementX / this.refs.track.offsetWidth;
-    this.props.dispatch(setLayerProperties(id, {
-      in: layer.in + percentMoved,
-      out: layer.out + percentMoved
+    this.props.dispatch(incrementLayerProperties(id, {
+      in: percentMoved,
+      out: percentMoved
     }));
   },
 
@@ -296,5 +296,5 @@ let Timeline = React.createClass({
 });
 
 module.exports = connect(function(state) {
-  return {layers: state.layers};
+  return {layers: state.layers.present};
 })(Timeline);
