@@ -213,23 +213,41 @@ const Timeline = React.createClass({
         <div className="pl-timeline-content">
           <div className="pl-timeline-layers">
             {this.props.layers.map(layer => {
+              const actions = [
+                {
+                  icon: layer.visible ? 'visible' : 'invisible',
+                  onClick: this._onLayerVisibilityToggle
+                },
+                {
+                  icon: 'delete',
+                  onClick: this._onLayerDelete
+                }
+              ];
+
               const layerClassName = classNames('pl-timeline-layer', {
                 'pl-hidden': !layer.visible
               });
+
               return (
-                <div className={layerClassName} key={layer.id}>
+                <div className={layerClassName}
+                    key={layer.id}
+                    onClick={this.props.selectLayer.bind(null, layer.id)}>
                   <div className="pl-timeline-layer-name">
                     {layer.name}
                   </div>
                   <div className="pl-timeline-layer-actions">
-                    <div className="pl-timeline-layer-action"
-                        onClick={this._onLayerVisibilityToggle.bind(null, layer.id)}>
-                      <Icon name={layer.visible ? 'visible' : 'invisible'}/>
-                    </div>
-                    <div className="pl-timeline-layer-action"
-                        onClick={this._onLayerDelete.bind(null, layer.id)}>
-                      <Icon name="delete"/>
-                    </div>
+                    {actions.map((action, index) => {
+                      return (
+                        <div className="pl-timeline-layer-action"
+                            key={index}
+                            onClick={function(event) {
+                              event.stopPropagation();
+                              action.onClick(layer.id);
+                            }}>
+                          <Icon name={action.icon}/>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               );

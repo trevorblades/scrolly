@@ -57,7 +57,8 @@ const App = React.createClass({
 
   _onKeyDown: function(event) {
     if (event.keyCode === 27) { // Escape key pressed
-      if (event.target.contentEditable === 'true') { // It happened on a text layer
+      if (event.target.contentEditable === 'true' ||
+          event.target.tagName.toUpperCase() === 'INPUT') {
         return event.target.blur();
       }
       this._selectLayer(null);
@@ -97,9 +98,7 @@ const App = React.createClass({
         <div className="pl-app-content">
           <Sidebar>
             <Library assets={this.state.assets}/>
-            {layer &&
-              <Inspector layer={layer}
-                  setLayerProperties={this._setLayerProperties}/>}
+            {layer && <Inspector dispatch={store.dispatch} layer={layer}/>}
           </Sidebar>
           <div className="pl-app-viewport-wrapper" ref="viewportWrapper">
             <Viewport compositionHeight={this.state.compositionHeight}

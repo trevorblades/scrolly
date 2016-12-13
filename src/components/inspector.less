@@ -1,3 +1,81 @@
 .pl-inspector {
-  padding: @padding-base;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    border: none;
+    color: @gray-lighter;
+    outline: none;
+    &:focus {
+      color: @gray-lightest;
+    }
+  }
+  .pl-inspector-header {
+    flex-shrink: 0;
+    padding: @padding-smaller;
+    border-bottom: 1px solid @black-faded-dark;
+    background-color: @gray;
+    input[type="text"] {
+      padding: @padding-smaller @padding-small;
+      border-radius: @border-radius-small;
+      box-shadow: inset 0 0 0 1px @black-faded-dark;
+      background-color: @gray-darker;
+      &:focus {
+        background-color: mix(@gray-dark, @gray-darker);
+      }
+    }
+  }
+  .pl-inspector-properties {
+    flex-grow: 1;
+    padding: @padding-base;
+    .pl-inspector-property {
+      font-size: @font-size-small;
+      position: relative;
+      &:not(:last-child) {
+        margin-bottom: @padding-base;
+      }
+
+      label {
+        color: @gray-light;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      input[type="text"], input[type="number"] {
+        width: 100%;
+        padding: 0;
+        padding-bottom: @padding-smaller;
+        border: none;
+        border-bottom: 1px solid @gray;
+        line-height: 1em;
+        text-align: right;
+        background: none;
+        position: relative;
+        &:focus {
+          color: @gray-lightest;
+          + span {
+            opacity: 1;
+            transform: scaleX(1);
+          }
+        }
+
+        + span {
+          width: 100%;
+          height: 1px;
+          background-color: @brand-primary;
+          opacity: 0;
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          transform: scaleX(0);
+          transition: opacity @transition-duration-medium ease-in-out,
+              transform @transition-duration-medium ease-in-out;
+        }
+      }
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+    }
+  }
 }
