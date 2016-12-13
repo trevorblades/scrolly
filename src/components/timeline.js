@@ -1,4 +1,5 @@
 const React = require('react');
+const {connect} = require('react-redux');
 const classNames = require('classnames');
 
 const Button = require('./button');
@@ -19,17 +20,17 @@ for (var i = 0; i < NUM_TICKS; i++) {
   ticks.push({});
 }
 
-const Timeline = React.createClass({
+let Timeline = React.createClass({
 
   propTypes: {
-    dispatch: React.PropTypes.func,
+    dispatch: React.PropTypes.func.isRequired,
     layers: React.PropTypes.array.isRequired,
-    maxHeight: React.PropTypes.number,
-    onResize: React.PropTypes.func,
-    percentPlayed: React.PropTypes.number,
-    selectLayer: React.PropTypes.func,
+    maxHeight: React.PropTypes.number.isRequired,
+    onResize: React.PropTypes.func.isRequired,
+    percentPlayed: React.PropTypes.number.isRequired,
+    selectLayer: React.PropTypes.func.isRequired,
     selectedLayerId: React.PropTypes.number,
-    setPercentPlayed: React.PropTypes.func
+    setPercentPlayed: React.PropTypes.func.isRequired
   },
 
   getInitialState: function() {
@@ -294,4 +295,6 @@ const Timeline = React.createClass({
   }
 });
 
-module.exports = Timeline;
+module.exports = connect(function(state) {
+  return {layers: state.layers};
+})(Timeline);

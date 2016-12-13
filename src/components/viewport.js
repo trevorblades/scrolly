@@ -1,5 +1,6 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
+const {connect} = require('react-redux');
 const classNames = require('classnames');
 
 const {setLayerProperties} = require('../actions');
@@ -21,7 +22,7 @@ function getViewportDimensions(options) {
   };
 }
 
-const Viewport = React.createClass({
+let Viewport = React.createClass({
 
   propTypes: {
     compositionHeight: React.PropTypes.number.isRequired,
@@ -169,7 +170,9 @@ const Viewport = React.createClass({
   },
 
   _onTextLayerBlur: function(event) {
-    this.props.dispatch(setLayerProperties(this.state.editingLayerId, {value: event.target.innerHTML}));
+    this.props.dispatch(setLayerProperties(this.state.editingLayerId, {
+      value: event.target.innerHTML
+    }));
     this.setState({editingLayerId: null}, this.props.selectLayer);
   },
 
@@ -193,8 +196,7 @@ const Viewport = React.createClass({
             height: this.state.height
           }}>
         {this.props.layers.map(layer => {
-          if (!layer.visible ||
-              layer.in > this.props.percentPlayed ||
+          if (layer.in > this.props.percentPlayed ||
               layer.out < this.props.percentPlayed) {
             return null;
           }
@@ -263,4 +265,6 @@ const Viewport = React.createClass({
   }
 });
 
-module.exports = Viewport;
+module.exports = connect(function(state) {
+  return {layers: state.layers.filter(layer => layer.visible)};
+})(Viewport);

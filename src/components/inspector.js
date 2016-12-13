@@ -1,11 +1,12 @@
 const React = require('react');
+const {connect} = require('react-redux');
 const sentenceCase = require('sentence-case');
 
 const {setLayerProperties} = require('../actions');
 
 const HIDDEN_PROPERTIES = ['id', 'type', 'name', 'visible', 'value'];
 
-const Inspector = React.createClass({
+let Inspector = React.createClass({
 
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
@@ -95,9 +96,7 @@ const Inspector = React.createClass({
                     onKeyDown={this._onInputKeyDown.bind(null, property)}
                     type={isNumber ? 'number' : 'text'}
                     value={value}/>
-                <label {...labelProps}>
-                  {sentenceCase(property)}
-                </label>
+                <label {...labelProps}>{sentenceCase(property)}</label>
                 <span/>
               </div>
             );
@@ -108,4 +107,4 @@ const Inspector = React.createClass({
   }
 });
 
-module.exports = Inspector;
+module.exports = connect()(Inspector);

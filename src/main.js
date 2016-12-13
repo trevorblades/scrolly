@@ -1,6 +1,12 @@
 const React = require('react');
-const ReactDOM = require('react-dom');
-
+const {render} = require('react-dom');
+const {createStore} = require('redux');
+const {Provider} = require('react-redux');
 const App = require('./components/app');
+const reducer = require('./reducers');
 
-ReactDOM.render(<App/>, document.getElementById('pl-root'));
+render(
+  <Provider store={createStore(reducer)}>
+    <App/>
+  </Provider>,
+  document.getElementById('pl-root'));
