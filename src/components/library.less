@@ -1,0 +1,36 @@
+@library-asset-thumb-size: ;
+
+.pl-library {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  color: @gray-lightest;
+  overflow: hidden;
+  .pl-library-assets {
+    flex-grow: 1;
+    overflow: auto;
+    .pl-library-asset {
+      display: flex;
+      padding: @padding-small;
+      &:nth-child(2n) {
+        background-color: @highlight;
+      }
+
+      .pl-library-asset-thumb {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        width: @padding-larger;
+        height: @padding-larger;
+        margin-right: @padding-smaller;
+        img {
+          max-width: 100%;
+          max-height: 100%;
+        }
+      }
+      .pl-library-asset-info {
+        overflow: hidden;
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 let nextLayerId = 0;
+let nextAssetId = 0;
 
 function addLayer() {
   return {
@@ -29,9 +30,21 @@ function toggleLayerVisibility(id) {
   };
 }
 
+function addAsset(name, filetype, size, data) {
+  return {
+    type: 'ADD_ASSET',
+    id: nextAssetId++,
+    name,
+    filetype,
+    size,
+    data
+  };
+}
+
 module.exports = {
   addLayer,
   deleteLayer,
   setLayerProperties,
-  toggleLayerVisibility
+  toggleLayerVisibility,
+  addAsset
 };

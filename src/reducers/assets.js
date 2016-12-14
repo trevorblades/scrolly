@@ -1,10 +1,10 @@
-const layerReducer = require('./layer');
+const assetReducer = require('./asset');
 
 module.exports = function(state = [], action) {
   switch (action.type) {
-    case 'ADD_LAYER':
-      return [...state, layerReducer(undefined, action)];
-    case 'DELETE_LAYER':
+    case 'ADD_ASSET':
+      return [...state, assetReducer(undefined, action)];
+    case 'DELETE_ASSET':
       var index = -1;
       for (var i = 0; i < state.length; i++) {
         if (state[i].id === action.id) {
@@ -13,9 +13,6 @@ module.exports = function(state = [], action) {
         }
       }
       return [...state.slice(0, index), ...state.slice(index + 1)];
-    case 'SET_LAYER_PROPERTIES':
-    case 'TOGGLE_LAYER_VISIBILITY':
-      return state.map(layer => layerReducer(layer, action));
     default:
       return state;
   }

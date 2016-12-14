@@ -1,4 +1,4 @@
-function layer(state, action) {
+module.exports = function(state, action) {
   switch (action.type) {
     case 'ADD_LAYER':
       return {
@@ -28,6 +28,4 @@ function layer(state, action) {
     default:
       return state;
   }
-}
-
-module.exports = layer;
+};

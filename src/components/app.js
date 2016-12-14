@@ -10,7 +10,11 @@ const Sidebar = require('./sidebar');
 const Timeline = require('./timeline');
 const Viewport = require('./viewport');
 
-let App = React.createClass({
+const {addAsset} = require('../actions');
+
+const ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/gif'];
+
+const App = React.createClass({
 
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
@@ -21,6 +25,7 @@ let App = React.createClass({
     return {
       compositionHeight: 1080,
       compositionWidth: 1920,
+      dragging: false,
       viewportWrapperHeight: 0,
       viewportWrapperWidth: 0,
       percentPlayed: 0,
@@ -73,6 +78,45 @@ let App = React.createClass({
     });
   },
 
+  _onDragEnter: function(event) {
+    if (event.dataTransfer.types.indexOf('Files') !== -1) {
+      this.setState({dragging: true});
+    }
+  },
+
+  _onDragLeave: function() {
+    this.setState({dragging: false});
+  },
+
+  _onDragOver: function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  },
+
+  _onDrop: function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this._onFileUpload(event.dataTransfer.files[0]);
+    this._onDragLeave();
+  },
+
+  _onFileUpload: function(file) {
+    if (!file) {
+      return;
+    } else if (ALLOWED_FILETYPES.indexOf(file.type) === -1) {
+      return; // file type not supported
+    }
+
+    const reader = new FileReader();
+    reader.onload = event => {
+      const action = addAsset(file.name, file.type, file.size, event.target.result);
+      this.props.dispatch(action);
+      this.setState({uploading: false});
+    };
+    reader.readAsDataURL(file);
+    this.setState({uploading: true});
+  },
+
   _setPercentPlayed: function(value) {
     if (value < 0) {
       value = 0;
@@ -88,7 +132,7 @@ let App = React.createClass({
 
   render: function() {
     return (
-      <div className="pl-app">
+      <div className="pl-app" onDragEnter={this._onDragEnter}>
         <Header ref="header"/>
         <div className="pl-app-content">
           <Sidebar>
@@ -111,6 +155,11 @@ let App = React.createClass({
             selectLayer={this._selectLayer}
             selectedLayerId={this.state.selectedLayerId}
             setPercentPlayed={this._setPercentPlayed}/>
+        {this.state.dragging &&
+          <div className="pl-app-drop"
+              onDragLeave={this._onDragLeave}
+              onDragOver={this._onDragOver}
+              onDrop={this._onDrop}/>}
       </div>
     );
   }
