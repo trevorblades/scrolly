@@ -5,7 +5,7 @@
   flex-direction: column;
   flex-shrink: 0;
   width: @sidebar-width;
-  border-right: 1px solid @black-faded-dark;
+  border-right: 1px solid @shadow-dark;
   position: relative;
   .pl-sidebar-tabs {
     padding: @padding-smaller;
@@ -25,7 +25,7 @@
         background-color: fade(@gray, 50%);
       }
       &.pl-active {
-        border: 1px solid @black-faded-darker;
+        border: 1px solid @shadow-darker;
         border-bottom: 0;
         border-top-left-radius: @border-radius-small;
         border-top-right-radius: @border-radius-small;
@@ -37,7 +37,7 @@
   .pl-sidebar-content {
     display: flex;
     flex-grow: 1;
-    box-shadow: 0 -1px @black-faded-dark;
+    box-shadow: 0 -1px @shadow-dark;
     background-color: @gray;
   }
 }

@@ -56,6 +56,11 @@ let Timeline = React.createClass({
     }
   },
 
+  _onLayerClick: function(id, event) {
+    event.stopPropagation();
+    this.props.selectLayer(id);
+  },
+
   _onHandleMouseDown: function(event) {
     if (event.button === 0) {
       document.addEventListener('mousemove', this._onHandleMouseMove);
@@ -211,9 +216,15 @@ let Timeline = React.createClass({
                 style={{left: `${percentPlayed}%`}}/>
           </div>
         </div>
-        <div className="pl-timeline-content">
+        <div className="pl-timeline-content"
+            onClick={this.props.selectLayer.bind(null, null)}>
           <div className="pl-timeline-layers">
             {this.props.layers.map(layer => {
+              const layerClassName = classNames('pl-timeline-layer', {
+                'pl-selected': layer.id === this.props.selectedLayerId,
+                'pl-hidden': !layer.visible
+              });
+
               const actions = [
                 {
                   icon: layer.visible ? 'visible' : 'invisible',
@@ -225,15 +236,10 @@ let Timeline = React.createClass({
                 }
               ];
 
-              const layerClassName = classNames('pl-timeline-layer', {
-                'pl-selected': layer.id === this.props.selectedLayerId,
-                'pl-hidden': !layer.visible
-              });
-
               return (
                 <div className={layerClassName}
                     key={layer.id}
-                    onClick={this.props.selectLayer.bind(null, layer.id)}>
+                    onClick={this._onLayerClick.bind(null, layer.id)}>
                   <div className="pl-timeline-layer-name">
                     {layer.name}
                   </div>
@@ -281,6 +287,7 @@ let Timeline = React.createClass({
                 return (
                   <div className="pl-timeline-track" key={layer.id}>
                     <div className={barClassName}
+                        onClick={event => event.stopPropagation()}
                         onMouseDown={this._onBarMouseDown.bind(null, layer)}
                         style={{
                           left: `${layerIn * 100}%`,

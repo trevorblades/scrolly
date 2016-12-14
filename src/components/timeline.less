@@ -1,3 +1,4 @@
+@import (reference) './button';
 @import (reference) './sidebar';
 
 @timeline-playhead-handle-size: 18px;
@@ -23,17 +24,17 @@
     .pl-timeline-header-status {
       display: flex;
       padding: @padding-smaller;
-      border-right: 1px solid @black-faded-dark;
+      border-right: 1px solid @shadow-dark;
       font-family: @font-family-monospace;
       .pl-timeline-header-status-indicator {
         flex-grow: 1;
         margin-right: @padding-smaller;
         padding: 0 @padding-small;
         border-radius: @border-radius-small;
-        box-shadow: 0 0 0 1px @black-faded-dark, inset 0 0 6px @black-faded-darker;
+        box-shadow: @button-shadow;
         font-family: @font-family-monospace;
         line-height: @padding-larger;
-        background: linear-gradient(lighten(@brand-warning, 10%) 50%, @brand-warning 50%, darken(@brand-warning, 20%));
+        background: linear-gradient(lighten(@brand-warning, 10%) 50%, @brand-warning 50%, darken(@brand-warning, 10%));
         overflow: hidden;
         position: relative;
       }
@@ -56,7 +57,7 @@
       &:before {
         content: '';
         height: 50%;
-        border-top: 1px solid @black-faded-dark;
+        border-top: 1px solid @shadow-dark;
         background-color: @gray;
         position: absolute;
         bottom: 0;
@@ -131,8 +132,12 @@
       font-size: @font-size-small;
       line-height: @padding-base;
       color: @gray-lightest;
+      cursor: default;
       &.pl-selected {
         color: white;
+      }
+      &:not(.pl-selected) .pl-timeline-layer-actions {
+        opacity: 0.5;
       }
       &.pl-hidden .pl-timeline-layer-name {
         text-decoration: line-through;
@@ -151,11 +156,11 @@
           margin-left: @padding-small;
           cursor: pointer;
           &:hover .pl-icon {
-            fill: @gray-lightest;
+            fill: white;
           }
 
           .pl-icon {
-            fill: @gray-lighter;
+            fill: @gray-lightest;
           }
         }
       }
@@ -165,7 +170,7 @@
     display: flex;
     min-height: 100%;
     padding: @timeline-track-padding;
-    box-shadow: -1px 0 @black-faded-dark;
+    box-shadow: -1px 0 @shadow-dark;
     overflow: hidden;
     position: absolute;
     top: 0;
@@ -203,7 +208,7 @@
       .pl-timeline-track-bar {
         height: 100%;
         border-radius: @border-radius-small;
-        box-shadow: 0 1px 1px @black-faded-dark;
+        box-shadow: 0 1px 1px @shadow-dark;
         background-color: @gray;
         position: absolute;
         top: 0;
@@ -212,7 +217,7 @@
           background-color: mix(@gray-light, @gray);
         }
         &:active, &.pl-selected {
-          background-color: @gray-light;
+          background-color: @gray-lighter;
         }
         &.pl-hidden {
           opacity: 0.5;

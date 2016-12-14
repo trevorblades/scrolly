@@ -64,10 +64,6 @@ let Viewport = React.createClass({
     }
   },
 
-  _onLayerClick: function(event) {
-    event.stopPropagation();
-  },
-
   _onLayerMouseDown: function(layer, event) {
     if (event.button === 0) {
       if (layer.id !== this.props.selectedLayerId) {
@@ -252,7 +248,7 @@ let Viewport = React.createClass({
           return (
             <div className={layerClassName}
                 key={layer.id}
-                onClick={this._onLayerClick}
+                onClick={event => event.stopPropagation()}
                 onMouseDown={this._onLayerMouseDown.bind(null, layer)}
                 style={style}>
               {children}

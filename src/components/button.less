@@ -1,5 +1,5 @@
-@button-inner-shadow: inset 0 1px @gray-light, inset 0 -1px @black-faded;
-@button-outer-shadow: 0 0 0 1px @black-faded-dark;
+@button-inner-shadow: inset 0 1px @highlight, inset 0 -1px @shadow;
+@button-outer-shadow: 0 0 0 1px @shadow-dark;
 @button-shadow: @button-inner-shadow, @button-outer-shadow;
 
 .pl-button {
@@ -8,6 +8,9 @@
   &:focus {
     box-shadow: @button-inner-shadow, 0 0 0 1px black, 0 0 1px 1px @brand-primary;
     background-color: @gray;
+    .pl-icon {
+      fill: @gray-lighter;
+    }
   }
   &:hover {
     background-color: mix(@gray, @gray-dark);
