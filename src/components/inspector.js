@@ -34,7 +34,7 @@ function clamp(key, value) {
   return value;
 }
 
-let Inspector = React.createClass({
+const Inspector = React.createClass({
 
   propTypes: {
     layer: React.PropTypes.object.isRequired,
@@ -158,7 +158,7 @@ let Inspector = React.createClass({
   }
 });
 
-Inspector = connect(null, function(dispatch, props) {
+module.exports = connect(null, function(dispatch, props) {
   return {
     onPropertyChange: function(key, value) {
       const property = PROPERTIES[key];
@@ -171,6 +171,3 @@ Inspector = connect(null, function(dispatch, props) {
     }
   };
 })(Inspector);
-Inspector.displayName = 'Inspector';
-
-module.exports = Inspector;

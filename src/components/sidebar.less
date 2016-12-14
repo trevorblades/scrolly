@@ -10,11 +10,25 @@
   .pl-sidebar-tabs {
     padding: @padding-smaller;
     padding-bottom: 0;
+    background-color: @gray-darker;
+    overflow: hidden;
     position: relative;
+    &:before {
+      content: '';
+      width: 100%;
+      height: 1px;
+      background-color: @shadow-dark;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
     .pl-sidebar-tab {
       display: inline-block;
       vertical-align: top;
-      padding: @padding-smallest @padding-small;
+      padding: @padding-smallest @padding-base;
+      border-top-left-radius: @border-radius-small;
+      border-top-right-radius: @border-radius-small;
       font-size: @font-size-small;
       color: @gray-lighter;
       cursor: pointer;
@@ -22,22 +36,19 @@
         margin-right: @padding-smallest;
       }
       &:hover {
-        background-color: fade(@gray, 50%);
+        color: @gray-lightest;
+        background-color: fade(@gray-dark, 50%);
       }
       &.pl-active {
-        border: 1px solid @shadow-darker;
-        border-bottom: 0;
-        border-top-left-radius: @border-radius-small;
-        border-top-right-radius: @border-radius-small;
+        box-shadow: 0 0 0 1px @shadow-dark;
         color: white;
-        background-color: @gray;
+        background-color: @gray-dark;
+        position: relative;
       }
     }
   }
   .pl-sidebar-content {
     display: flex;
     flex-grow: 1;
-    box-shadow: 0 -1px @shadow-dark;
-    background-color: @gray;
   }
 }
