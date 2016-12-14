@@ -20,15 +20,6 @@ function layer(state, action) {
         return state;
       }
       return Object.assign({}, state, action.properties);
-    case 'INCREMENT_LAYER_PROPERTIES':
-      if (state.id !== action.id) {
-        return state;
-      }
-      var nextState = Object.assign({}, state);
-      for (var key in action.properties) {
-        nextState[key] += action.properties[key];
-      }
-      return nextState;
     case 'TOGGLE_LAYER_VISIBILITY':
       if (state.id !== action.id) {
         return state;

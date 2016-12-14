@@ -22,14 +22,6 @@ function setLayerProperties(id, properties) {
   };
 }
 
-function incrementLayerProperties(id, properties) {
-  return {
-    type: 'INCREMENT_LAYER_PROPERTIES',
-    id,
-    properties
-  };
-}
-
 function toggleLayerVisibility(id) {
   return {
     type: 'TOGGLE_LAYER_VISIBILITY',
@@ -41,6 +33,5 @@ module.exports = {
   addLayer,
   deleteLayer,
   setLayerProperties,
-  incrementLayerProperties,
   toggleLayerVisibility
 };

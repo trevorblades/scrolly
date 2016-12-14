@@ -69,22 +69,25 @@ let Viewport = React.createClass({
   },
 
   _onLayerMouseDown: function(layer, event) {
-    if (layer.id !== this.props.selectedLayerId) {
-      this.props.selectLayer(layer.id);
-    }
-    this.setState({
-      moveX: layer.x,
-      moveY: layer.y,
-      movingLayerId: layer.id
-    });
+    if (event.button === 0) {
+      if (layer.id !== this.props.selectedLayerId) {
+        this.props.selectLayer(layer.id);
+      }
 
-    const layerRect = event.target.getBoundingClientRect();
-    const offsetX = event.clientX - layerRect.left;
-    const offsetY = event.clientY - layerRect.top;
-    this._boundLayerMouseMove = this._onLayerMouseMove.bind(null, offsetX, offsetY);
-    this._boundLayerMouseUp = this._onLayerMouseUp.bind(null, layer.x, layer.y);
-    document.addEventListener('mousemove', this._boundLayerMouseMove);
-    document.addEventListener('mouseup', this._boundLayerMouseUp);
+      this.setState({
+        moveX: layer.x,
+        moveY: layer.y,
+        movingLayerId: layer.id
+      });
+
+      const layerRect = event.target.getBoundingClientRect();
+      const offsetX = event.clientX - layerRect.left;
+      const offsetY = event.clientY - layerRect.top;
+      this._boundLayerMouseMove = this._onLayerMouseMove.bind(null, offsetX, offsetY);
+      this._boundLayerMouseUp = this._onLayerMouseUp.bind(null, layer.x, layer.y);
+      document.addEventListener('mousemove', this._boundLayerMouseMove);
+      document.addEventListener('mouseup', this._boundLayerMouseUp);
+    }
   },
 
   _onLayerMouseMove: function(offsetX, offsetY, event) {
@@ -115,32 +118,29 @@ let Viewport = React.createClass({
     });
   },
 
-  _onLayerMouseUp: function(originX, originY) {
-    if (originX !== this.state.moveX || originY !== this.state.moveY) {
-      this.props.dispatch(setLayerProperties(this.state.movingLayerId, {
-        x: this.state.moveX,
-        y: this.state.moveY
-      }));
-    }
+  _onLayerMouseUp: function() {
+    this.props.dispatch(setLayerProperties(this.state.movingLayerId, {
+      x: this.state.moveX,
+      y: this.state.moveY
+    }));
     this.setState({movingLayerId: null});
-
     document.removeEventListener('mousemove', this._boundLayerMouseMove);
-    document.removeEventListener('mouseup', this._boundLayerMouseUp);
+    document.removeEventListener('mouseup', this._onLayerMouseUp);
     delete this._boundLayerMouseMove;
-    delete this._boundLayerMouseUp;
   },
 
   _onLayerHandleMouseDown: function(layer, index, event) {
-    event.stopPropagation();
-    this.setState({
-      resizeFontSize: layer.fontSize,
-      resizeY: layer.y,
-      resizingLayerId: layer.id
-    });
-
-    this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, index);
-    document.addEventListener('mousemove', this._boundLayerHandleMouseMove);
-    document.addEventListener('mouseup', this._onLayerHandleMouseUp);
+    if (event.button === 0) {
+      event.stopPropagation();
+      this.setState({
+        resizeFontSize: layer.fontSize,
+        resizeY: layer.y,
+        resizingLayerId: layer.id
+      });
+      this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, index);
+      document.addEventListener('mousemove', this._boundLayerHandleMouseMove);
+      document.addEventListener('mouseup', this._onLayerHandleMouseUp);
+    }
   },
 
   _onLayerHandleMouseMove: function(index, event) {
@@ -201,8 +201,9 @@ let Viewport = React.createClass({
             return null;
           }
 
-          const isResizing = layer.id === this.state.resizingLayerId;
           let children;
+          const isResizing = layer.id === this.state.resizingLayerId;
+
           let layerX = layer.x;
           let layerY = layer.y;
           if (layer.id === this.state.movingLayerId) {
@@ -211,6 +212,7 @@ let Viewport = React.createClass({
           } else if (isResizing) {
             layerY = this.state.resizeY;
           }
+
           const style = {
             top: this.state.height * layerY / this.props.compositionHeight,
             left: this.state.width * layerX / this.props.compositionWidth

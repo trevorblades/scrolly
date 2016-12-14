@@ -9,7 +9,6 @@ const {
   addLayer,
   deleteLayer,
   setLayerProperties,
-  incrementLayerProperties,
   toggleLayerVisibility
 } = require('../actions');
 
@@ -24,11 +23,11 @@ for (var i = 0; i < numTicks; i++) {
 let Timeline = React.createClass({
 
   propTypes: {
-    dispatch: React.PropTypes.func.isRequired,
     layers: React.PropTypes.array.isRequired,
     maxHeight: React.PropTypes.number.isRequired,
     onAddClick: React.PropTypes.func.isRequired,
     onDeleteClick: React.PropTypes.func.isRequired,
+    onPropertiesChange: React.PropTypes.func.isRequired,
     onResize: React.PropTypes.func.isRequired,
     onVisiblityToggle: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
@@ -39,6 +38,9 @@ let Timeline = React.createClass({
 
   getInitialState: function() {
     return {
+      dragIn: null,
+      dragOut: null,
+      draggingLayerId: null,
       height: 200
     };
   },
@@ -54,15 +56,11 @@ let Timeline = React.createClass({
     }
   },
 
-  _onHeaderTrackMouseDown: function(event) {
-    const percentPlayed = (event.clientX - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
-    this.props.setPercentPlayed(percentPlayed);
-    this._onPlayheadMouseDown();
-  },
-
-  _onHandleMouseDown: function() {
-    document.addEventListener('mousemove', this._onHandleMouseMove);
-    document.addEventListener('mouseup', this._onHandleMouseUp);
+  _onHandleMouseDown: function(event) {
+    if (event.button === 0) {
+      document.addEventListener('mousemove', this._onHandleMouseMove);
+      document.addEventListener('mouseup', this._onHandleMouseUp);
+    }
   },
 
   _onHandleMouseMove: function(event) {
@@ -81,9 +79,19 @@ let Timeline = React.createClass({
     document.removeEventListener('mouseup', this._onHandleMouseUp);
   },
 
-  _onPlayheadMouseDown: function() {
-    document.addEventListener('mousemove', this._onPlayheadMouseMove);
-    document.addEventListener('mouseup', this._onPlayheadMouseUp);
+  _onHeaderTrackMouseDown: function(event) {
+    if (event.button === 0) {
+      const percentPlayed = (event.clientX - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
+      this.props.setPercentPlayed(percentPlayed);
+      this._onPlayheadMouseDown(event);
+    }
+  },
+
+  _onPlayheadMouseDown: function(event) {
+    if (event.button === 0) {
+      document.addEventListener('mousemove', this._onPlayheadMouseMove);
+      document.addEventListener('mouseup', this._onPlayheadMouseUp);
+    }
   },
 
   _onPlayheadMouseMove: function(event) {
@@ -96,56 +104,72 @@ let Timeline = React.createClass({
     document.removeEventListener('mouseup', this._onPlayheadMouseUp);
   },
 
-  _onBarMouseDown: function(id) {
-    if (id !== this.props.selectedLayerId) {
-      this.props.selectLayer(id);
-    }
+  _onBarMouseDown: function(layer, event) {
+    if (event.button === 0) {
+      if (layer.id !== this.props.selectedLayerId) {
+        this.props.selectLayer(layer.id);
+      }
 
-    if (!this._boundBarMouseMove) {
-      this._boundBarMouseMove = this._onBarMouseMove.bind(null, id);
-      document.addEventListener('mousemove', this._boundBarMouseMove);
+      this.setState({
+        dragIn: layer.in,
+        dragOut: layer.out,
+        draggingLayerId: layer.id
+      });
+      document.addEventListener('mousemove', this._onBarMouseMove);
       document.addEventListener('mouseup', this._onBarMouseUp);
     }
   },
 
-  _onBarMouseMove: function(id, event) {
-    const percentMoved = event.movementX / this.refs.track.offsetWidth;
-    this.props.dispatch(incrementLayerProperties(id, {
-      in: percentMoved,
-      out: percentMoved
-    }));
+  _onBarMouseMove: function(event) {
+    const movement = event.movementX / this.refs.track.offsetWidth;
+    this.setState({
+      dragIn: this.state.dragIn + movement,
+      dragOut: this.state.dragOut + movement
+    });
   },
 
   _onBarMouseUp: function() {
-    document.removeEventListener('mousemove', this._boundBarMouseMove);
+    this.props.onPropertiesChange(this.state.draggingLayerId, {
+      in: this.state.dragIn,
+      out: this.state.dragOut
+    });
+    this.setState({draggingLayerId: null});
     document.removeEventListener('mouseup', this._onBarMouseUp);
-    delete this._boundBarMouseMove;
+    document.removeEventListener('mousemove', this._onBarMouseMove);
   },
 
-  _onBarHandleMouseDown: function(id, index, event) {
-    event.stopPropagation();
-    if (!this._boundBarHandleMouseMove) {
-      this._boundBarHandleMouseMove = this._onBarHandleMouseMove.bind(null, id, index);
+  _onBarHandleMouseDown: function(layer, index, event) {
+    if (event.button === 0) {
+      event.stopPropagation();
+      this.setState({
+        dragIn: layer.in,
+        dragOut: layer.out,
+        draggingLayerId: layer.id
+      });
+      this._boundBarHandleMouseMove = this._onBarHandleMouseMove.bind(null, index);
       document.addEventListener('mousemove', this._boundBarHandleMouseMove);
       document.addEventListener('mouseup', this._onBarHandleMouseUp);
     }
   },
 
-  _onBarHandleMouseMove: function(id, index, event) {
+  _onBarHandleMouseMove: function(index, event) {
     let position = (event.clientX - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
     if (position < 0) {
       position = 0;
     } else if (position > 1) {
       position = 1;
     }
-    this.props.dispatch(setLayerProperties(id, {
-      [index ? 'out' : 'in']: position
-    }));
+    this.setState({[`drag${index ? 'Out' : 'In'}`]: position});
   },
 
   _onBarHandleMouseUp: function() {
-    document.removeEventListener('mousemove', this._boundBarHandleMouseMove);
+    this.props.onPropertiesChange(this.state.draggingLayerId, {
+      in: this.state.dragIn,
+      out: this.state.dragOut
+    });
+    this.setState({draggingLayerId: null});
     document.removeEventListener('mouseup', this._onBarHandleMouseUp);
+    document.removeEventListener('mousemove', this._boundBarHandleMouseMove);
     delete this._boundBarHandleMouseMove;
   },
 
@@ -232,7 +256,7 @@ let Timeline = React.createClass({
                   handles.push(
                     <div className="pl-timeline-track-bar-handle"
                         key={i}
-                        onMouseDown={this._onBarHandleMouseDown.bind(null, layer.id, i)}/>
+                        onMouseDown={this._onBarHandleMouseDown.bind(null, layer, i)}/>
                   );
                 }
 
@@ -241,13 +265,19 @@ let Timeline = React.createClass({
                   'pl-hidden': !layer.visible
                 });
 
+                let layerIn = layer.in;
+                let layerOut = layer.out;
+                if (layer.id === this.state.draggingLayerId) {
+                  layerIn = this.state.dragIn;
+                  layerOut = this.state.dragOut;
+                }
                 return (
                   <div className="pl-timeline-track" key={layer.id}>
                     <div className={barClassName}
-                        onMouseDown={layer.visible && this._onBarMouseDown.bind(null, layer.id)}
+                        onMouseDown={layer.visible && this._onBarMouseDown.bind(null, layer)}
                         style={{
-                          left: `${layer.in * 100}%`,
-                          right: `${100 - layer.out * 100}%`
+                          left: `${layerIn * 100}%`,
+                          right: `${100 - layerOut * 100}%`
                         }}>
                       {handles}
                     </div>
@@ -282,6 +312,9 @@ function mapDispatchToProps(dispatch) {
     },
     onVisiblityToggle: function(id) {
       dispatch(toggleLayerVisibility(id));
+    },
+    onPropertiesChange: function(id, properties) {
+      dispatch(setLayerProperties(id, properties));
     }
   };
 }

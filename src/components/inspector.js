@@ -41,10 +41,12 @@ let Inspector = React.createClass({
     }
   },
 
-  _onLabelMouseDown: function(property) {
-    this._boundLabelMouseMove = this._onLabelMouseMove.bind(null, property);
-    document.addEventListener('mousemove', this._boundLabelMouseMove);
-    document.addEventListener('mouseup', this._onLabelMouseUp);
+  _onLabelMouseDown: function(property, event) {
+    if (event.button === 0) {
+      this._boundLabelMouseMove = this._onLabelMouseMove.bind(null, property);
+      document.addEventListener('mousemove', this._boundLabelMouseMove);
+      document.addEventListener('mouseup', this._onLabelMouseUp);
+    }
   },
 
   _onLabelMouseMove: function(property, event) {
