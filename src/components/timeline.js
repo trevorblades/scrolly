@@ -79,6 +79,11 @@ let Timeline = React.createClass({
     document.removeEventListener('mouseup', this._onHandleMouseUp);
   },
 
+  _onHeaderTrackWheel: function(event) {
+    const percentPlayed = (this.refs.track.offsetWidth * this.props.percentPlayed + event.deltaY) / this.refs.track.offsetWidth;
+    this.props.setPercentPlayed(percentPlayed);
+  },
+
   _onHeaderTrackMouseDown: function(event) {
     if (event.button === 0) {
       const percentPlayed = (event.clientX - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
@@ -192,6 +197,7 @@ let Timeline = React.createClass({
           </div>
           <div className="pl-timeline-header-track"
               onMouseDown={this._onHeaderTrackMouseDown}
+              onWheel={this._onHeaderTrackWheel}
               ref="track">
             <div className="pl-timeline-header-track-ticks">
               {ticks.map(function(tick, index) {
