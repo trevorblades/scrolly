@@ -14,10 +14,10 @@ const {
 } = require('../actions');
 
 const MIN_HEIGHT = 100;
-let NUM_TICKS = 17;
 
+let numTicks = 17;
 const ticks = [];
-for (var i = 0; i < NUM_TICKS; i++) {
+for (var i = 0; i < numTicks; i++) {
   ticks.push({});
 }
 
@@ -27,7 +27,10 @@ let Timeline = React.createClass({
     dispatch: React.PropTypes.func.isRequired,
     layers: React.PropTypes.array.isRequired,
     maxHeight: React.PropTypes.number.isRequired,
+    onAddClick: React.PropTypes.func.isRequired,
+    onDeleteClick: React.PropTypes.func.isRequired,
     onResize: React.PropTypes.func.isRequired,
+    onVisiblityToggle: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
     selectLayer: React.PropTypes.func.isRequired,
     selectedLayerId: React.PropTypes.number,
@@ -38,10 +41,6 @@ let Timeline = React.createClass({
     return {
       height: 200
     };
-  },
-
-  componentWillMount: function() {
-    window.addEventListener('keydown', this._onKeyDown);
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -55,25 +54,10 @@ let Timeline = React.createClass({
     }
   },
 
-  componentWillUnmount: function() {
-    window.removeEventListener('keydown', this._onKeyDown);
-  },
-
-  _onKeyDown: function(event) {
-    const tagName = event.target.tagName.toUpperCase();
-    if (tagName !== 'INPUT' &&
-        tagName !== 'TEXTAREA' &&
-        (event.keyCode === 188 || event.keyCode === 190)) { // < or > key pressed
-      event.preventDefault();
-      let movement = event.keyCode === 188 ? -1 : 1;
-      movement /= event.shiftKey ? 10 : 100;
-      this.props.setPercentPlayed(this.props.percentPlayed + movement);
-    }
-  },
-
-  _onHeaderTrackClick: function(event) {
+  _onHeaderTrackMouseDown: function(event) {
     const percentPlayed = (event.clientX - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
     this.props.setPercentPlayed(percentPlayed);
+    this._onPlayheadMouseDown();
   },
 
   _onHandleMouseDown: function() {
@@ -98,7 +82,6 @@ let Timeline = React.createClass({
   },
 
   _onPlayheadMouseDown: function() {
-    this.setState({scrubbing: true});
     document.addEventListener('mousemove', this._onPlayheadMouseMove);
     document.addEventListener('mouseup', this._onPlayheadMouseUp);
   },
@@ -109,7 +92,6 @@ let Timeline = React.createClass({
   },
 
   _onPlayheadMouseUp: function() {
-    this.setState({scrubbing: false});
     document.removeEventListener('mousemove', this._onPlayheadMouseMove);
     document.removeEventListener('mouseup', this._onPlayheadMouseUp);
   },
@@ -167,18 +149,6 @@ let Timeline = React.createClass({
     delete this._boundBarHandleMouseMove;
   },
 
-  _onAddClick: function() {
-    this.props.dispatch(addLayer());
-  },
-
-  _onLayerVisibilityToggle: function(id) {
-    this.props.dispatch(toggleLayerVisibility(id));
-  },
-
-  _onLayerDelete: function(id) {
-    this.props.dispatch(deleteLayer(id));
-  },
-
   render: function() {
     const percentPlayed = this.props.percentPlayed * 100;
     const marker = (
@@ -192,12 +162,12 @@ let Timeline = React.createClass({
           <div className="pl-timeline-header-status">
             <div className="pl-timeline-header-status-indicator">{`${percentPlayed.toFixed(2)}%`}</div>
             <Button className="pl-timeline-header-status-add"
-                onClick={this._onAddClick}>
+                onClick={this.props.onAddClick}>
               <Icon name="add"/>
             </Button>
           </div>
           <div className="pl-timeline-header-track"
-              onClick={this._onHeaderTrackClick}
+              onMouseDown={this._onHeaderTrackMouseDown}
               ref="track">
             <div className="pl-timeline-header-track-ticks">
               {ticks.map(function(tick, index) {
@@ -217,11 +187,11 @@ let Timeline = React.createClass({
               const actions = [
                 {
                   icon: layer.visible ? 'visible' : 'invisible',
-                  onClick: this._onLayerVisibilityToggle
+                  onClick: this.props.onVisiblityToggle
                 },
                 {
                   icon: 'delete',
-                  onClick: this._onLayerDelete
+                  onClick: this.props.onDeleteClick
                 }
               ];
 
@@ -295,6 +265,25 @@ let Timeline = React.createClass({
   }
 });
 
-module.exports = connect(function(state) {
-  return {layers: state.layers.present};
-})(Timeline);
+function mapStateToProps(state) {
+  return {
+    layers: state.layers.present
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+    onAddClick: function() {
+      dispatch(addLayer());
+    },
+    onDeleteClick: function(id) {
+      dispatch(deleteLayer(id));
+    },
+    onVisiblityToggle: function(id) {
+      dispatch(toggleLayerVisibility(id));
+    }
+  };
+}
+
+module.exports = connect(mapStateToProps, mapDispatchToProps)(Timeline);
