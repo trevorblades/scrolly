@@ -226,6 +226,7 @@ let Timeline = React.createClass({
               ];
 
               const layerClassName = classNames('pl-timeline-layer', {
+                'pl-selected': layer.id === this.props.selectedLayerId,
                 'pl-hidden': !layer.visible
               });
 
@@ -280,7 +281,7 @@ let Timeline = React.createClass({
                 return (
                   <div className="pl-timeline-track" key={layer.id}>
                     <div className={barClassName}
-                        onMouseDown={layer.visible && this._onBarMouseDown.bind(null, layer)}
+                        onMouseDown={this._onBarMouseDown.bind(null, layer)}
                         style={{
                           left: `${layerIn * 100}%`,
                           right: `${100 - layerOut * 100}%`

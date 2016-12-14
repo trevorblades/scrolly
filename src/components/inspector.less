@@ -1,14 +1,14 @@
 .pl-inspector {
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  flex-grow: 1;
   input[type="text"], input[type="number"] {
     width: 100%;
     border: none;
-    color: @gray-lighter;
+    color: @gray-lightest;
     outline: none;
     &:focus {
-      color: @gray-lightest;
+      color: white;
     }
   }
   .pl-inspector-header {
@@ -29,6 +29,8 @@
   .pl-inspector-properties {
     flex-grow: 1;
     padding: @padding-base;
+    background-color: @gray-dark;
+    overflow: auto;
     .pl-inspector-property {
       font-size: @font-size-small;
       position: relative;
@@ -37,7 +39,7 @@
       }
 
       label {
-        color: @gray-light;
+        color: @gray-lighter;
         position: absolute;
         top: 0;
         left: 0;
@@ -52,12 +54,9 @@
         text-align: right;
         background: none;
         position: relative;
-        &:focus {
-          color: @gray-lightest;
-          ~ span {
-            opacity: 1;
-            transform: scaleX(1);
-          }
+        &:focus ~ span {
+          opacity: 1;
+          transform: scaleX(1);
         }
       }
       input[type="number"]::-webkit-inner-spin-button {

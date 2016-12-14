@@ -23,4 +23,5 @@ const Library = React.createClass({
   }
 });
 
+Library.displayName = 'Library';
 module.exports = Library;

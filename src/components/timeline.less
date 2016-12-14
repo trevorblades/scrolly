@@ -30,9 +30,12 @@
         margin-right: @padding-smaller;
         padding: 0 @padding-small;
         border-radius: @border-radius-small;
+        box-shadow: 0 0 0 1px @black-faded-dark, inset 0 0 6px @black-faded-darker;
         font-family: @font-family-monospace;
         line-height: @padding-larger;
-        background-color: @gray-lightest;
+        background: linear-gradient(lighten(@brand-warning, 10%) 50%, @brand-warning 50%, darken(@brand-warning, 20%));
+        overflow: hidden;
+        position: relative;
       }
       .pl-timeline-header-status-add {
         flex-shrink: 0;
@@ -119,7 +122,6 @@
   }
   .pl-timeline-layers {
     padding-top: @padding-small;
-    color: @gray-lightest;
     .pl-timeline-layer {
       display: flex;
       justify-content: space-between;
@@ -128,6 +130,10 @@
       margin-bottom: @padding-small;
       font-size: @font-size-small;
       line-height: @padding-base;
+      color: @gray-lightest;
+      &.pl-selected {
+        color: white;
+      }
       &.pl-hidden .pl-timeline-layer-name {
         text-decoration: line-through;
         opacity: 0.5;
@@ -202,13 +208,11 @@
         position: absolute;
         top: 0;
         left: 0;
-        &:not(.pl-hidden) {
-          &:hover {
-            background-color: mix(@gray-light, @gray);
-          }
-          &:active, &.pl-selected {
-            background-color: @gray-light;
-          }
+        &:hover {
+          background-color: mix(@gray-light, @gray);
+        }
+        &:active, &.pl-selected {
+          background-color: @gray-light;
         }
         &.pl-hidden {
           opacity: 0.5;

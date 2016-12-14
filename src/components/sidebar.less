@@ -7,4 +7,37 @@
   width: @sidebar-width;
   border-right: 1px solid @black-faded-dark;
   position: relative;
+  .pl-sidebar-tabs {
+    padding: @padding-smaller;
+    padding-bottom: 0;
+    position: relative;
+    .pl-sidebar-tab {
+      display: inline-block;
+      vertical-align: top;
+      padding: @padding-smallest @padding-small;
+      font-size: @font-size-small;
+      color: @gray-lighter;
+      cursor: pointer;
+      &:not(:last-child) {
+        margin-right: @padding-smallest;
+      }
+      &:hover {
+        background-color: fade(@gray, 50%);
+      }
+      &.pl-active {
+        border: 1px solid @black-faded-darker;
+        border-bottom: 0;
+        border-top-left-radius: @border-radius-small;
+        border-top-right-radius: @border-radius-small;
+        color: white;
+        background-color: @gray;
+      }
+    }
+  }
+  .pl-sidebar-content {
+    display: flex;
+    flex-grow: 1;
+    box-shadow: 0 -1px @black-faded-dark;
+    background-color: @gray;
+  }
 }

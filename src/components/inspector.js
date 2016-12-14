@@ -4,32 +4,61 @@ const sentenceCase = require('sentence-case');
 
 const {setLayerProperties} = require('../actions');
 
-const HIDDEN_PROPERTIES = ['id', 'type', 'name', 'visible', 'value'];
+const PROPERTIES = {
+  x: true,
+  y: true,
+  in: {
+    step: 0.01,
+    min: 0,
+    max: 1
+  },
+  out: {
+    step: 0.01,
+    min: 0,
+    max: 1
+  },
+  fontSize: {
+    min: 1
+  },
+  fontWeight: true,
+  fontStyle: true
+};
+
+function clamp(key, value) {
+  const property = PROPERTIES[key];
+  if (!isNaN(property.min) && value < property.min) {
+    return property.min;
+  } else if (!isNaN(property.max) && value > property.max) {
+    return property.max;
+  }
+  return value;
+}
 
 let Inspector = React.createClass({
 
   propTypes: {
-    dispatch: React.PropTypes.func.isRequired,
-    layer: React.PropTypes.object.isRequired
+    layer: React.PropTypes.object.isRequired,
+    onPropertyChange: React.PropTypes.func.isRequired
   },
 
   getInitialState: function() {
-    return Object.assign({}, this.props.layer);
+    return Object.assign({
+      dragKey: null,
+      dragValue: null
+    }, this.props.layer);
   },
 
   componentWillReceiveProps: function(nextProps) {
     if (nextProps.layer !== this.props.layer) {
-      this.setState(Object.assign({}, nextProps.layer));
+      this.setState(nextProps.layer);
     }
   },
 
-  _onPropertyChange: function(property, event) {
-    this.props.dispatch(setLayerProperties(this.state.id, {
-      [property]: event.target.value
-    }));
+  _onInputChange: function(event) {
+    this.props.onPropertyChange(event.target.name, event.target.value);
   },
 
-  _onInputKeyDown: function(property, event) {
+  _onInputKeyDown: function(event) {
     if (!isNaN(event.target.value) &&
         (event.keyCode === 38 || event.keyCode === 40)) {
       event.preventDefault();
@@ -37,50 +66,67 @@ let Inspector = React.createClass({
       if (event.shiftKey) {
         movement *= 10;
       }
-      this._incrementProperty(property, movement);
+
+      const key = event.target.name;
+      const property = PROPERTIES[key];
+      if (!isNaN(property.step)) {
+        movement *= property.step;
+      }
+
+      const value = this.state[key] + movement;
+      this.props.onPropertyChange(key, clamp(key, value));
     }
   },
 
   _onLabelMouseDown: function(property, event) {
     if (event.button === 0) {
-      this._boundLabelMouseMove = this._onLabelMouseMove.bind(null, property);
-      document.addEventListener('mousemove', this._boundLabelMouseMove);
+      this.setState({
+        dragKey: property,
+        dragValue: this.state[property]
+      });
+      document.addEventListener('mousemove', this._onLabelMouseMove);
       document.addEventListener('mouseup', this._onLabelMouseUp);
     }
   },
 
-  _onLabelMouseMove: function(property, event) {
-    this._incrementProperty(property, event.movementX);
+  _onLabelMouseMove: function(event) {
+    let movement = event.movementX;
+    const property = PROPERTIES[this.state.dragKey];
+    if (!isNaN(property.step)) {
+      movement *= property.step;
+    }
+
+    const value = this.state.dragValue + movement;
+    this.setState({dragValue: clamp(this.state.dragKey, value)});
   },
 
   _onLabelMouseUp: function() {
-    document.removeEventListener('mousemove', this._boundLabelMouseMove);
+    this.props.onPropertyChange(this.state.dragKey, this.state.dragValue);
+    this.setState({
+      dragKey: null,
+      dragValue: null
+    });
+    document.removeEventListener('mousemove', this._onLabelMouseMove);
     document.removeEventListener('mouseup', this._onLabelMouseUp);
-    delete this._boundLabelMouseMove;
-  },
-
-  _incrementProperty: function(property, value) {
-    if (property === 'in' || property === 'out') {
-      value /= 100;
-    }
-    this.props.dispatch(setLayerProperties(this.state.id, {
-      [property]: this.state[property] + value
-    }));
   },
 
   render: function() {
-    const properties = Object.keys(this.state).filter(key => HIDDEN_PROPERTIES.indexOf(key) === -1);
+    const properties = Object.keys(PROPERTIES).filter(property => {
+      return typeof this.state[property] !== 'undefined';
+    });
     return (
       <div className="pl-inspector">
         <div className="pl-inspector-header">
-          <input onChange={this._onPropertyChange.bind(null, 'name')}
+          <input name="name"
+              onChange={this._onInputChange}
               type="text"
               value={this.state.name}/>
         </div>
         <div className="pl-inspector-properties">
           {properties.map(property => {
             let labelProps;
-            let value = this.state[property];
+            let value = property === this.state.dragKey ?
+                this.state.dragValue : this.state[property];
             const isNumber = !isNaN(value);
             if (isNumber) {
               value = Math.round(value * 100) / 100;
@@ -94,8 +140,9 @@ let Inspector = React.createClass({
             return (
               <div className="pl-inspector-property"
                   key={property}>
-                <input onChange={this._onPropertyChange.bind(null, property)}
-                    onKeyDown={this._onInputKeyDown.bind(null, property)}
+                <input name={property}
+                    onChange={this._onInputChange}
+                    onKeyDown={this._onInputKeyDown}
                     type={isNumber ? 'number' : 'text'}
                     value={value}/>
                 <label {...labelProps}>{sentenceCase(property)}</label>
@@ -109,4 +156,19 @@ let Inspector = React.createClass({
   }
 });
 
-module.exports = connect()(Inspector);
+Inspector = connect(null, function(dispatch, props) {
+  return {
+    onPropertyChange: function(key, value) {
+      const property = PROPERTIES[key];
+      if (!isNaN(property.min) && value < property.min) {
+        value = property.min;
+      } else if (!isNaN(property.max) && value > property.max) {
+        value = property.max;
+      }
+      dispatch(setLayerProperties(props.layer.id, {[key]: value}));
+    }
+  };
+})(Inspector);
+Inspector.displayName = 'Inspector';
+
+module.exports = Inspector;

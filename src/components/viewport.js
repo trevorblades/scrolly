@@ -219,9 +219,9 @@ let Viewport = React.createClass({
           };
 
           if (layer.type === 'text') {
-            style.fontSize = isResizing ?
-                this.state.resizeFontSize :
-                layer.fontSize;
+            const fontSize = isResizing ?
+                this.state.resizeFontSize : layer.fontSize;
+            style.fontSize = `${fontSize}px`;
             style.fontWeight = layer.fontWeight;
             style.fontStyle = layer.fontStyle;
 
