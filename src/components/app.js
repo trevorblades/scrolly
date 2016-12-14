@@ -19,7 +19,6 @@ let App = React.createClass({
 
   getInitialState: function() {
     return {
-      assets: [],
       compositionHeight: 1080,
       compositionWidth: 1920,
       viewportWrapperHeight: 0,
@@ -88,14 +87,13 @@ let App = React.createClass({
   },
 
   render: function() {
-    const layer = this.props.layers.filter(l => l.id === this.state.selectedLayerId)[0];
     return (
       <div className="pl-app">
         <Header ref="header"/>
         <div className="pl-app-content">
           <Sidebar>
             <Library assets={this.state.assets}/>
-            {layer && <Inspector layer={layer}/>}
+            <Inspector selectedLayerId={this.state.selectedLayerId}/>
           </Sidebar>
           <div className="pl-app-viewport-wrapper" ref="viewportWrapper">
             <Viewport compositionHeight={this.state.compositionHeight}

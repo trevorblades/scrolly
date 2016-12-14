@@ -2,15 +2,17 @@ const React = require('react');
 
 const Library = React.createClass({
 
-  propTypes: {
-    assets: React.PropTypes.array
+  getInitialState: function() {
+    return {
+      assets: []
+    };
   },
 
   render: function() {
     return (
       <div className="pl-library">
         <div className="pl-library-assets">
-          {this.props.assets.map(function(asset, index) {
+          {this.state.assets.map(function(asset, index) {
             return (
               <div className="pl-library-asset" key={index}>
                 <span>{asset.filename}</span>

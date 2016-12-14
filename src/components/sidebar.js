@@ -14,6 +14,10 @@ const Sidebar = React.createClass({
     };
   },
 
+  _onTabClick: function(index) {
+    this.setState({activeTabIndex: index});
+  },
+
   render: function() {
     return (
       <div className="pl-sidebar" style={{width: this.props.width}}>
@@ -22,11 +26,19 @@ const Sidebar = React.createClass({
             const tabClassName = classNames('pl-sidebar-tab', {
               'pl-active': index === this.state.activeTabIndex
             });
-            return <div className={tabClassName} key={index}>Tab</div>;
+            return (
+              <div className={tabClassName}
+                  key={index}
+                  onClick={this._onTabClick.bind(null, index)}>
+                {child.type.WrappedComponent ?
+                    child.type.WrappedComponent.displayName :
+                    child.type.displayName}
+              </div>
+            );
           })}
         </div>
         <div className="pl-sidebar-content">
-          {this.props.children}
+          {this.props.children[this.state.activeTabIndex]}
         </div>
       </div>
     );

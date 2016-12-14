@@ -37,7 +37,7 @@ function clamp(key, value) {
 const Inspector = React.createClass({
 
   propTypes: {
-    layer: React.PropTypes.object.isRequired,
+    layer: React.PropTypes.object,
     onPropertyChange: React.PropTypes.func.isRequired
   },
 
@@ -49,13 +49,13 @@ const Inspector = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    if (nextProps.layer !== this.props.layer) {
+    if (nextProps.layer && nextProps.layer !== this.props.layer) {
       this.setState(nextProps.layer);
     }
   },
 
   _onInputChange: function(event) {
-    this.props.onPropertyChange(event.target.name, event.target.value);
+    this.props.onPropertyChange(this.state.id, event.target.name, event.target.value);
   },
 
   _onInputKeyDown: function(event) {
@@ -69,7 +69,7 @@ const Inspector = React.createClass({
 
       const key = event.target.name;
       const value = parseFloat(event.target.value) + movement;
-      this.props.onPropertyChange(key, clamp(key, value));
+      this.props.onPropertyChange(this.state.id, key, clamp(key, value));
     }
   },
 
@@ -96,7 +96,7 @@ const Inspector = React.createClass({
   },
 
   _onLabelMouseUp: function() {
-    this.props.onPropertyChange(this.state.dragKey, this.state.dragValue);
+    this.props.onPropertyChange(this.state.id, this.state.dragKey, this.state.dragValue);
     this.setState({
       dragKey: null,
       dragValue: null
@@ -106,6 +106,17 @@ const Inspector = React.createClass({
   },
 
   render: function() {
+    if (!this.props.layer) {
+      return (
+        <div className="pl-inspector">
+          <div className="pl-inspector-empty">
+            <h4>Nothing is selected</h4>
+            <h6>Add or select a layer to inspect its properties</h6>
+          </div>
+        </div>
+      );
+    }
+
     const properties = Object.keys(PROPERTIES).filter(property => {
       return typeof this.state[property] !== 'undefined';
     });
@@ -158,16 +169,26 @@ const Inspector = React.createClass({
   }
 });
 
-module.exports = connect(null, function(dispatch, props) {
+function mapStateToProps(state, props) {
   return {
-    onPropertyChange: function(key, value) {
-      const property = PROPERTIES[key];
-      if (!isNaN(property.min) && value < property.min) {
-        value = property.min;
-      } else if (!isNaN(property.max) && value > property.max) {
-        value = property.max;
+    layer: state.layers.present.filter(layer => layer.id === props.selectedLayerId)[0]
+  };
+}
+
+function mapDispatchToProps(dispatch, props, state) {
+  return {
+    onPropertyChange: function(id, key, value) {
+      if (key in PROPERTIES) {
+        const property = PROPERTIES[key];
+        if (property.min && value < property.min) {
+          value = property.min;
+        } else if (property.max && value > property.max) {
+          value = property.max;
+        }
       }
-      dispatch(setLayerProperties(props.layer.id, {[key]: value}));
+      dispatch(setLayerProperties(id, {[key]: value}));
     }
   };
-})(Inspector);
+}
+
+module.exports = connect(mapStateToProps, mapDispatchToProps)(Inspector);
