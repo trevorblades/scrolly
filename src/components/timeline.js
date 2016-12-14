@@ -252,7 +252,8 @@ let Timeline = React.createClass({
                             onClick={function(event) {
                               event.stopPropagation();
                               action.onClick(layer.id);
-                            }}>
+                            }}
+                            onMouseDown={event => event.stopPropagation()}>
                           <Icon name={action.icon}/>
                         </div>
                       );

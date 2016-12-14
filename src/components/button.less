@@ -1,23 +1,10 @@
-@button-inner-shadow: inset 0 1px @highlight, inset 0 -1px @shadow;
-@button-outer-shadow: 0 0 0 1px @shadow-dark;
-@button-shadow: @button-inner-shadow, @button-outer-shadow;
-
 .pl-button {
-  box-shadow: @button-shadow;
-  background-color: @gray;
-  &:focus {
-    box-shadow: @button-inner-shadow, 0 0 0 1px black, 0 0 1px 1px @brand-primary;
-    background-color: @gray;
-    .pl-icon {
-      fill: @gray-lighter;
-    }
-  }
-  &:hover {
-    background-color: mix(@gray, @gray-dark);
+  box-shadow: none;
+  &:hover, &:focus {
+    background-color: @shadow;
   }
   &:active {
-    box-shadow: @button-outer-shadow;
-    background-color: @gray-dark;
+    background-color: @shadow-dark;
   }
 
   .pl-icon {
