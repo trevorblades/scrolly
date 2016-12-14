@@ -59,21 +59,16 @@ let Inspector = React.createClass({
   },
 
   _onInputKeyDown: function(event) {
-    if (!isNaN(event.target.value) &&
-        (event.keyCode === 38 || event.keyCode === 40)) {
+    if (event.keyCode === 38 || event.keyCode === 40) {
       event.preventDefault();
-      let movement = event.keyCode === 38 ? 1 : -1;
+      let direction = event.keyCode === 38 ? 1 : -1;
+      let movement = event.target.step * direction;
       if (event.shiftKey) {
         movement *= 10;
       }
 
       const key = event.target.name;
-      const property = PROPERTIES[key];
-      if (!isNaN(property.step)) {
-        movement *= property.step;
-      }
-
-      const value = this.state[key] + movement;
+      const value = parseFloat(event.target.value) + movement;
       this.props.onPropertyChange(key, clamp(key, value));
     }
   },
@@ -123,29 +118,36 @@ let Inspector = React.createClass({
               value={this.state.name}/>
         </div>
         <div className="pl-inspector-properties">
-          {properties.map(property => {
+          {properties.map(key => {
+            const property = PROPERTIES[key];
+
+            let inputProps;
             let labelProps;
-            let value = property === this.state.dragKey ?
-                this.state.dragValue : this.state[property];
+            let value = key === this.state.dragKey ?
+                this.state.dragValue : this.state[key];
             const isNumber = !isNaN(value);
             if (isNumber) {
               value = Math.round(value * 100) / 100;
+              inputProps = {
+                onKeyDown: this._onInputKeyDown,
+                step: property.step || 1
+              };
               labelProps = {
-                onMouseDown: this._onLabelMouseDown.bind(null, property),
+                onMouseDown: this._onLabelMouseDown.bind(null, key),
                 style: {
                   cursor: 'ew-resize'
                 }
               };
             }
+
             return (
               <div className="pl-inspector-property"
-                  key={property}>
-                <input name={property}
+                  key={key}>
+                <input {...inputProps} name={key}
                     onChange={this._onInputChange}
-                    onKeyDown={this._onInputKeyDown}
                     type={isNumber ? 'number' : 'text'}
                     value={value}/>
-                <label {...labelProps}>{sentenceCase(property)}</label>
+                <label {...labelProps}>{sentenceCase(key)}</label>
                 <span/>
               </div>
             );

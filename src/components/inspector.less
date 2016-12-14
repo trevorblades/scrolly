@@ -15,7 +15,6 @@
     flex-shrink: 0;
     padding: @padding-smaller;
     border-bottom: 1px solid @shadow-dark;
-    background-color: @gray;
     input[type="text"] {
       padding: @padding-smaller @padding-small;
       border-radius: @border-radius-small;
@@ -29,34 +28,41 @@
   .pl-inspector-properties {
     flex-grow: 1;
     padding: @padding-base;
-    background-color: @gray-dark;
+    background-color: @shadow;
     overflow: auto;
     .pl-inspector-property {
-      font-size: @font-size-small;
       position: relative;
       &:not(:last-child) {
         margin-bottom: @padding-base;
       }
 
       label {
+        font-size: @font-size-small;
+        line-height: @padding-large;
         color: @gray-lighter;
         position: absolute;
-        top: 0;
+        bottom: @padding-smallest;
         left: 0;
       }
       input[type="text"], input[type="number"] {
         width: 100%;
-        padding: 0;
-        padding-bottom: @padding-smaller;
+        padding: @padding-smallest 0;
         border: none;
-        border-bottom: 1px solid @gray;
+        border-bottom: 1px solid @gray-light;
+        font-family: @font-family-monospace;
+        font-size: @padding-large;
         line-height: 1em;
         text-align: right;
         background: none;
         position: relative;
-        &:focus ~ span {
-          opacity: 1;
-          transform: scaleX(1);
+        &:focus {
+          ~ label {
+            color: @brand-primary;
+          }
+          ~ span {
+            opacity: 1;
+            transform: scaleX(1);
+          }
         }
       }
       input[type="number"]::-webkit-inner-spin-button {
