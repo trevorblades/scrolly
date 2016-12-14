@@ -16,9 +16,9 @@
       padding: @padding-smaller @padding-small;
       border-radius: @border-radius-small;
       box-shadow: 0 0 0 1px @shadow-dark;
-      background-color: @gray-lightest;
-      &:focus {
-        background-color: white;
+      background-color: white;
+      &:not(:focus) {
+        color: @gray-lighter;
       }
     }
   }

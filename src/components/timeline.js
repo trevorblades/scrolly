@@ -56,7 +56,7 @@ let Timeline = React.createClass({
     }
   },
 
-  _onLayerClick: function(id, event) {
+  _onLayerMouseDown: function(id, event) {
     event.stopPropagation();
     this.props.selectLayer(id);
   },
@@ -116,6 +116,7 @@ let Timeline = React.createClass({
 
   _onBarMouseDown: function(layer, event) {
     if (event.button === 0) {
+      event.stopPropagation();
       if (layer.id !== this.props.selectedLayerId) {
         this.props.selectLayer(layer.id);
       }
@@ -217,7 +218,7 @@ let Timeline = React.createClass({
           </div>
         </div>
         <div className="pl-timeline-content"
-            onClick={this.props.selectLayer.bind(null, null)}>
+            onMouseDown={this.props.selectLayer.bind(null, null)}>
           <div className="pl-timeline-layers">
             {this.props.layers.map(layer => {
               const layerClassName = classNames('pl-timeline-layer', {
@@ -239,7 +240,7 @@ let Timeline = React.createClass({
               return (
                 <div className={layerClassName}
                     key={layer.id}
-                    onClick={this._onLayerClick.bind(null, layer.id)}>
+                    onMouseDown={this._onLayerMouseDown.bind(null, layer.id)}>
                   <div className="pl-timeline-layer-name">
                     {layer.name}
                   </div>

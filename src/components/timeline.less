@@ -132,7 +132,10 @@
       font-size: @font-size-small;
       line-height: @padding-base;
       color: @gray-lightest;
-      cursor: default;
+      cursor: pointer;
+      &:hover {
+        color: mix(@gray-lightest, white);
+      }
       &.pl-selected {
         color: white;
       }
@@ -149,10 +152,10 @@
         flex-grow: 1;
       }
       .pl-timeline-layer-actions {
+        display: flex;
+        align-items: center;
         flex-shrink: 0;
         .pl-timeline-layer-action {
-          display: inline-block;
-          vertical-align: top;
           margin-left: @padding-small;
           cursor: pointer;
           &:hover .pl-icon {
@@ -209,15 +212,16 @@
         height: 100%;
         border-radius: @border-radius-small;
         box-shadow: 0 1px 1px @shadow-dark;
-        background-color: @gray;
+        background-color: @gray-light;
+        cursor: pointer;
         position: absolute;
         top: 0;
         left: 0;
         &:hover {
-          background-color: mix(@gray-light, @gray);
+          background-color: mix(@gray-light, @gray-lightest);
         }
         &:active, &.pl-selected {
-          background-color: @gray-lighter;
+          background-color: @gray-lightest;
         }
         &.pl-hidden {
           opacity: 0.5;
