@@ -56,6 +56,7 @@
   "dependencies": {
     "bytes": "^2.4.0",
     "classnames": "^2.2.5",
+    "core-js": "^2.4.1",
     "planet-css": "^0.9.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",

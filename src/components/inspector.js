@@ -77,7 +77,7 @@ const Inspector = React.createClass({
     if (event.button === 0) {
       this.setState({
         dragKey: property,
-        dragValue: this.state[property]
+        dragValue: parseFloat(this.state[property])
       });
       document.addEventListener('mousemove', this._onLabelMouseMove);
       document.addEventListener('mouseup', this._onLabelMouseUp);
@@ -171,7 +171,7 @@ const Inspector = React.createClass({
 
 function mapStateToProps(state, props) {
   return {
-    layer: state.layers.present.filter(layer => layer.id === props.selectedLayerId)[0]
+    layer: state.layers.present.find(layer => layer.id === props.selectedLayerId)
   };
 }
 
