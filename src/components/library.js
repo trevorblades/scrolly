@@ -33,8 +33,10 @@ const Library = React.createClass({
               <div className="pl-library-preview-asset-thumb">
                 <img src={selectedAsset.data}/>
               </div>
-              <h5 className="pl-ellipsized">{selectedAsset.name}</h5>
-              <h6>{bytes(selectedAsset.size)}</h6>
+              <div className="pl-library-preview-asset-info">
+                <h5 className="pl-ellipsized">{selectedAsset.name}</h5>
+                <h6>{bytes(selectedAsset.size)}</h6>
+              </div>
             </div>}
         </div>
         <div className="pl-library-assets" onClick={this._onAssetsClick}>
