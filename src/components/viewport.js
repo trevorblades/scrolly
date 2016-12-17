@@ -52,6 +52,10 @@ let Viewport = React.createClass({
     });
   },
 
+  componentWillMount: function() {
+    this._dragCounter = 0;
+  },
+
   componentWillReceiveProps: function(nextProps) {
     if (nextProps.compositionHeight !== this.props.compositionHeight ||
         nextProps.compositionWidth !== this.props.compositionWidth ||
@@ -70,13 +74,17 @@ let Viewport = React.createClass({
   _onDragEnter: function(event) {
     event.preventDefault();
     if (isDragTypeFound(event, ASSET_DRAG_TYPE)) {
+      this._dragCounter++;
       this.setState({dragging: true});
     }
   },
 
   _onDragLeave: function(event) {
     if (isDragTypeFound(event, ASSET_DRAG_TYPE)) {
-      this.setState({dragging: false});
+      this._dragCounter--;
+      if (!this._dragCounter) {
+        this.setState({dragging: false});
+      }
     }
   },
 
@@ -90,6 +98,7 @@ let Viewport = React.createClass({
     if (id) {
       const asset = this.props.assets.find(asset => asset.id === parseInt(id));
       this.props.dispatch(addImageLayer(asset.data));
+      this._dragCounter = 0;
       this.setState({dragging: false});
     }
   },
@@ -214,8 +223,11 @@ let Viewport = React.createClass({
   },
 
   render: function() {
+    const viewportClassName = classNames('pl-viewport', {
+      'pl-dragging': this.state.dragging
+    });
     return (
-      <div className="pl-viewport"
+      <div className={viewportClassName}
           onClick={this._onClick}
           onDragEnter={this._onDragEnter}
           onDragLeave={this._onDragLeave}
