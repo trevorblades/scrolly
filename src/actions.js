@@ -41,10 +41,18 @@ function addAsset(name, filetype, size, data) {
   };
 }
 
+function removeAsset(id) {
+  return {
+    type: 'REMOVE_ASSET',
+    id
+  };
+}
+
 module.exports = {
   addLayer,
   deleteLayer,
   setLayerProperties,
   toggleLayerVisibility,
-  addAsset
+  addAsset,
+  removeAsset
 };

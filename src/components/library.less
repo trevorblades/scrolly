@@ -46,10 +46,14 @@
   .pl-library-header, .pl-library-assets .pl-library-asset {
     display: flex;
     span {
-      .pl-ellipsized;
       display: block;
       width: 50%;
       padding: @padding-smaller @padding-small;
+      &:last-child {
+        flex-shrink: 0;
+        box-sizing: content-box;
+        width: 1rem;
+      }
     }
   }
   .pl-library-header {
@@ -89,6 +93,16 @@
       &.pl-selected {
         color: white;
         background-color: @shadow;
+      }
+
+      span:first-child {
+        .pl-ellipsized;
+      }
+      .pl-icon {
+        fill: @gray-lightest;
+        &:hover {
+          fill: white;
+        }
       }
     }
   }

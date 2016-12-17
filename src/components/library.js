@@ -5,7 +5,7 @@ const classNames = require('classnames');
 
 const Icon = require('./icon');
 
-const {addAsset} = require('../actions');
+const {addAsset, removeAsset} = require('../actions');
 
 const ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/gif'];
 
@@ -14,7 +14,8 @@ const Library = React.createClass({
   propTypes: {
     assets: React.PropTypes.array.isRequired,
     dispatch: React.PropTypes.func,
-    dragging: React.PropTypes.bool
+    dragging: React.PropTypes.bool,
+    onRemoveClick: React.PropTypes.func
   },
 
   getInitialState: function() {
@@ -41,6 +42,7 @@ const Library = React.createClass({
   _onDrop: function(event) {
     event.preventDefault();
     this._onFileUpload(event.dataTransfer.files[0]);
+    this.setState({dragging: false});
   },
 
   _onFileUpload: function(file) {
@@ -91,6 +93,7 @@ const Library = React.createClass({
         <div className="pl-library-header">
           <span>Name</span>
           <span>Size</span>
+          <span/>
         </div>
         <div className={assetsClassName}
             onClick={this._onAssetsClick}
@@ -108,6 +111,9 @@ const Library = React.createClass({
                   onClick={this._onAssetClick.bind(null, asset.id)}>
                 <span title={asset.name}>{asset.name}</span>
                 <span>{bytes(asset.size)}</span>
+                <span onClick={this.props.onRemoveClick.bind(null, asset.id)}>
+                  <Icon name="delete"/>
+                </span>
               </div>
             );
           })}
@@ -117,8 +123,19 @@ const Library = React.createClass({
   }
 });
 
-module.exports = connect(function(state) {
+function mapStateToProps(state) {
   return {
     assets: state.assets.present
   };
-})(Library);
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+    onRemoveClick: function(id) {
+      dispatch(removeAsset(id));
+    }
+  };
+}
+
+module.exports = connect(mapStateToProps, mapDispatchToProps)(Library);
