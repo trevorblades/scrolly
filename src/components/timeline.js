@@ -105,7 +105,7 @@ let Timeline = React.createClass({
   },
 
   _onPlayheadMouseMove: function(event) {
-    this.props.setPercentPlayed((this.refs.playhead.offsetLeft + event.movementX) /
+    this.props.setPercentPlayed((event.clientX - this.refs.track.offsetLeft) /
         this.refs.track.offsetWidth);
   },
 
@@ -126,16 +126,29 @@ let Timeline = React.createClass({
         dragOut: layer.out,
         draggingLayerId: layer.id
       });
-      document.addEventListener('mousemove', this._onBarMouseMove);
+
+      const rect = event.target.getBoundingClientRect();
+      const offsetX = event.clientX - rect.left;
+      this._boundBarMouseMove = this._onBarMouseMove.bind(null, offsetX);
+      document.addEventListener('mousemove', this._boundBarMouseMove);
       document.addEventListener('mouseup', this._onBarMouseUp);
     }
   },
 
-  _onBarMouseMove: function(event) {
-    const movement = event.movementX / this.refs.track.offsetWidth;
+  _onBarMouseMove: function(offsetX, event) {
+    const barSize = this.state.dragOut - this.state.dragIn;
+    let dragIn = ((event.clientX - offsetX) - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
+    let dragOut = dragIn + barSize;
+    if (dragIn < 0) {
+      dragIn = 0;
+      dragOut = barSize;
+    } else if (dragOut > 1) {
+      dragOut = 1;
+      dragIn = dragOut - barSize;
+    }
     this.setState({
-      dragIn: this.state.dragIn + movement,
-      dragOut: this.state.dragOut + movement
+      dragIn: dragIn,
+      dragOut: dragOut
     });
   },
 
@@ -145,8 +158,9 @@ let Timeline = React.createClass({
       out: this.state.dragOut
     });
     this.setState({draggingLayerId: null});
+    document.removeEventListener('mousemove', this._boundBarMouseMove);
     document.removeEventListener('mouseup', this._onBarMouseUp);
-    document.removeEventListener('mousemove', this._onBarMouseMove);
+    delete this._boundBarMouseMove;
   },
 
   _onBarHandleMouseDown: function(layer, index, event) {
@@ -213,7 +227,6 @@ let Timeline = React.createClass({
             {marker}
             <div className="pl-timeline-header-track-playhead"
                 onMouseDown={this._onPlayheadMouseDown}
-                ref="playhead"
                 style={{left: `${percentPlayed}%`}}/>
           </div>
         </div>

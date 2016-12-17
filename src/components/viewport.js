@@ -115,9 +115,9 @@ let Viewport = React.createClass({
         movingLayerId: layer.id
       });
 
-      const layerRect = event.target.getBoundingClientRect();
-      const offsetX = event.clientX - layerRect.left;
-      const offsetY = event.clientY - layerRect.top;
+      const rect = event.target.getBoundingClientRect();
+      const offsetX = event.clientX - rect.left;
+      const offsetY = event.clientY - rect.top;
       this._boundLayerMouseMove = this._onLayerMouseMove.bind(null, offsetX, offsetY);
       this._boundLayerMouseUp = this._onLayerMouseUp.bind(null, layer.x, layer.y);
       document.addEventListener('mousemove', this._boundLayerMouseMove);

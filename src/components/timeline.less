@@ -54,7 +54,6 @@
       margin: @timeline-track-padding;
       cursor: pointer;
       position: relative;
-      z-index: 0;
       &:before {
         content: '';
         height: 50%;
@@ -101,7 +100,6 @@
         position: absolute;
         top: 0;
         left: 0;
-        z-index: 1;
         transform: translateX(@timeline-playhead-handle-size / -2);
         &:before {
           content: '';
@@ -180,30 +178,10 @@
     top: 0;
     left: @sidebar-width;
     right: 0;
-    z-index: 0;
-    &:before, &:after {
-      content: '';
-      width: @padding-small;
-      height: 100%;
-      background-color: fade(@gray-darker, 80%);
-      position: absolute;
-      top: 0;
-    }
-    &:before {
-      left: 0;
-      z-index: 1;
-    }
-    &:after {
-      right: 0;
-    }
-
     .pl-timeline-tracks-wrapper {
       flex-grow: 1;
       padding-top: @padding-small;
       position: relative;
-      .pl-timeline-marker {
-        z-index: 1;
-      }
     }
     .pl-timeline-track {
       height: @padding-base;
