@@ -1,4 +1,5 @@
 var path = require('path');
+var babelify = require('babelify');
 var browserify = require('browserify');
 var browserSync = require('browser-sync').create();
 var del = require('del');
@@ -9,6 +10,7 @@ var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
 var LessPluginAutoPrefix = require('less-plugin-autoprefix');
 var LessPluginCleanCSS = require('less-plugin-clean-css');
+var livereactload = require('livereactload');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 var watchify = require('watchify');
@@ -27,15 +29,18 @@ function devMarkup() {
 }
 gulp.task('dev-markup', devMarkup);
 
-var bundlerOptions = Object.assign({}, watchify.args, {debug: true});
+var bundlerOptions = Object.assign({}, watchify.args, {
+  debug: true,
+  transform: babelify,
+  plugin: livereactload
+});
 var bundler = watchify(browserify(path.join(SRC_DIR, 'main.js'), bundlerOptions));
 
 function bundle() {
   return bundler.bundle()
     .on('error', gutil.log.bind(gutil, 'Error Bundling'))
     .pipe(source('main.js'))
-    .pipe(gulp.dest(DEV_DIR))
-    .pipe(browserSync.reload({stream: true}));
+    .pipe(gulp.dest(DEV_DIR));
 }
 
 bundler.on('update', bundle);
