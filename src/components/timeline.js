@@ -7,7 +7,7 @@ const Icon = require('./icon');
 
 const {
   addLayer,
-  deleteLayer,
+  removeLayer,
   setLayerProperties,
   toggleLayerVisibility
 } = require('../actions');
@@ -26,8 +26,8 @@ let Timeline = React.createClass({
     layers: React.PropTypes.array.isRequired,
     maxHeight: React.PropTypes.number.isRequired,
     onAddClick: React.PropTypes.func.isRequired,
-    onDeleteClick: React.PropTypes.func.isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
+    onRemoveClick: React.PropTypes.func.isRequired,
     onResize: React.PropTypes.func.isRequired,
     onVisiblityToggle: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
@@ -232,8 +232,8 @@ let Timeline = React.createClass({
                   onClick: this.props.onVisiblityToggle
                 },
                 {
-                  icon: 'delete',
-                  onClick: this.props.onDeleteClick
+                  icon: 'trash',
+                  onClick: this.props.onRemoveClick
                 }
               ];
 
@@ -323,8 +323,8 @@ function mapDispatchToProps(dispatch) {
     onAddClick: function() {
       dispatch(addLayer());
     },
-    onDeleteClick: function(id) {
-      dispatch(deleteLayer(id));
+    onRemoveClick: function(id) {
+      dispatch(removeLayer(id));
     },
     onVisiblityToggle: function(id) {
       dispatch(toggleLayerVisibility(id));

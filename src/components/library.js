@@ -112,7 +112,7 @@ const Library = React.createClass({
                 <span title={asset.name}>{asset.name}</span>
                 <span>{bytes(asset.size)}</span>
                 <span onClick={this.props.onRemoveClick.bind(null, asset.id)}>
-                  <Icon name="delete"/>
+                  <Icon name="trash"/>
                 </span>
               </div>
             );

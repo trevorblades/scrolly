@@ -4,7 +4,7 @@ module.exports = function(state = [], action) {
   switch (action.type) {
     case 'ADD_LAYER':
       return [...state, layerReducer(undefined, action)];
-    case 'DELETE_LAYER':
+    case 'REMOVE LAYER':
       var index = -1;
       for (var i = 0; i < state.length; i++) {
         if (state[i].id === action.id) {

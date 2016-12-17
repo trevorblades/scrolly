@@ -8,9 +8,9 @@ function addLayer() {
   };
 }
 
-function deleteLayer(id) {
+function removeLayer(id) {
   return {
-    type: 'DELETE_LAYER',
+    type: 'REMOVE LAYER',
     id
   };
 }
@@ -50,7 +50,7 @@ function removeAsset(id) {
 
 module.exports = {
   addLayer,
-  deleteLayer,
+  removeLayer,
   setLayerProperties,
   toggleLayerVisibility,
   addAsset,
