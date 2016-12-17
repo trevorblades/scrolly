@@ -10,10 +10,6 @@ const Sidebar = require('./sidebar');
 const Timeline = require('./timeline');
 const Viewport = require('./viewport');
 
-const {addAsset} = require('../actions');
-
-const ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/gif'];
-
 const App = React.createClass({
 
   propTypes: {
@@ -32,6 +28,10 @@ const App = React.createClass({
       selectedLayerId: null,
       timelineMaxHeight: 0
     };
+  },
+
+  componentWillMount: function() {
+    this._dragCounter = 0;
   },
 
   componentDidMount: function() {
@@ -79,42 +79,21 @@ const App = React.createClass({
   },
 
   _onDragEnter: function(event) {
-    if (event.dataTransfer.types.indexOf('Files') !== -1) {
-      this.setState({dragging: true});
-    }
+    event.preventDefault();
+    this._dragCounter++;
+    this.setState({dragging: true});
   },
 
-  _onDragLeave: function() {
-    this.setState({dragging: false});
+  _onDragLeave: function(event) {
+    event.preventDefault();
+    this._dragCounter--;
+    if (!this._dragCounter) {
+      this.setState({dragging: false});
+    }
   },
 
   _onDragOver: function(event) {
     event.preventDefault();
-    event.stopPropagation();
-  },
-
-  _onDrop: function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this._onFileUpload(event.dataTransfer.files[0]);
-    this._onDragLeave();
-  },
-
-  _onFileUpload: function(file) {
-    if (!file) {
-      return;
-    } else if (ALLOWED_FILETYPES.indexOf(file.type) === -1) {
-      return; // file type not supported
-    }
-
-    const reader = new FileReader();
-    reader.onload = event => {
-      const action = addAsset(file.name, file.type, file.size, event.target.result);
-      this.props.dispatch(action);
-      this.setState({uploading: false});
-    };
-    reader.readAsDataURL(file);
-    this.setState({uploading: true});
   },
 
   _setPercentPlayed: function(value) {
@@ -132,11 +111,18 @@ const App = React.createClass({
 
   render: function() {
     return (
-      <div className="pl-app" onDragEnter={this._onDragEnter}>
+      <div className="pl-app"
+          onDragEnter={this._onDragEnter}
+          onDragLeave={this._onDragLeave}
+          onDragOver={this._onDragOver}
+          onDrop={this._onDragLeave}>
         <Header ref="header"/>
         <div className="pl-app-content">
           <Sidebar>
-            <Library assets={this.state.assets}/>
+            <Library assets={this.state.assets}
+                dragging={this.state.dragging}
+                onDragEnter={this._onDragEnter}
+                onDrop={this._onLibraryDrop}/>
             <Inspector selectedLayerId={this.state.selectedLayerId}/>
           </Sidebar>
           <div className="pl-app-viewport-wrapper" ref="viewportWrapper">
@@ -155,11 +141,6 @@ const App = React.createClass({
             selectLayer={this._selectLayer}
             selectedLayerId={this.state.selectedLayerId}
             setPercentPlayed={this._setPercentPlayed}/>
-        {this.state.dragging &&
-          <div className="pl-app-drop"
-              onDragLeave={this._onDragLeave}
-              onDragOver={this._onDragOver}
-              onDrop={this._onDrop}/>}
       </div>
     );
   }

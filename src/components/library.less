@@ -14,6 +14,7 @@
     height: 4.75rem;
     .pl-library-preview-thumb {
       display: flex;
+      flex-shrink: 0;
       align-items: center;
       justify-content: center;
       width: 40%;
@@ -32,6 +33,7 @@
     }
     .pl-library-preview-info {
       padding: @padding-small 1rem;
+      overflow: hidden;
       h5 {
         .pl-ellipsized;
         color: white;
@@ -44,6 +46,7 @@
   .pl-library-header, .pl-library-assets .pl-library-asset {
     display: flex;
     span {
+      .pl-ellipsized;
       display: block;
       width: 50%;
       padding: @padding-smaller @padding-small;
@@ -59,6 +62,22 @@
   .pl-library-assets {
     flex-grow: 1;
     position: relative;
+    &.pl-highlighted {
+      z-index: 1;
+      &:after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        border: 1px solid @brand-primary;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      &.pl-dragging:after {
+        background-color: @shadow;
+      }
+    }
+
     .pl-library-asset {
       border-bottom: 1px solid @gray-darker;
       font-size: @font-size-small;
