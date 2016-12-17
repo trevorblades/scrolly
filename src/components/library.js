@@ -28,11 +28,15 @@ const Library = React.createClass({
 
   _onDragEnter: function(event) {
     event.preventDefault();
-    this.setState({dragging: true});
+    if (event.dataTransfer.types.indexOf('Files') !== -1) {
+      this.setState({dragging: true});
+    }
   },
 
   _onDragLeave: function(event) {
-    this.setState({dragging: false});
+    if (event.dataTransfer.types.indexOf('Files') !== -1) {
+      this.setState({dragging: false});
+    }
   },
 
   _onDragOver: function(event) {
@@ -107,6 +111,7 @@ const Library = React.createClass({
             });
             return (
               <div className={assetClassName}
+                  draggable
                   key={index}
                   onClick={this._onAssetClick.bind(null, asset.id)}>
                 <span title={asset.name}>{asset.name}</span>

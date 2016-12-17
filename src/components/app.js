@@ -80,15 +80,19 @@ const App = React.createClass({
 
   _onDragEnter: function(event) {
     event.preventDefault();
-    this._dragCounter++;
-    this.setState({dragging: true});
+    if (event.dataTransfer.types.indexOf('Files') !== -1) {
+      this._dragCounter++;
+      this.setState({dragging: true});
+    }
   },
 
   _onDragLeave: function(event) {
     event.preventDefault();
-    this._dragCounter--;
-    if (!this._dragCounter) {
-      this.setState({dragging: false});
+    if (event.dataTransfer.types.indexOf('Files') !== -1) {
+      this._dragCounter--;
+      if (!this._dragCounter) {
+        this.setState({dragging: false});
+      }
     }
   },
 
