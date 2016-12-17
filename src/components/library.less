@@ -1,46 +1,75 @@
 @import './sidebar';
 
-@library-thumb-width: 40%;
-@library-thumb-aspect-ratio: 16 / 9;
-
 .pl-library {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   color: @gray-lightest;
   overflow: hidden;
-  .pl-library-preview {
+  .pl-library-preview, .pl-library-header {
     flex-shrink: 0;
-    height: (@sidebar-width * @library-thumb-width / 100) / @library-thumb-aspect-ratio;
-    .pl-library-preview-asset {
+  }
+  .pl-library-preview {
+    display: flex;
+    height: 4.75rem;
+    .pl-library-preview-thumb {
       display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40%;
       height: 100%;
-      .pl-library-preview-asset-thumb {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: @library-thumb-width;
-        height: 100%;
-        background-color: @shadow;
-        img {
-          max-width: 100%;
-          max-height: 100%;
-        }
+      background-color: @shadow;
+      pointer-events: none;
+      img {
+        max-width: 100%;
+        max-height: 100%;
       }
-      .pl-library-preview-asset-info {
-        padding: @padding-small;
+      .pl-icon {
+        width: 40%;
+        height: 40%;
+        fill: @gray;
+      }
+    }
+    .pl-library-preview-info {
+      padding: @padding-small 1rem;
+      h5 {
+        .pl-ellipsized;
+        color: white;
+      }
+      h6 {
+        color: @gray-lighter;
       }
     }
   }
+  .pl-library-header, .pl-library-assets .pl-library-asset {
+    display: flex;
+    span {
+      display: block;
+      width: 50%;
+      padding: @padding-smaller @padding-small;
+    }
+  }
+  .pl-library-header {
+    .pl-spaced;
+    border-top: 1px solid @shadow-dark;
+    box-shadow: 0 1px @shadow-dark;
+    font-size: @font-size-smaller;
+    background-color: @gray;
+  }
   .pl-library-assets {
     flex-grow: 1;
-    border-top: 1px solid @shadow;
-    overflow: auto;
+    position: relative;
     .pl-library-asset {
-      display: flex;
-      padding: @padding-small;
-      &:nth-child(2n) {
-        background-color: @highlight;
+      border-bottom: 1px solid @gray-darker;
+      font-size: @font-size-small;
+      cursor: pointer;
+      &:hover {
+        color: mix(@gray-lightest, white);
+        background-color: @shadow-light;
+      }
+      &.pl-selected {
+        color: white;
+        background-color: @shadow;
       }
     }
   }
