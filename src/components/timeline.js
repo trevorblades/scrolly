@@ -321,7 +321,7 @@ function mapDispatchToProps(dispatch) {
   return {
     dispatch,
     onAddClick: function() {
-      dispatch(addLayer());
+      dispatch(addLayer('text'));
     },
     onRemoveClick: function(id) {
       dispatch(removeLayer(id));

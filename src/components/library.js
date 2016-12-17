@@ -6,6 +6,8 @@ const classNames = require('classnames');
 const Icon = require('./icon');
 
 const {addAsset, removeAsset} = require('../actions');
+const {ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
+const isDragTypeFound = require('../util/is-drag-type-found');
 
 const ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/gif'];
 
@@ -28,13 +30,13 @@ const Library = React.createClass({
 
   _onDragEnter: function(event) {
     event.preventDefault();
-    if (event.dataTransfer.types.indexOf('Files') !== -1) {
+    if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
       this.setState({dragging: true});
     }
   },
 
   _onDragLeave: function(event) {
-    if (event.dataTransfer.types.indexOf('Files') !== -1) {
+    if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
       this.setState({dragging: false});
     }
   },
@@ -45,8 +47,10 @@ const Library = React.createClass({
 
   _onDrop: function(event) {
     event.preventDefault();
-    this._onFileUpload(event.dataTransfer.files[0]);
-    this.setState({dragging: false});
+    if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
+      this._onFileUpload(event.dataTransfer.files[0]);
+      this.setState({dragging: false});
+    }
   },
 
   _onFileUpload: function(file) {
@@ -64,13 +68,17 @@ const Library = React.createClass({
     this.setState({uploading: true});
   },
 
+  _onAssetsClick: function() {
+    this.setState({selectedAssetId: null});
+  },
+
   _onAssetClick: function(id, event) {
     event.stopPropagation();
     this.setState({selectedAssetId: id});
   },
 
-  _onAssetsClick: function() {
-    this.setState({selectedAssetId: null});
+  _onAssetDragStart: function(id, event) {
+    event.dataTransfer.setData(ASSET_DRAG_TYPE, id);
   },
 
   render: function() {
@@ -113,7 +121,8 @@ const Library = React.createClass({
               <div className={assetClassName}
                   draggable
                   key={index}
-                  onClick={this._onAssetClick.bind(null, asset.id)}>
+                  onClick={this._onAssetClick.bind(null, asset.id)}
+                  onDragStart={this._onAssetDragStart.bind(null, asset.id)}>
                 <span title={asset.name}>{asset.name}</span>
                 <span>{bytes(asset.size)}</span>
                 <span onClick={this.props.onRemoveClick.bind(null, asset.id)}>

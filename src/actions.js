@@ -1,11 +1,18 @@
 let nextLayerId = 0;
 let nextAssetId = 0;
 
-function addLayer() {
+function addLayer(type) {
   return {
     type: 'ADD_LAYER',
-    id: nextLayerId++
+    id: nextLayerId++,
+    layerType: type
   };
+}
+
+function addImageLayer(src) {
+  const action = addLayer('image');
+  action.src = src;
+  return action;
 }
 
 function removeLayer(id) {
@@ -50,6 +57,7 @@ function removeAsset(id) {
 
 module.exports = {
   addLayer,
+  addImageLayer,
   removeLayer,
   setLayerProperties,
   toggleLayerVisibility,

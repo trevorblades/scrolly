@@ -3,7 +3,9 @@ const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const classNames = require('classnames');
 
-const {setLayerProperties} = require('../actions');
+const {addImageLayer, setLayerProperties} = require('../actions');
+const {ASSET_DRAG_TYPE} = require('../constants');
+const isDragTypeFound = require('../util/is-drag-type-found');
 
 function getViewportDimensions(options) {
   const compositionAspectRatio = options.compositionWidth / options.compositionHeight;
@@ -25,6 +27,7 @@ function getViewportDimensions(options) {
 let Viewport = React.createClass({
 
   propTypes: {
+    assets: React.PropTypes.array.isRequired,
     compositionHeight: React.PropTypes.number.isRequired,
     compositionWidth: React.PropTypes.number.isRequired,
     dispatch: React.PropTypes.func.isRequired,
@@ -58,9 +61,36 @@ let Viewport = React.createClass({
     }
   },
 
-  _onViewportClick: function() {
+  _onClick: function() {
     if (this.props.selectedLayerId !== null) {
       this.props.selectLayer(null);
+    }
+  },
+
+  _onDragEnter: function(event) {
+    event.preventDefault();
+    if (isDragTypeFound(event, ASSET_DRAG_TYPE)) {
+      this.setState({dragging: true});
+    }
+  },
+
+  _onDragLeave: function(event) {
+    if (isDragTypeFound(event, ASSET_DRAG_TYPE)) {
+      this.setState({dragging: false});
+    }
+  },
+
+  _onDragOver: function(event) {
+    event.preventDefault();
+  },
+
+  _onDrop: function(event) {
+    event.preventDefault();
+    const id = event.dataTransfer.getData(ASSET_DRAG_TYPE);
+    if (id) {
+      const asset = this.props.assets.find(asset => asset.id === parseInt(id));
+      this.props.dispatch(addImageLayer(asset.data));
+      this.setState({dragging: false});
     }
   },
 
@@ -186,7 +216,11 @@ let Viewport = React.createClass({
   render: function() {
     return (
       <div className="pl-viewport"
-          onClick={this._onViewportClick}
+          onClick={this._onClick}
+          onDragEnter={this._onDragEnter}
+          onDragLeave={this._onDragLeave}
+          onDragOver={this._onDragOver}
+          onDrop={this._onDrop}
           style={{
             width: this.state.width,
             height: this.state.height
@@ -265,6 +299,7 @@ let Viewport = React.createClass({
 
 module.exports = connect(function(state) {
   return {
+    assets: state.assets.present,
     layers: state.layers.present.filter(layer => layer.visible)
   };
 })(Viewport);

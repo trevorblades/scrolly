@@ -10,6 +10,9 @@ const Sidebar = require('./sidebar');
 const Timeline = require('./timeline');
 const Viewport = require('./viewport');
 
+const {FILE_DRAG_TYPE} = require('../constants');
+const isDragTypeFound = require('../util/is-drag-type-found');
+
 const App = React.createClass({
 
   propTypes: {
@@ -80,15 +83,14 @@ const App = React.createClass({
 
   _onDragEnter: function(event) {
     event.preventDefault();
-    if (event.dataTransfer.types.indexOf('Files') !== -1) {
+    if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
       this._dragCounter++;
       this.setState({dragging: true});
     }
   },
 
   _onDragLeave: function(event) {
-    event.preventDefault();
-    if (event.dataTransfer.types.indexOf('Files') !== -1) {
+    if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
       this._dragCounter--;
       if (!this._dragCounter) {
         this.setState({dragging: false});
