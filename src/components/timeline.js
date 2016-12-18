@@ -105,8 +105,12 @@ let Timeline = React.createClass({
   },
 
   _onPlayheadMouseMove: function(event) {
-    this.props.setPercentPlayed((event.clientX - this.refs.track.offsetLeft) /
-        this.refs.track.offsetWidth);
+    let percentPlayed = (event.clientX - this.refs.track.offsetLeft) /
+        this.refs.track.offsetWidth;
+    if (event.shiftKey) {
+      percentPlayed = Math.round(percentPlayed * 100) / 100;
+    }
+    this.props.setPercentPlayed(percentPlayed);
   },
 
   _onPlayheadMouseUp: function() {
