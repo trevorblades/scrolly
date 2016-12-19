@@ -125,7 +125,7 @@ const Inspector = React.createClass({
     }
 
     const properties = Object.keys(PROPERTIES).filter(property => {
-      return typeof this.state[property] !== 'undefined';
+      return typeof this.props.layer[property] !== 'undefined';
     });
     return (
       <div className="pl-inspector">
