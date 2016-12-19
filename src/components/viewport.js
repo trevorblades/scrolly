@@ -224,7 +224,6 @@ let Viewport = React.createClass({
   },
 
   render: function() {
-    console.log('render');
     const viewportClassName = classNames('pl-viewport', {
       'pl-dragging': this.state.dragging
     });
