@@ -9,7 +9,8 @@ module.exports = function(state, action) {
         y: 0,
         in: 0,
         out: 1,
-        visible: true
+        visible: true,
+        opacity: 1
       };
 
       switch (layer.type) {

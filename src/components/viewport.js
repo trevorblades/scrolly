@@ -280,13 +280,15 @@ let Viewport = React.createClass({
                     dangerouslySetInnerHTML={{__html: layer.value}}
                     onBlur={isEditing && this._onTextLayerBlur}
                     onDoubleClick={this._onTextLayerDoubleClick.bind(null, layer.id)}
-                    spellCheck={false}/>
+                    spellCheck={false}
+                    style={{opacity: layer.opacity}}/>
               );
               break;
             case 'image':
               children = (
                 <img height={layer.height * scale}
                     src={layer.src}
+                    style={{opacity: layer.opacity}}
                     width={layer.width * scale}/>
               );
               break;

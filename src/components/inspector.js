@@ -17,6 +17,11 @@ const PROPERTIES = {
     min: 0,
     max: 1
   },
+  opacity: {
+    step: 0.01,
+    min: 0,
+    max: 1
+  },
   width: true,
   height: true,
   fontSize: {
