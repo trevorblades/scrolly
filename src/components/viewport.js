@@ -106,6 +106,7 @@ let Viewport = React.createClass({
   _onLayerMouseDown: function(layer, event) {
     if (event.button === 0) {
       event.preventDefault();
+
       if (layer.id !== this.props.selectedLayerId) {
         this.props.selectLayer(layer.id);
       }
@@ -120,9 +121,8 @@ let Viewport = React.createClass({
       const offsetX = event.clientX - rect.left;
       const offsetY = event.clientY - rect.top;
       this._boundLayerMouseMove = this._onLayerMouseMove.bind(null, offsetX, offsetY);
-      this._boundLayerMouseUp = this._onLayerMouseUp.bind(null, layer.x, layer.y);
       document.addEventListener('mousemove', this._boundLayerMouseMove);
-      document.addEventListener('mouseup', this._boundLayerMouseUp);
+      document.addEventListener('mouseup', this._onLayerMouseUp);
     }
   },
 
