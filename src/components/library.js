@@ -59,13 +59,29 @@ const Library = React.createClass({
     }
 
     const reader = new FileReader();
-    reader.onload = event => {
-      const action = addAsset(file.name, file.type, file.size, event.target.result);
-      this.props.dispatch(action);
-      this.setState({uploading: false});
-    };
+    reader.onload = this._onReaderLoad.bind(null, file);
     reader.readAsDataURL(file);
     this.setState({uploading: true});
+  },
+
+  _onReaderLoad: function(file, event) {
+    const img = new Image();
+    const data = event.target.result;
+    img.onload = this._onImageLoad.bind(null, data, file);
+    img.src = data;
+  },
+
+  _onImageLoad: function(data, file, event) {
+    const args = [
+      file.name,
+      file.type,
+      file.size,
+      data,
+      event.target.width,
+      event.target.height
+    ];
+    this.props.dispatch(addAsset(...args));
+    this.setState({uploading: false});
   },
 
   _onAssetsClick: function() {

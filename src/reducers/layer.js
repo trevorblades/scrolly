@@ -21,6 +21,8 @@ module.exports = function(state, action) {
           break;
         case 'image':
           layer.src = action.src;
+          layer.width = action.width;
+          layer.height = action.height;
           break;
         default:
       }

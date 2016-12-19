@@ -6,7 +6,9 @@ module.exports = function(state, action) {
         name: action.name,
         filetype: action.filetype,
         size: action.size,
-        data: action.data
+        data: action.data,
+        width: action.width,
+        height: action.height
       };
     default:
       return state;

@@ -97,7 +97,7 @@ let Viewport = React.createClass({
     const id = event.dataTransfer.getData(ASSET_DRAG_TYPE);
     if (id) {
       const asset = this.props.assets.find(asset => asset.id === parseInt(id));
-      this.props.dispatch(addImageLayer(asset.data));
+      this.props.dispatch(addImageLayer(asset.data, asset.width, asset.height));
       this._dragCounter = 0;
       this.setState({dragging: false});
     }
@@ -224,6 +224,7 @@ let Viewport = React.createClass({
   },
 
   render: function() {
+    console.log('render');
     const viewportClassName = classNames('pl-viewport', {
       'pl-dragging': this.state.dragging
     });
@@ -280,7 +281,11 @@ let Viewport = React.createClass({
               );
               break;
             case 'image':
-              children = <img src={layer.src}/>;
+              children = (
+                <img height={layer.height}
+                    src={layer.src}
+                    width={layer.width}/>
+              );
               break;
             default:
               break;

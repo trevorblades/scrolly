@@ -9,9 +9,11 @@ function addLayer(type) {
   };
 }
 
-function addImageLayer(src) {
+function addImageLayer(src, width, height) {
   const action = addLayer('image');
   action.src = src;
+  action.width = width;
+  action.height = height;
   return action;
 }
 
@@ -37,14 +39,16 @@ function toggleLayerVisibility(id) {
   };
 }
 
-function addAsset(name, filetype, size, data) {
+function addAsset(name, filetype, size, data, width, height) {
   return {
     type: 'ADD_ASSET',
     id: nextAssetId++,
     name,
     filetype,
     size,
-    data
+    data,
+    width,
+    height
   };
 }
 
