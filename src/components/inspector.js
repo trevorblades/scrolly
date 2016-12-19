@@ -17,6 +17,8 @@ const PROPERTIES = {
     min: 0,
     max: 1
   },
+  width: true,
+  height: true,
   fontSize: {
     min: 1
   },
@@ -55,7 +57,12 @@ const Inspector = React.createClass({
   },
 
   _onInputChange: function(event) {
-    this.props.onPropertyChange(this.state.id, event.target.name, event.target.value);
+    let value = event.target.value;
+    const key = event.target.name;
+    if (!isNaN(this.state[key])) {
+      value = !value ? 0 : parseFloat(value);
+    }
+    this.props.onPropertyChange(this.state.id, key, value);
   },
 
   _onInputKeyDown: function(event) {

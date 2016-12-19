@@ -23,6 +23,8 @@ module.exports = function(state, action) {
           layer.src = action.src;
           layer.width = action.width;
           layer.height = action.height;
+          layer.aspectRatio = layer.width / layer.height;
+          layer.constrainProportions = true;
           break;
         default:
       }
@@ -31,6 +33,14 @@ module.exports = function(state, action) {
     case 'SET_LAYER_PROPERTIES':
       if (state.id !== action.id) {
         return state;
+      }
+      if (('width' in action.properties || 'height' in action.properties) &&
+          state.constrainProportions) {
+        if ('width' in action.properties) {
+          action.properties.height = action.properties.width / state.aspectRatio;
+        } else {
+          action.properties.width = action.properties.height * state.aspectRatio;
+        }
       }
       return Object.assign({}, state, action.properties);
     case 'TOGGLE_LAYER_VISIBILITY':
