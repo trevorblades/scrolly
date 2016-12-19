@@ -11,20 +11,22 @@
   }
 
   .pl-viewport-layer {
-    border: 1px solid transparent;
     position: absolute;
     top: 0;
     left: 0;
     &:hover {
-      border-color: fade(red, 25%);
+      box-shadow: 0 0 0 1px fade(red, 25%);
     }
     &.pl-selected {
-      border-color: red;
+      box-shadow: 0 0 0 1px red;
       .pl-viewport-layer-handles {
         display: block;
       }
     }
 
+    img {
+      display: block;
+    }
     .pl-viewport-layer-text {
       line-height: 1em;
       background: transparent;
@@ -45,9 +47,9 @@
         height: 3px;
         background-color: red;
         position: absolute;
-        transform: translate(-50%, -50%);
         top: 0;
         left: 0;
+        transform: translate(-50%, -50%);
         &:nth-child(1), &:nth-child(5) {
           cursor: nwse-resize;
         }
