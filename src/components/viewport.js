@@ -105,6 +105,7 @@ let Viewport = React.createClass({
 
   _onLayerMouseDown: function(layer, event) {
     if (event.button === 0) {
+      event.preventDefault();
       if (layer.id !== this.props.selectedLayerId) {
         this.props.selectLayer(layer.id);
       }
@@ -260,22 +261,29 @@ let Viewport = React.createClass({
             left: this.state.width * layerX / this.props.compositionWidth
           };
 
-          if (layer.type === 'text') {
-            const fontSize = isResizing ?
-                this.state.resizeFontSize : layer.fontSize;
-            style.fontSize = `${fontSize}px`;
-            style.fontWeight = layer.fontWeight;
-            style.fontStyle = layer.fontStyle;
+          switch (layer.type) {
+            case 'text':
+              var fontSize = isResizing ?
+                  this.state.resizeFontSize : layer.fontSize;
+              style.fontSize = `${fontSize}px`;
+              style.fontWeight = layer.fontWeight;
+              style.fontStyle = layer.fontStyle;
 
-            const isEditing = layer.id === this.state.editingLayerId;
-            children = (
-              <div className="pl-viewport-layer-text"
-                  contentEditable={isEditing}
-                  dangerouslySetInnerHTML={{__html: layer.value}}
-                  onBlur={isEditing && this._onTextLayerBlur}
-                  onDoubleClick={this._onTextLayerDoubleClick.bind(null, layer.id)}
-                  spellCheck={false}/>
-            );
+              var isEditing = layer.id === this.state.editingLayerId;
+              children = (
+                <div className="pl-viewport-layer-text"
+                    contentEditable={isEditing}
+                    dangerouslySetInnerHTML={{__html: layer.value}}
+                    onBlur={isEditing && this._onTextLayerBlur}
+                    onDoubleClick={this._onTextLayerDoubleClick.bind(null, layer.id)}
+                    spellCheck={false}/>
+              );
+              break;
+            case 'image':
+              children = <img src={layer.src}/>;
+              break;
+            default:
+              break;
           }
 
           const handles = [];
