@@ -128,7 +128,6 @@ let Viewport = React.createClass({
 
   _onLayerMouseMove: function(offsetX, offsetY, event) {
     const node = ReactDOM.findDOMNode(this);
-    const scale = this.props.compositionWidth / this.state.width;
 
     let layerX = event.clientX - node.offsetLeft - offsetX;
     const minX = offsetX * -1;
@@ -148,9 +147,10 @@ let Viewport = React.createClass({
       layerY = maxY;
     }
 
+    const scale = this._getScale();
     this.setState({
-      moveX: layerX * scale,
-      moveY: layerY * scale
+      moveX: layerX / scale,
+      moveY: layerY / scale
     });
   },
 
@@ -183,8 +183,7 @@ let Viewport = React.createClass({
     let layerY = this.state.resizeY;
     let movementY = event.movementY;
     if (index <= 2) {
-      const scale = this.props.compositionWidth / this.state.width;
-      layerY += event.movementY * scale;
+      layerY += event.movementY * this._getScale();
       movementY *= -1;
     }
     return this.setState({
@@ -223,7 +222,12 @@ let Viewport = React.createClass({
     }
   },
 
+  _getScale: function() {
+    return this.state.width / this.props.compositionWidth;
+  },
+
   render: function() {
+    const scale = this._getScale();
     const viewportClassName = classNames('pl-viewport', {
       'pl-dragging': this.state.dragging
     });
@@ -281,9 +285,9 @@ let Viewport = React.createClass({
               break;
             case 'image':
               children = (
-                <img height={layer.height}
+                <img height={layer.height * scale}
                     src={layer.src}
-                    width={layer.width}/>
+                    width={layer.width * scale}/>
               );
               break;
             default:
