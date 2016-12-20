@@ -7,7 +7,7 @@ module.exports = function(value, position) {
 
   const bounds = Object.keys(value);
   let lowerBound = bounds[0];
-  let upperBound = bounds[1];
+  let upperBound = bounds[bounds.length - 1];
   bounds.forEach(function(bound) {
     if (bound < position && bound > lowerBound) {
       lowerBound = bound;
