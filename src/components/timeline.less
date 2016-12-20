@@ -126,6 +126,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
       padding: 0 @padding-small;
       margin-bottom: @padding-small;
       font-size: @font-size-small;
@@ -166,6 +167,27 @@
           }
         }
       }
+      .pl-timeline-layer-properties {
+        width: 100%;
+        .pl-timeline-layer-property {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: @padding-smaller;
+          font-size: @font-size-smaller;
+          line-height: @font-size-smaller;
+          position: relative;
+          .pl-timeline-layer-property-animate {
+            width: @font-size-smaller;
+            height: @font-size-smaller;
+            border-radius: 50%;
+            background-color: @gray-light;
+            &.pl-active {
+              background-color: @brand-error;
+            }
+          }
+        }
+      }
     }
   }
   .pl-timeline-tracks {
@@ -184,11 +206,11 @@
       position: relative;
     }
     .pl-timeline-track {
-      height: @padding-base;
+      min-height: @padding-base;
       margin-bottom: @padding-small;
       position: relative;
       .pl-timeline-track-bar {
-        height: 100%;
+        height: @padding-base;
         border-radius: @border-radius-small;
         box-shadow: 0 1px 1px @shadow-dark;
         background-color: @gray-light;
@@ -216,6 +238,23 @@
           transform: translateX(-50%);
           &:last-child {
             left: 100%;
+          }
+        }
+      }
+      .pl-timeline-track-properties {
+        padding-top: @padding-base;
+        .pl-timeline-track-property {
+          height: @font-size-smaller;
+          margin-top: @padding-smaller;
+          position: relative;
+          .pl-timeline-track-property-keyframe {
+            width: @font-size-smaller / 2;
+            height: @font-size-smaller / 2;
+            box-shadow: @box-shadow-small;
+            background-color: @gray-lightest;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
           }
         }
       }

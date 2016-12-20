@@ -3,49 +3,7 @@ const {connect} = require('react-redux');
 const sentenceCase = require('sentence-case');
 
 const {setLayerProperties} = require('../actions');
-
-const PROPERTIES = {
-  x: {
-    type: 'number'
-  },
-  y: {
-    type: 'number'
-  },
-  in: {
-    type: 'number',
-    step: 0.01,
-    min: 0,
-    max: 1
-  },
-  out: {
-    type: 'number',
-    step: 0.01,
-    min: 0,
-    max: 1
-  },
-  opacity: {
-    type: 'number',
-    step: 0.01,
-    min: 0,
-    max: 1
-  },
-  width: {
-    type: 'number'
-  },
-  height: {
-    type: 'number'
-  },
-  fontSize: {
-    type: 'number',
-    min: 1
-  },
-  fontWeight: {
-    type: 'text'
-  },
-  fontStyle: {
-    type: 'text'
-  }
-};
+const {PROPERTIES} = require('../constants');
 
 function clamp(key, value) {
   const property = PROPERTIES[key];

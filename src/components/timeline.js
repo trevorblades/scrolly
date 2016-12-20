@@ -1,6 +1,7 @@
 const React = require('react');
 const {connect} = require('react-redux');
 const classNames = require('classnames');
+const sentenceCase = require('sentence-case');
 
 const Button = require('./button');
 const Icon = require('./icon');
@@ -12,8 +13,16 @@ const {
   setLayerProperties,
   toggleLayerVisibility
 } = require('../actions');
+const {PROPERTIES} = require('../constants');
 
 const MIN_HEIGHT = 100;
+
+const animatedProperties = [];
+for (var key in PROPERTIES) {
+  if (PROPERTIES[key].animated) {
+    animatedProperties.push(key);
+  }
+}
 
 let numTicks = 17;
 const ticks = [];
@@ -43,6 +52,7 @@ let Timeline = React.createClass({
       dragIn: null,
       dragOut: null,
       draggingLayerId: null,
+      expandedLayerId: null,
       height: 200,
       sortingLayerId: null,
       sortOrder: null
@@ -243,6 +253,24 @@ let Timeline = React.createClass({
     delete this._boundBarHandleMouseMove;
   },
 
+  _onExpandClick: function(id) {
+    const expandedLayerId = id === this.state.expandedLayerId ? null : id;
+    this.setState({expandedLayerId: expandedLayerId});
+  },
+
+  _onAnimateToggle: function(id, property) {
+    let nextValue;
+    const layer = this.props.layers.find(layer => layer.id === id);
+    const value = layer[property];
+    if (typeof value === 'object') {
+      const key = Object.keys(value)[0];
+      nextValue = value[key];
+    } else {
+      nextValue = {[this.props.percentPlayed]: value};
+    }
+    this.props.onPropertiesChange(id, {[property]: nextValue});
+  },
+
   render: function() {
     const percentPlayed = this.props.percentPlayed * 100;
     const marker = (
@@ -291,6 +319,10 @@ let Timeline = React.createClass({
 
               const actions = [
                 {
+                  icon: 'chevron',
+                  onClick: this._onExpandClick
+                },
+                {
                   icon: layer.visible ? 'visible' : 'invisible',
                   onClick: this.props.onVisiblityToggle
                 },
@@ -299,6 +331,8 @@ let Timeline = React.createClass({
                   onClick: this.props.onRemoveClick
                 }
               ];
+
+              const properties = animatedProperties.filter(property => layer[property]);
 
               return (
                 <div className={layerClassName}
@@ -326,6 +360,22 @@ let Timeline = React.createClass({
                       );
                     })}
                   </div>
+                  {layer.id === this.state.expandedLayerId &&
+                    <div className="pl-timeline-layer-properties">
+                      {properties.map(property => {
+                        const animateClassName = classNames('pl-timeline-layer-property-animate', {
+                          'pl-active': typeof layer[property] === 'object'
+                        });
+                        return (
+                          <div className="pl-timeline-layer-property"
+                              key={property}>
+                            <span>{sentenceCase(property)}</span>
+                            <div className={animateClassName}
+                                onClick={this._onAnimateToggle.bind(null, layer.id, property)}/>
+                          </div>
+                        );
+                      })}
+                    </div>}
                 </div>
               );
             })}
@@ -353,6 +403,8 @@ let Timeline = React.createClass({
                   layerIn = this.state.dragIn;
                   layerOut = this.state.dragOut;
                 }
+
+                const properties = animatedProperties.filter(property => layer[property]);
                 return (
                   <div className="pl-timeline-track" key={layer.id}>
                     <div className={barClassName}
@@ -364,6 +416,27 @@ let Timeline = React.createClass({
                         }}>
                       {handles}
                     </div>
+                    {layer.id === this.state.expandedLayerId &&
+                      <div className="pl-timeline-track-properties">
+                        {properties.map(function(property) {
+                          let keyframes = [];
+                          if (typeof layer[property] === 'object') {
+                            keyframes = Object.keys(layer[property]);
+                          }
+                          return (
+                            <div className="pl-timeline-track-property"
+                                key={property}>
+                              {keyframes.map(function(keyframe, index) {
+                                return (
+                                  <div className="pl-timeline-track-property-keyframe"
+                                      key={index}
+                                      style={{left: `${keyframe * 100}%`}}/>
+                                );
+                              })}
+                            </div>
+                          );
+                        })}
+                      </div>}
                   </div>
                 );
               })}

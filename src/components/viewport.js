@@ -5,6 +5,7 @@ const classNames = require('classnames');
 
 const {addImageLayer, setLayerProperties} = require('../actions');
 const {ASSET_DRAG_TYPE} = require('../constants');
+const getInterpolatedValue = require('../util/get-interpolated-value');
 const isDragTypeFound = require('../util/is-drag-type-found');
 
 function getViewportDimensions(options) {
@@ -112,8 +113,8 @@ let Viewport = React.createClass({
       }
 
       this.setState({
-        moveX: layer.x,
-        moveY: layer.y,
+        moveX: getInterpolatedValue(layer.x, this.state.percentPlayed),
+        moveY: getInterpolatedValue(layer.y, this.state.percentPlayed),
         movingLayerId: layer.id
       });
 
@@ -155,9 +156,14 @@ let Viewport = React.createClass({
   },
 
   _onLayerMouseUp: function() {
+    const layer = this.props.layers.find(layer => layer.id === this.state.movingLayerId);
     this.props.dispatch(setLayerProperties(this.state.movingLayerId, {
-      x: this.state.moveX,
-      y: this.state.moveY
+      x: typeof layer.x === 'object' ? Object.assign({}, layer.x, {
+        [this.props.percentPlayed]: this.state.moveX
+      }) : this.state.moveX,
+      y: typeof layer.y === 'object' ? Object.assign({}, layer.y, {
+        [this.props.percentPlayed]: this.state.moveY
+      }) : this.state.moveY
     }));
     this.setState({movingLayerId: null});
     document.removeEventListener('mousemove', this._boundLayerMouseMove);
@@ -272,8 +278,8 @@ let Viewport = React.createClass({
             return null;
           }
 
-          let layerX = layer.x;
-          let layerY = layer.y;
+          let layerX = getInterpolatedValue(layer.x, this.props.percentPlayed);
+          let layerY = getInterpolatedValue(layer.y, this.props.percentPlayed);
           const isResizing = layer.id === this.state.resizingLayerId;
           if (layer.id === this.state.movingLayerId) {
             layerX = this.state.moveX;
