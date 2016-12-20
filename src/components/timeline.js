@@ -8,6 +8,7 @@ const Icon = require('./icon');
 const {
   addLayer,
   removeLayer,
+  orderLayers,
   setLayerProperties,
   toggleLayerVisibility
 } = require('../actions');
@@ -23,6 +24,7 @@ for (var i = 0; i < numTicks; i++) {
 let Timeline = React.createClass({
 
   propTypes: {
+    dispatch: React.PropTypes.func.isRequired,
     layers: React.PropTypes.array.isRequired,
     maxHeight: React.PropTypes.number.isRequired,
     onAddClick: React.PropTypes.func.isRequired,
@@ -41,7 +43,9 @@ let Timeline = React.createClass({
       dragIn: null,
       dragOut: null,
       draggingLayerId: null,
-      height: 200
+      height: 200,
+      sortingLayerId: null,
+      sortOrder: null
     };
   },
 
@@ -54,6 +58,43 @@ let Timeline = React.createClass({
       }
       this.setState({height: height});
     }
+  },
+
+  _onLayerDragEnd: function() {
+    this.props.dispatch(orderLayers(this.state.sortOrder));
+    this.setState({
+      sortingLayerId: null,
+      sortOrder: null
+    });
+  },
+
+  _onLayerDragOver: function(event) {
+    const layer = event.currentTarget;
+    const layerIndex = this.state.sortOrder.indexOf(this.state.sortingLayerId);
+    const targetIndex = Array.from(layer.parentNode.children).indexOf(layer);
+    const sortOrder = this.state.sortOrder.slice();
+    sortOrder.splice(layerIndex, 1);
+    sortOrder.splice(targetIndex, 0, this.state.sortingLayerId);
+
+    let changed = false;
+    for (var i = sortOrder.length - 1; i >= 0; i--) {
+      if (sortOrder[i] !== this.state.sortOrder[i]) {
+        changed = true;
+        break;
+      }
+    }
+
+    if (changed) {
+      this.setState({sortOrder: sortOrder});
+    }
+  },
+
+  _onLayerDragStart: function(id, event) {
+    event.dataTransfer.effectAllowed = 'none';
+    this.setState({
+      sortingLayerId: id,
+      sortOrder: this.props.layers.map(layer => layer.id)
+    });
   },
 
   _onLayerMouseDown: function(id, event) {
@@ -209,6 +250,13 @@ let Timeline = React.createClass({
           style={{left: `${percentPlayed}%`}}/>
     );
 
+    let layers;
+    if (this.state.sortOrder) {
+      layers = this.state.sortOrder.map(id => this.props.layers.find(layer => layer.id === id));
+    } else {
+      layers = this.props.layers.slice();
+    }
+
     return (
       <div className="pl-timeline" style={{height: this.state.height}}>
         <div className="pl-timeline-header">
@@ -237,7 +285,7 @@ let Timeline = React.createClass({
         <div className="pl-timeline-content"
             onMouseDown={this.props.selectLayer.bind(null, null)}>
           <div className="pl-timeline-layers">
-            {this.props.layers.map(layer => {
+            {layers.map(layer => {
               const layerClassName = classNames('pl-timeline-layer', {
                 'pl-selected': layer.id === this.props.selectedLayerId,
                 'pl-hidden': !layer.visible
@@ -256,7 +304,11 @@ let Timeline = React.createClass({
 
               return (
                 <div className={layerClassName}
+                    draggable
                     key={layer.id}
+                    onDragEnd={this._onLayerDragEnd}
+                    onDragOver={this._onLayerDragOver}
+                    onDragStart={this._onLayerDragStart.bind(null, layer.id)}
                     onMouseDown={this._onLayerMouseDown.bind(null, layer.id)}>
                   <div className="pl-timeline-layer-name">
                     {layer.name}
@@ -282,7 +334,7 @@ let Timeline = React.createClass({
           </div>
           <div className="pl-timeline-tracks">
             <div className="pl-timeline-tracks-wrapper">
-              {this.props.layers.map(layer => {
+              {layers.map(layer => {
                 const handles = [];
                 for (var i = 0; i < 2; i++) {
                   handles.push(

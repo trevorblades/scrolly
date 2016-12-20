@@ -19,8 +19,15 @@ function addImageLayer(src, width, height) {
 
 function removeLayer(id) {
   return {
-    type: 'REMOVE LAYER',
+    type: 'REMOVE_LAYER',
     id
+  };
+}
+
+function orderLayers(order) {
+  return {
+    type: 'ORDER_LAYERS',
+    order
   };
 }
 
@@ -63,6 +70,7 @@ module.exports = {
   addLayer,
   addImageLayer,
   removeLayer,
+  orderLayers,
   setLayerProperties,
   toggleLayerVisibility,
   addAsset,

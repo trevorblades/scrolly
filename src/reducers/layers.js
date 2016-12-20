@@ -4,7 +4,7 @@ module.exports = function(state = [], action) {
   switch (action.type) {
     case 'ADD_LAYER':
       return [...state, layerReducer(undefined, action)];
-    case 'REMOVE LAYER':
+    case 'REMOVE_LAYER':
       var index = -1;
       for (var i = 0; i < state.length; i++) {
         if (state[i].id === action.id) {
@@ -13,6 +13,8 @@ module.exports = function(state = [], action) {
         }
       }
       return [...state.slice(0, index), ...state.slice(index + 1)];
+    case 'ORDER_LAYERS':
+      return action.order.map(id => state.find(layer => layer.id === id));
     case 'SET_LAYER_PROPERTIES':
     case 'TOGGLE_LAYER_VISIBILITY':
       return state.map(layer => layerReducer(layer, action));
