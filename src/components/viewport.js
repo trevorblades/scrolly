@@ -249,6 +249,8 @@ let Viewport = React.createClass({
   },
 
   render: function() {
+    const layers = this.props.layers.slice();
+    layers.reverse();
     const scale = this._getScale();
     const viewportClassName = classNames('pl-viewport', {
       'pl-dragging': this.state.dragging
@@ -264,7 +266,7 @@ let Viewport = React.createClass({
             width: this.state.width,
             height: this.state.height
           }}>
-        {this.props.layers.map(layer => {
+        {layers.map(layer => {
           if (layer.in > this.props.percentPlayed ||
               layer.out < this.props.percentPlayed) {
             return null;

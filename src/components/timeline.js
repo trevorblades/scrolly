@@ -250,12 +250,10 @@ let Timeline = React.createClass({
           style={{left: `${percentPlayed}%`}}/>
     );
 
-    let layers;
-    if (this.state.sortOrder) {
-      layers = this.state.sortOrder.map(id => this.props.layers.find(layer => layer.id === id));
-    } else {
-      layers = this.props.layers.slice();
-    }
+    const layers = this.state.sortOrder ?
+        this.state.sortOrder.map(id => {
+          return this.props.layers.find(layer => layer.id === id);
+        }) : this.props.layers;
 
     return (
       <div className="pl-timeline" style={{height: this.state.height}}>
