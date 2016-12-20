@@ -168,36 +168,58 @@ let Viewport = React.createClass({
   _onLayerHandleMouseDown: function(layer, index, event) {
     if (event.button === 0) {
       event.stopPropagation();
-      this.setState({
-        resizeFontSize: layer.fontSize,
+      const nextState = {
         resizeY: layer.y,
         resizingLayerId: layer.id
-      });
-      this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, index);
+      };
+      switch (layer.type) {
+        case 'text':
+          nextState.resizeFontSize = layer.fontSize;
+          break;
+        case 'image':
+          nextState.resizeHeight = layer.height;
+          break;
+        default:
+          break;
+      }
+      this.setState(nextState);
+      this._boundLayerHandleMouseMove = this._onLayerHandleMouseMove.bind(null, layer, index);
       document.addEventListener('mousemove', this._boundLayerHandleMouseMove);
       document.addEventListener('mouseup', this._onLayerHandleMouseUp);
     }
   },
 
-  _onLayerHandleMouseMove: function(index, event) {
+  _onLayerHandleMouseMove: function(layer, index, event) {
     let layerY = this.state.resizeY;
     let movementY = event.movementY;
+    const scale = this._getScale();
     if (index <= 2) {
-      layerY += event.movementY * this._getScale();
+      layerY += event.movementY / scale;
       movementY *= -1;
     }
-    return this.setState({
-      resizeY: layerY,
-      resizeFontSize: Math.round(this.state.resizeFontSize + movementY)
-    });
+    const nextState = {resizeY: layerY};
+    if (this.state.resizeFontSize !== null) {
+      nextState.resizeFontSize = Math.round(this.state.resizeFontSize + movementY);
+    } else if (this.state.resizeHeight !== null) {
+      nextState.resizeHeight = this.state.resizeHeight + movementY / scale;
+    }
+    return this.setState(nextState);
   },
 
   _onLayerHandleMouseUp: function() {
-    this.props.dispatch(setLayerProperties(this.state.resizingLayerId, {
-      y: this.state.resizeY,
-      fontSize: this.state.resizeFontSize
-    }));
-    this.setState({resizingLayerId: null});
+    const nextProps = {y: this.state.resizeY};
+    if (this.state.resizeFontSize !== null) {
+      nextProps.fontSize = this.state.resizeFontSize;
+    } else if (this.state.resizeHeight !== null) {
+      nextProps.height = this.state.resizeHeight;
+    }
+    this.props.dispatch(setLayerProperties(this.state.resizingLayerId, nextProps));
+    this.setState({
+      resizeFontSize: null,
+      resizeHeight: null,
+      resizeY: null,
+      resizingLayerId: null
+    });
 
     document.removeEventListener('mousemove', this._boundLayerHandleMouseMove);
     document.removeEventListener('mouseup', this._onLayerHandleMouseUp);
@@ -285,8 +307,9 @@ let Viewport = React.createClass({
               );
               break;
             case 'image':
+              var layerHeight = isResizing ? this.state.resizeHeight : layer.height;
               children = (
-                <img height={layer.height * scale}
+                <img height={layerHeight * scale}
                     src={layer.src}
                     style={{opacity: layer.opacity}}
                     width={layer.width * scale}/>
