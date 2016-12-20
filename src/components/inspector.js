@@ -5,37 +5,53 @@ const sentenceCase = require('sentence-case');
 const {setLayerProperties} = require('../actions');
 
 const PROPERTIES = {
-  x: true,
-  y: true,
+  x: {
+    type: 'number'
+  },
+  y: {
+    type: 'number'
+  },
   in: {
+    type: 'number',
     step: 0.01,
     min: 0,
     max: 1
   },
   out: {
+    type: 'number',
     step: 0.01,
     min: 0,
     max: 1
   },
   opacity: {
+    type: 'number',
     step: 0.01,
     min: 0,
     max: 1
   },
-  width: true,
-  height: true,
+  width: {
+    type: 'number'
+  },
+  height: {
+    type: 'number'
+  },
   fontSize: {
+    type: 'number',
     min: 1
   },
-  fontWeight: true,
-  fontStyle: true
+  fontWeight: {
+    type: 'text'
+  },
+  fontStyle: {
+    type: 'text'
+  }
 };
 
 function clamp(key, value) {
   const property = PROPERTIES[key];
-  if (!isNaN(property.min) && value < property.min) {
+  if (typeof property.min !== 'undefined' && value < property.min) {
     return property.min;
-  } else if (!isNaN(property.max) && value > property.max) {
+  } else if (typeof property.max !== 'undefined' && value > property.max) {
     return property.max;
   }
   return value;
@@ -63,7 +79,7 @@ const Inspector = React.createClass({
 
   _onInputChange: function(event) {
     let value = event.target.value;
-    if (!isNaN(value)) {
+    if (event.target.type === 'number') {
       value = !value ? 0 : parseFloat(value);
     }
     this.props.onPropertyChange(this.state.id, event.target.name, value);
@@ -98,7 +114,7 @@ const Inspector = React.createClass({
   _onLabelMouseMove: function(event) {
     let movement = event.movementX;
     const property = PROPERTIES[this.state.dragKey];
-    if (!isNaN(property.step)) {
+    if (property.step) {
       movement *= property.step;
     }
 
@@ -141,13 +157,13 @@ const Inspector = React.createClass({
         </div>
         <div className="pl-inspector-properties">
           {properties.map(key => {
-            const property = PROPERTIES[key];
-
             let inputProps;
             let labelProps;
             let value = key === this.state.dragKey ?
                 this.state.dragValue : this.state[key];
-            if (value !== '' && !isNaN(value)) { // value is a number
+
+            const property = PROPERTIES[key];
+            if (property.type === 'number') {
               value = Math.round(value * 100) / 100;
               inputProps = {
                 onKeyDown: this._onInputKeyDown,
@@ -166,7 +182,7 @@ const Inspector = React.createClass({
                   key={key}>
                 <input name={key}
                     onChange={this._onInputChange}
-                    type="text"
+                    type={property.type}
                     value={value}
                     {...inputProps}/>
                 <label {...labelProps}>{sentenceCase(key)}</label>
