@@ -307,12 +307,17 @@ let Viewport = React.createClass({
               );
               break;
             case 'image':
-              var layerHeight = isResizing ? this.state.resizeHeight : layer.height;
+              var layerHeight = layer.height;
+              var layerWidth = layer.width;
+              if (isResizing) {
+                layerHeight = this.state.resizeHeight;
+                layerWidth = layerHeight * layer.aspectRatio;
+              }
               children = (
                 <img height={layerHeight * scale}
                     src={layer.src}
                     style={{opacity: layer.opacity}}
-                    width={layer.width * scale}/>
+                    width={layerWidth * scale}/>
               );
               break;
             default:
