@@ -248,11 +248,9 @@ let Viewport = React.createClass({
             return null;
           }
 
-          let children;
-          const isResizing = layer.id === this.state.resizingLayerId;
-
           let layerX = layer.x;
           let layerY = layer.y;
+          const isResizing = layer.id === this.state.resizingLayerId;
           if (layer.id === this.state.movingLayerId) {
             layerX = this.state.moveX;
             layerY = this.state.moveY;
@@ -265,14 +263,11 @@ let Viewport = React.createClass({
             left: this.state.width * layerX / this.props.compositionWidth
           };
 
+          let children;
           switch (layer.type) {
             case 'text':
               var fontSize = isResizing ?
                   this.state.resizeFontSize : layer.fontSize;
-              style.fontSize = `${fontSize}px`;
-              style.fontWeight = layer.fontWeight;
-              style.fontStyle = layer.fontStyle;
-
               var isEditing = layer.id === this.state.editingLayerId;
               children = (
                 <div className="pl-viewport-layer-text"
@@ -281,7 +276,12 @@ let Viewport = React.createClass({
                     onBlur={isEditing && this._onTextLayerBlur}
                     onDoubleClick={this._onTextLayerDoubleClick.bind(null, layer.id)}
                     spellCheck={false}
-                    style={{opacity: layer.opacity}}/>
+                    style={{
+                      fontSize: `${fontSize}px`,
+                      fontWeight: layer.fontWeight,
+                      fontStyle: layer.fontStyle,
+                      opacity: layer.opacity
+                    }}/>
               );
               break;
             case 'image':

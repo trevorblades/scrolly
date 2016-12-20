@@ -63,11 +63,10 @@ const Inspector = React.createClass({
 
   _onInputChange: function(event) {
     let value = event.target.value;
-    const key = event.target.name;
-    if (!isNaN(this.state[key])) {
+    if (!isNaN(value)) {
       value = !value ? 0 : parseFloat(value);
     }
-    this.props.onPropertyChange(this.state.id, key, value);
+    this.props.onPropertyChange(this.state.id, event.target.name, value);
   },
 
   _onInputKeyDown: function(event) {
@@ -148,8 +147,7 @@ const Inspector = React.createClass({
             let labelProps;
             let value = key === this.state.dragKey ?
                 this.state.dragValue : this.state[key];
-            const isNumber = !isNaN(value);
-            if (isNumber) {
+            if (value !== '' && !isNaN(value)) { // value is a number
               value = Math.round(value * 100) / 100;
               inputProps = {
                 onKeyDown: this._onInputKeyDown,
@@ -166,10 +164,11 @@ const Inspector = React.createClass({
             return (
               <div className="pl-inspector-property"
                   key={key}>
-                <input {...inputProps} name={key}
+                <input name={key}
                     onChange={this._onInputChange}
-                    type={isNumber ? 'number' : 'text'}
-                    value={value}/>
+                    type="text"
+                    value={value}
+                    {...inputProps}/>
                 <label {...labelProps}>{sentenceCase(key)}</label>
                 <span/>
               </div>

@@ -17,7 +17,7 @@ module.exports = function(state, action) {
         case 'text':
           layer.value = 'Enter text here';
           layer.fontSize = 16;
-          layer.fontWeight = 'regular';
+          layer.fontWeight = 'normal';
           layer.fontStyle = 'normal';
           break;
         case 'image':
