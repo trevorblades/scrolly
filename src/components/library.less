@@ -1,9 +1,10 @@
-@import './sidebar';
+@library-width: 20rem;
 
 .pl-library {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  width: @library-width;
+  border-right: 1px solid @shadow-dark;
   color: @gray-lightest;
   overflow: hidden;
   .pl-library-preview, .pl-library-header {

@@ -4,9 +4,7 @@ const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
 
 const Header = require('./header');
-const Inspector = require('./inspector');
 const Library = require('./library');
-const Sidebar = require('./sidebar');
 const Timeline = require('./timeline');
 const Viewport = require('./viewport');
 
@@ -124,13 +122,10 @@ const App = React.createClass({
           onDrop={this._onDragLeave}>
         <Header ref="header"/>
         <div className="pl-app-content">
-          <Sidebar>
-            <Library assets={this.state.assets}
-                dragging={this.state.dragging}
-                onDragEnter={this._onDragEnter}
-                onDrop={this._onLibraryDrop}/>
-            <Inspector selectedLayerId={this.state.selectedLayerId}/>
-          </Sidebar>
+          <Library assets={this.state.assets}
+              dragging={this.state.dragging}
+              onDragEnter={this._onDragEnter}
+              onDrop={this._onLibraryDrop}/>
           <div className="pl-app-viewport-wrapper" ref="viewportWrapper">
             <Viewport compositionHeight={this.state.compositionHeight}
                 compositionWidth={this.state.compositionWidth}

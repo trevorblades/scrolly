@@ -1,0 +1,111 @@
+@import (reference) './library';
+
+.pl-layer {
+  display: flex;
+  flex-wrap: wrap;
+  margin: @padding-small 0;
+  &.pl-selected {
+    .pl-layer-control {
+      color: white;
+    }
+    .pl-layer-bar {
+      background-color: @gray-lightest;
+    }
+  }
+  &.pl-hidden .pl-layer-control span {
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
+
+  .pl-layer-control, .pl-layer-property-control {
+    display: flex;
+    justify-content: space-between;
+    flex-shrink: 0;
+    width: @library-width;
+    padding: 0 @padding-small;
+    font-size: @font-size-small;
+    line-height: @padding-base;
+    color: @gray-lightest;
+    span {
+      .pl-ellipsized;
+      flex-grow: 1;
+    }
+  }
+  .pl-layer-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    .pl-layer-action {
+      margin-left: @padding-small;
+      cursor: pointer;
+      &:hover .pl-icon {
+        fill: white;
+      }
+
+      .pl-icon {
+        fill: @gray-lightest;
+      }
+    }
+  }
+  .pl-layer-track {
+    flex-grow: 1;
+    margin: 0 @padding-small;
+    position: relative;
+  }
+  .pl-layer-bar {
+    height: @padding-base;
+    border-radius: @border-radius-small;
+    box-shadow: 0 1px 1px @shadow-dark;
+    background-color: @gray-light;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    .pl-layer-bar-handle {
+      width: 5px;
+      height: 100%;
+      cursor: ew-resize;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translateX(-50%);
+      &:last-child {
+        left: 100%;
+      }
+    }
+  }
+  .pl-layer-properties {
+    width: 100%;
+    margin-top: @padding-small;
+    padding: @padding-small 0;
+    border-top: 1px solid @shadow-dark;
+    border-bottom: 1px solid @shadow-dark;
+    background-color: @gray-dark;
+    .pl-layer-property {
+      display: flex;
+      &:not(:last-child) {
+        margin-bottom: @padding-smaller;
+      }
+
+      .pl-layer-property-animate {
+        width: @font-size-smaller;
+        height: @font-size-smaller;
+        border-radius: 50%;
+        background-color: @gray-light;
+        cursor: pointer;
+        &.pl-active {
+          background-color: @brand-error;
+        }
+      }
+      .pl-layer-property-keyframe {
+        width: @font-size-smaller / 1.5;
+        height: @font-size-smaller / 1.5;
+        box-shadow: @box-shadow-small;
+        background-color: @gray-lightest;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+    }
+  }
+}
