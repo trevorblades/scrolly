@@ -1,0 +1,35 @@
+@import (reference) './library';
+
+.pl-control {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 @padding-small;
+  font-size: @font-size-small;
+  line-height: @padding-base;
+  color: @gray-lightest;
+  span {
+    .pl-ellipsized;
+    flex-grow: 1;
+  }
+  .pl-control-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    .pl-control-action {
+      margin-left: @padding-small;
+      cursor: pointer;
+      &:hover .pl-icon {
+        fill: white;
+      }
+
+      .pl-icon {
+        width: @padding-base;
+        height: @padding-base;
+        fill: @gray-lightest;
+        &.pl-active {
+          fill: @brand-primary;
+        }
+      }
+    }
+  }
+}

@@ -93,7 +93,7 @@ let Timeline = React.createClass({
     });
   },
 
-  _onLayerMouseDown: function(id, event) {
+  _onLayerSelect: function(id, event) {
     event.stopPropagation();
     this.props.selectLayer(id);
   },
@@ -203,9 +203,8 @@ let Timeline = React.createClass({
                     onDragEnd={this._onLayerDragEnd}
                     onDragOver={this._onLayerDragOver}
                     onDragStart={this._onLayerDragStart}
-                    onMouseDown={this._onLayerMouseDown}
+                    onSelect={this._onLayerSelect.bind(null, layer.id)}
                     percentPlayed={this.props.percentPlayed}
-                    selectLayer={this.props.selectLayer}
                     selected={layer.id === this.props.selectedLayerId}/>
               );
             })}

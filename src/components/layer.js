@@ -3,6 +3,7 @@ const {connect} = require('react-redux');
 const classNames = require('classnames');
 const sentenceCase = require('sentence-case');
 
+const Control = require('./control');
 const Icon = require('./icon');
 
 const {
@@ -26,9 +27,9 @@ const Layer = React.createClass({
     onDragEnd: React.PropTypes.func.isRequired,
     onDragOver: React.PropTypes.func.isRequired,
     onDragStart: React.PropTypes.func.isRequired,
-    onMouseDown: React.PropTypes.func.isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
     onRemoveClick: React.PropTypes.func.isRequired,
+    onSelect: React.PropTypes.func.isRequired,
     onVisiblityToggle: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
     selected: React.PropTypes.bool
@@ -53,7 +54,7 @@ const Layer = React.createClass({
     if (event.button === 0) {
       event.stopPropagation();
       if (!this.props.selected) {
-        this.props.onMouseDown(this.props.layer.id, event);
+        this.props.onSelect(event);
       }
 
       this.setState({
@@ -133,8 +134,7 @@ const Layer = React.createClass({
     delete this._boundBarHandleMouseMove;
   },
 
-  _onExpandClick: function(event) {
-    event.stopPropagation();
+  _onMoreClick: function() {
     this.setState({expanded: !this.state.expanded});
   },
 
@@ -158,15 +158,18 @@ const Layer = React.createClass({
 
     const actions = [
       {
-        icon: 'chevron',
-        onClick: this._onExpandClick
+        children: (
+          <Icon className={this.state.expanded ? 'pl-active' : null}
+              name="more"/>
+        ),
+        onClick: this._onMoreClick
       },
       {
-        icon: this.props.layer.visible ? 'visible' : 'invisible',
+        children: <Icon name={this.props.layer.visible ? 'visible' : 'invisible'}/>,
         onClick: this.props.onVisiblityToggle
       },
       {
-        icon: 'trash',
+        children: <Icon name="trash"/>,
         onClick: this.props.onRemoveClick
       }
     ];
@@ -189,26 +192,16 @@ const Layer = React.createClass({
 
     return (
       <div className={layerClassName}
-          onDragOver={this.props.onDragOver}>
-        <div className="pl-layer-control"
+          onDragOver={this.props.onDragOver}
+          onMouseDown={event => event.stopPropagation()}>
+        <Control actions={actions}
+            className="pl-layer-name"
             draggable
+            onClick={this.props.onSelect}
             onDragEnd={this.props.onDragEnd}
-            onDragStart={this.props.onDragStart.bind(null, this.props.layer.id)}
-            onMouseDown={this.props.onMouseDown.bind(null, this.props.layer.id)}>
+            onDragStart={this.props.onDragStart}>
           <span>{this.props.layer.name}</span>
-          <div className="pl-layer-actions">
-            {actions.map((action, index) => {
-              return (
-                <div className="pl-layer-action"
-                    key={index}
-                    onClick={action.onClick}
-                    onMouseDown={event => event.stopPropagation()}>
-                  <Icon name={action.icon}/>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        </Control>
         <div className="pl-layer-track"
             key={this.props.layer.id}
             ref="track">
@@ -225,9 +218,7 @@ const Layer = React.createClass({
         {this.state.expanded &&
           <div className="pl-layer-properties">
             {this._properties.map(property => {
-              const animateClassName = classNames('pl-layer-property-animate', {
-                'pl-active': typeof this.props.layer[property] === 'object'
-              });
+              const propertyActions = [{children: <Icon name="timer"/>}];
 
               let keyframes = [];
               if (typeof this.props.layer[property] === 'object') {
@@ -237,13 +228,9 @@ const Layer = React.createClass({
               return (
                 <div className="pl-layer-property"
                     key={property}>
-                  <div className="pl-layer-property-control">
-                    <span>{sentenceCase(property)}</span>
-                    <div className="pl-layer-actions">
-                      <div className={animateClassName}
-                          onClick={this._onAnimateToggle.bind(null, property)}/>
-                    </div>
-                  </div>
+                  <Control actions={propertyActions}>
+                    {sentenceCase(property)}
+                  </Control>
                   <div className="pl-layer-track"
                       key={property}>
                     {keyframes.map(function(keyframe, index) {

@@ -1,12 +1,14 @@
 const React = require('react');
+const classNames = require('classnames');
 
 const icons = {
-  add: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14"><path d="M14,8H8v6H6V8H0V6H6V0H8V6h6V8Z"/></svg>',
-  chevron: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 7.41"><path d="M1.41,0L6,4.58,10.59,0,12,1.41l-6,6-6-6Z"/></svg>',
-  image: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><path d="M18,16V2a2,2,0,0,0-2-2H2A2,2,0,0,0,0,2V16a2,2,0,0,0,2,2H16A2,2,0,0,0,18,16ZM5.5,10.5l2.5,3L11.5,9,16,15H2Z"/></svg>',
-  invisible: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21.99 19"><path d="M11,4a5,5,0,0,1,5,5,4.85,4.85,0,0,1-.36,1.83l2.92,2.92A11.82,11.82,0,0,0,22,9,11.83,11.83,0,0,0,11,1.5a11.65,11.65,0,0,0-4,.7L9.17,4.36A4.85,4.85,0,0,1,11,4ZM1,1.27L3.28,3.55,3.74,4A11.8,11.8,0,0,0,0,9a11.83,11.83,0,0,0,11,7.5,11.78,11.78,0,0,0,4.38-.84l0.42,0.42L18.73,19,20,17.73,2.27,0ZM6.53,6.8L8.08,8.35A2.82,2.82,0,0,0,8,9a3,3,0,0,0,3,3,2.82,2.82,0,0,0,.65-0.08l1.55,1.55A5,5,0,0,1,6.53,6.8ZM10.84,6L14,9.17,14,9a3,3,0,0,0-3-3H10.84Z"/></svg>',
-  trash: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 18"><path d="M1,16a2,2,0,0,0,2,2h8a2,2,0,0,0,2-2V4H1V16ZM14,1H10.5l-1-1h-5l-1,1H0V3H14V1Z"/></svg>',
-  visible: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 15"><path d="M11,0A11.83,11.83,0,0,0,0,7.5a11.82,11.82,0,0,0,22,0A11.83,11.83,0,0,0,11,0Zm0,12.5a5,5,0,1,1,5-5A5,5,0,0,1,11,12.5Zm0-8a3,3,0,1,0,3,3A3,3,0,0,0,11,4.5Z"/></svg>'
+  add: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0,0H24V24H0V0Z" fill="none"/><path d="M4,6H2V20a2,2,0,0,0,2,2H18V20H4V6ZM20,2H8A2,2,0,0,0,6,4V16a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V4A2,2,0,0,0,20,2Zm-1,9H15v4H13V11H9V9h4V5h2V9h4v2Z"/></svg>',
+  image: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0,0H24V24H0V0Z" fill="none"/><path d="M21,19V5a2,2,0,0,0-2-2H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19A2,2,0,0,0,21,19ZM8.5,13.5l2.5,3L14.5,12,19,18H5Z"/></svg>',
+  invisible: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0,0H24V24H0V0ZM0,0H24V24H0V0ZM0,0H24V24H0V0ZM0,0H24V24H0V0Z" fill="none"/><path d="M12,7a5,5,0,0,1,5,5,4.85,4.85,0,0,1-.36,1.83l2.92,2.92A11.82,11.82,0,0,0,23,12,11.83,11.83,0,0,0,12,4.5a11.65,11.65,0,0,0-4,.7l2.16,2.16A4.85,4.85,0,0,1,12,7ZM2,4.27L4.28,6.55,4.74,7A11.8,11.8,0,0,0,1,12a11.82,11.82,0,0,0,15.38,6.66l0.42,0.42L19.73,22,21,20.73,3.27,3ZM7.53,9.8l1.55,1.55A2.82,2.82,0,0,0,9,12a3,3,0,0,0,3,3,2.82,2.82,0,0,0,.65-0.08l1.55,1.55A5,5,0,0,1,7.53,9.8ZM11.84,9L15,12.17,15,12a3,3,0,0,0-3-3H11.84Z"/></svg>',
+  more: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0,0H24V24H0V0Z" fill="none"/><path d="M6,10a2,2,0,1,0,2,2A2,2,0,0,0,6,10Zm12,0a2,2,0,1,0,2,2A2,2,0,0,0,18,10Zm-6,0a2,2,0,1,0,2,2A2,2,0,0,0,12,10Z"/></svg>',
+  timer: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0,0H24V24H0V0Z" fill="none"/><path d="M15,1H9V3h6V1ZM11,14h2V8H11v6Zm8-6.61L20.45,6A11,11,0,0,0,19,4.56L17.62,6A9,9,0,1,0,19,7.39ZM12,20a7,7,0,1,1,7-7A7,7,0,0,1,12,20Z"/></svg>',
+  trash: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0,0H24V24H0V0Z" fill="none"/><path d="M6,19a2,2,0,0,0,2,2h8a2,2,0,0,0,2-2V7H6V19Zm2.46-7.12,1.41-1.41L12,12.59l2.12-2.12,1.41,1.41L13.41,14l2.12,2.12-1.41,1.41L12,15.41,9.88,17.53,8.47,16.12,10.59,14ZM15.5,4l-1-1h-5l-1,1H5V6H19V4H15.5Z"/></svg>',
+  visible: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0,0H24V24H0V0Z" fill="none"/><path d="M12,4.5A11.83,11.83,0,0,0,1,12a11.82,11.82,0,0,0,22,0A11.83,11.83,0,0,0,12,4.5ZM12,17a5,5,0,1,1,5-5A5,5,0,0,1,12,17Zm0-8a3,3,0,1,0,3,3A3,3,0,0,0,12,9Z"/></svg>'
 };
 
 const parser = new DOMParser();
@@ -14,6 +16,7 @@ const parser = new DOMParser();
 const Icon = React.createClass({
 
   propTypes: {
+    className: React.PropTypes.string,
     name: React.PropTypes.string.isRequired
   },
 
@@ -39,7 +42,7 @@ const Icon = React.createClass({
     }
 
     return (
-      <svg className="pl-icon"
+      <svg className={classNames('pl-icon', this.props.className)}
           viewBox={icon.attributes.viewBox.value}
           xmlns="http://www.w3.org/2000/svg">
         {shapes.map(function(shape, index) {

@@ -1,51 +1,26 @@
 @import (reference) './library';
+@import './control';
 
 .pl-layer {
   display: flex;
   flex-wrap: wrap;
   margin: @padding-small 0;
-  &.pl-selected {
-    .pl-layer-control {
+  &.pl-selected:not(.pl-hidden) {
+    .pl-layer-name {
       color: white;
     }
     .pl-layer-bar {
       background-color: @gray-lightest;
     }
   }
-  &.pl-hidden .pl-layer-control span {
+  &.pl-hidden .pl-layer-name span {
     text-decoration: line-through;
     opacity: 0.5;
   }
 
-  .pl-layer-control, .pl-layer-property-control {
-    display: flex;
-    justify-content: space-between;
+  .pl-control {
     flex-shrink: 0;
     width: @library-width;
-    padding: 0 @padding-small;
-    font-size: @font-size-small;
-    line-height: @padding-base;
-    color: @gray-lightest;
-    span {
-      .pl-ellipsized;
-      flex-grow: 1;
-    }
-  }
-  .pl-layer-actions {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    .pl-layer-action {
-      margin-left: @padding-small;
-      cursor: pointer;
-      &:hover .pl-icon {
-        fill: white;
-      }
-
-      .pl-icon {
-        fill: @gray-lightest;
-      }
-    }
   }
   .pl-layer-track {
     flex-grow: 1;
@@ -87,16 +62,6 @@
         margin-bottom: @padding-smaller;
       }
 
-      .pl-layer-property-animate {
-        width: @font-size-smaller;
-        height: @font-size-smaller;
-        border-radius: 50%;
-        background-color: @gray-light;
-        cursor: pointer;
-        &.pl-active {
-          background-color: @brand-error;
-        }
-      }
       .pl-layer-property-keyframe {
         width: @font-size-smaller / 1.5;
         height: @font-size-smaller / 1.5;
