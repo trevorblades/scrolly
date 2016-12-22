@@ -181,15 +181,18 @@ const Layer = React.createClass({
           <Icon className={this.state.expanded && 'pl-active'}
               name="more"/>
         ),
-        onClick: this._onMoreClick
+        onClick: this._onMoreClick,
+        title: `${this.state.expanded ? 'Hide' : 'Show'} properties`
       },
       {
         children: <Icon name={this.props.layer.visible ? 'visible' : 'invisible'}/>,
-        onClick: this.props.onVisiblityToggle
+        onClick: this.props.onVisiblityToggle,
+        title: `${this.props.layer.visible ? 'Hide' : 'Show'} layer`
       },
       {
         children: <Icon name="trash"/>,
-        onClick: this.props.onRemoveClick
+        onClick: this.props.onRemoveClick,
+        title: 'Remove layer'
       }
     ];
 
@@ -249,7 +252,8 @@ const Layer = React.createClass({
                         name="timer"/>
                   ),
                   onClick: animating ?
-                      this._removeKeyframes.bind(null, property) : addKeyframe
+                      this._removeKeyframes.bind(null, property) : addKeyframe,
+                  title: `${animating ? 'Disable' : 'Enable'} animation`
                 },
                 {
                   children: (
@@ -257,7 +261,8 @@ const Layer = React.createClass({
                         name={highlighted ? 'remove' : 'add'}/>
                   ),
                   onClick: highlighted ?
-                      this._removeKeyframe.bind(null, property) : addKeyframe
+                      this._removeKeyframe.bind(null, property) : addKeyframe,
+                  title: `${highlighted ? 'Remove' : 'Add'} keyframe`
                 }
               ];
 

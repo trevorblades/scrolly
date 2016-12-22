@@ -29,7 +29,8 @@ const Control = React.createClass({
             return (
               <div className="pl-control-action"
                   key={index}
-                  onClick={action.onClick}>
+                  onClick={action.onClick}
+                  title={action.title}>
                 {action.children}
               </div>
             );
