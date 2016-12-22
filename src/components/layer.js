@@ -12,6 +12,7 @@ const {
   toggleLayerVisibility
 } = require('../actions');
 const {PROPERTIES} = require('../constants');
+const getInterpolatedValue = require('../util/get-interpolated-value');
 
 const animatedProperties = [];
 for (var key in PROPERTIES) {
@@ -139,14 +140,10 @@ const Layer = React.createClass({
   },
 
   _onAnimateToggle: function(property) {
-    let nextValue;
     const value = this.props.layer[property];
-    if (typeof value === 'object') {
-      const key = Object.keys(value)[0];
-      nextValue = value[key];
-    } else {
-      nextValue = {[this.props.percentPlayed]: value};
-    }
+    const nextValue = typeof value === 'object' ?
+        getInterpolatedValue(value, this.props.percentPlayed) :
+        {[this.props.percentPlayed]: value};
     this.props.onPropertiesChange({[property]: nextValue});
   },
 
@@ -218,12 +215,18 @@ const Layer = React.createClass({
         {this.state.expanded &&
           <div className="pl-layer-properties">
             {this._properties.map(property => {
-              const propertyActions = [{children: <Icon name="timer"/>}];
+              const keyframes = typeof this.props.layer[property] === 'object' ?
+                  Object.keys(this.props.layer[property]) : [];
 
-              let keyframes = [];
-              if (typeof this.props.layer[property] === 'object') {
-                keyframes = Object.keys(this.props.layer[property]);
-              }
+              const propertyActions = [
+                {
+                  children: (
+                    <Icon className={keyframes.length ? 'pl-active' : null}
+                        name="timer"/>
+                  ),
+                  onClick: this._onAnimateToggle.bind(null, property)
+                }
+              ];
 
               return (
                 <div className="pl-layer-property"
