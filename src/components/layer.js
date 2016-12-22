@@ -139,12 +139,34 @@ const Layer = React.createClass({
     this.setState({expanded: !this.state.expanded});
   },
 
-  _onAnimateToggle: function(property) {
+  _addKeyframe: function(property) {
+    let nextValue;
     const value = this.props.layer[property];
-    const nextValue = typeof value === 'object' ?
-        getInterpolatedValue(value, this.props.percentPlayed) :
-        {[this.props.percentPlayed]: value};
+    if (typeof value === 'object') {
+      const interpolatedValue = getInterpolatedValue(value, this.props.percentPlayed);
+      nextValue = Object.assign({}, value, {
+        [this.props.percentPlayed]: interpolatedValue
+      });
+    } else {
+      nextValue = {[this.props.percentPlayed]: value};
+    }
     this.props.onPropertiesChange({[property]: nextValue});
+  },
+
+  _removeKeyframe: function(property) {
+    const value = this.props.layer[property];
+    if (this.props.percentPlayed in value) {
+      const nextValue = Object.assign({}, value);
+      delete nextValue[this.props.percentPlayed];
+      this.props.onPropertiesChange({[property]: nextValue});
+    }
+  },
+
+  _removeKeyframes: function(property) {
+    const value = this.props.layer[property];
+    this.props.onPropertiesChange({
+      [property]: getInterpolatedValue(value, this.props.percentPlayed)
+    });
   },
 
   render: function() {
@@ -156,7 +178,7 @@ const Layer = React.createClass({
     const actions = [
       {
         children: (
-          <Icon className={this.state.expanded ? 'pl-active' : null}
+          <Icon className={this.state.expanded && 'pl-active'}
               name="more"/>
         ),
         onClick: this._onMoreClick
@@ -215,18 +237,32 @@ const Layer = React.createClass({
         {this.state.expanded &&
           <div className="pl-layer-properties">
             {this._properties.map(property => {
-              const keyframes = typeof this.props.layer[property] === 'object' ?
-                  Object.keys(this.props.layer[property]) : [];
+              const value = this.props.layer[property];
+              const animating = typeof value === 'object';
+              const highlighted = animating && this.props.percentPlayed in value;
 
+              const addKeyframe = this._addKeyframe.bind(null, property);
               const propertyActions = [
                 {
                   children: (
-                    <Icon className={keyframes.length ? 'pl-active' : null}
+                    <Icon className={animating && 'pl-active'}
                         name="timer"/>
                   ),
-                  onClick: this._onAnimateToggle.bind(null, property)
+                  onClick: animating ?
+                      this._removeKeyframes.bind(null, property) : addKeyframe
+                },
+                {
+                  children: (
+                    <Icon className={highlighted && 'pl-active'}
+                        name={highlighted ? 'remove' : 'add'}/>
+                  ),
+                  onClick: highlighted ?
+                      this._removeKeyframe.bind(null, property) : addKeyframe
                 }
               ];
+
+              const keyframes = animating ?
+                  Object.keys(this.props.layer[property]) : [];
 
               return (
                 <div className="pl-layer-property"

@@ -174,7 +174,7 @@ let Timeline = React.createClass({
             <div className="pl-timeline-header-control-indicator">{`${percentPlayed.toFixed(2)}%`}</div>
             <Button className="pl-timeline-header-control-add"
                 onClick={this.props.onAddClick}>
-              <Icon name="add"/>
+              <Icon name="addLayer"/>
             </Button>
           </div>
           <div className="pl-timeline-header-track"
