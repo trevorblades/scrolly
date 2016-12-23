@@ -156,8 +156,13 @@ const Layer = React.createClass({
   _removeKeyframe: function(property) {
     const value = this.props.layer[property];
     if (this.props.percentPlayed in value) {
-      const nextValue = Object.assign({}, value);
-      delete nextValue[this.props.percentPlayed];
+      let nextValue;
+      if (Object.keys(value).length === 1) {
+        nextValue = value[this.props.percentPlayed];
+      } else {
+        nextValue = Object.assign({}, value);
+        delete nextValue[this.props.percentPlayed];
+      }
       this.props.onPropertiesChange({[property]: nextValue});
     }
   },

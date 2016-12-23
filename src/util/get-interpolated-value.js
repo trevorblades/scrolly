@@ -1,5 +1,5 @@
 module.exports = function(value, position) {
-  if (typeof value === 'number') {
+  if (typeof value !== 'object') {
     return value;
   } else if (position in value) {
     return value[position];
