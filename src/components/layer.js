@@ -15,11 +15,21 @@ const {
 const {PROPERTIES} = require('../constants');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 
-const animatedProperties = [];
+const animatedKeys = [];
 for (var key in PROPERTIES) {
   if (PROPERTIES[key].animated) {
-    animatedProperties.push(key);
+    animatedKeys.push(key);
   }
+}
+
+function clamp(key, value) {
+  const property = PROPERTIES[key];
+  if (typeof property.min !== 'undefined' && value < property.min) {
+    return property.min;
+  } else if (typeof property.max !== 'undefined' && value > property.max) {
+    return property.max;
+  }
+  return value;
 }
 
 const Layer = React.createClass({
@@ -47,8 +57,8 @@ const Layer = React.createClass({
   },
 
   componentWillMount: function() {
-    this._properties = animatedProperties.filter(property => {
-      return typeof this.props.layer[property] !== 'undefined';
+    this._keys = animatedKeys.filter(key => {
+      return typeof this.props.layer[key] !== 'undefined';
     });
   },
 
@@ -140,8 +150,8 @@ const Layer = React.createClass({
     this.setState({expanded: !this.state.expanded});
   },
 
-  _onPropertyChange: function(property, value) {
-    this.props.onPropertiesChange({[property]: value});
+  _onPropertyChange: function(key, value) {
+    this.props.onPropertiesChange({[key]: clamp(key, value)});
   },
 
   _addKeyframe: function(property) {
@@ -249,18 +259,18 @@ const Layer = React.createClass({
         </div>
         {this.state.expanded &&
           <div className="pl-layer-properties">
-            {this._properties.map(property => {
-              const value = this.props.layer[property];
+            {this._keys.map(key => {
+              const value = this.props.layer[key];
               const animating = typeof value === 'object';
               const highlighted = animating && this.props.percentPlayed in value;
 
-              const addKeyframe = this._addKeyframe.bind(null, property);
+              const addKeyframe = this._addKeyframe.bind(null, key);
               const interpolatedValue = getInterpolatedValue(value, this.props.percentPlayed);
               const propertyActions = [
                 {
                   children: (
-                    <TextField onChange={this._onPropertyChange.bind(null, property)}
-                        type={PROPERTIES[property].type}
+                    <TextField onChange={this._onPropertyChange.bind(null, key)}
+                        type={PROPERTIES[key].type}
                         value={Math.round(interpolatedValue * 100) / 100}/>
                   )
                 },
@@ -270,7 +280,7 @@ const Layer = React.createClass({
                         name="timer"/>
                   ),
                   onClick: animating ?
-                      this._removeKeyframes.bind(null, property) : addKeyframe,
+                      this._removeKeyframes.bind(null, key) : addKeyframe,
                   title: `${animating ? 'Disable' : 'Enable'} animation`
                 },
                 {
@@ -279,22 +289,21 @@ const Layer = React.createClass({
                         name={highlighted ? 'remove' : 'add'}/>
                   ),
                   onClick: highlighted ?
-                      this._removeKeyframe.bind(null, property) : addKeyframe,
+                      this._removeKeyframe.bind(null, key) : addKeyframe,
                   title: `${highlighted ? 'Remove' : 'Add'} keyframe`
                 }
               ];
 
               const keyframes = animating ?
-                  Object.keys(this.props.layer[property]) : [];
+                  Object.keys(this.props.layer[key]) : [];
 
               return (
                 <div className="pl-layer-property"
-                    key={property}>
+                    key={key}>
                   <Control actions={propertyActions}>
-                    {sentenceCase(property)}
+                    {sentenceCase(key)}
                   </Control>
-                  <div className="pl-layer-track"
-                      key={property}>
+                  <div className="pl-layer-track">
                     {keyframes.map(function(keyframe, index) {
                       return (
                         <div className="pl-layer-property-keyframe"
