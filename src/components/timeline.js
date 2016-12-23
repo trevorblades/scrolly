@@ -6,21 +6,18 @@ const Icon = require('./icon');
 const Layer = require('./layer');
 
 const {addLayer, orderLayers} = require('../actions');
-const {PROPERTIES} = require('../constants');
 
 const MIN_HEIGHT = 100;
-
-const animatedProperties = [];
-for (var key in PROPERTIES) {
-  if (PROPERTIES[key].animated) {
-    animatedProperties.push(key);
-  }
-}
+const SNAP_TOLERANCE = 0.01;
 
 let numTicks = 17;
 const ticks = [];
 for (var i = 0; i < numTicks; i++) {
   ticks.push({});
+}
+
+function shouldSnap(keyframe, percentPlayed) {
+  return Math.abs(keyframe - percentPlayed) <= SNAP_TOLERANCE;
 }
 
 let Timeline = React.createClass({
@@ -144,9 +141,32 @@ let Timeline = React.createClass({
   _onPlayheadMouseMove: function(event) {
     let percentPlayed = (event.clientX - this.refs.track.offsetLeft) /
         this.refs.track.offsetWidth;
+
     if (event.shiftKey) {
-      percentPlayed = Math.round(percentPlayed * 100) / 100;
+      const snapPositions = Object.keys(this.props.layers.reduce(function(obj, layer) {
+        for (var property in layer) {
+          const value = layer[property];
+          if ((property === 'in' || property === 'out') &&
+              shouldSnap(value, percentPlayed)) {
+            obj[value] = true;
+          } else if (typeof value === 'object') {
+            for (var key in value) {
+              if (shouldSnap(key, percentPlayed)) {
+                obj[key] = true;
+              }
+            }
+          }
+        }
+        return obj;
+      }, {})).map(Number).sort();
+
+      if (snapPositions.length) {
+        percentPlayed = snapPositions.reduce(function(a, b) {
+          return (Math.abs(b - percentPlayed) < Math.abs(a - percentPlayed) ? b : a);
+        });
+      }
     }
+
     this.props.setPercentPlayed(percentPlayed);
   },
 
