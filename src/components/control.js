@@ -26,8 +26,11 @@ const Control = React.createClass({
         {this.props.children}
         <div className="pl-control-actions">
           {this.props.actions.map(function(action, index) {
+            const actionClassName = classNames('pl-control-action', {
+              'pl-clickable': action.onClick
+            });
             return (
-              <div className="pl-control-action"
+              <div className={actionClassName}
                   key={index}
                   onClick={action.onClick}
                   title={action.title}>

@@ -253,6 +253,13 @@ const Layer = React.createClass({
               const propertyActions = [
                 {
                   children: (
+                    <div className="pl-layer-property-value">
+                      {Math.round(getInterpolatedValue(value, this.props.percentPlayed) * 100) / 100}
+                    </div>
+                  )
+                },
+                {
+                  children: (
                     <Icon className={animating && 'pl-active'}
                         name="timer"/>
                   ),

@@ -17,9 +17,11 @@
     flex-shrink: 0;
     .pl-control-action {
       margin-left: @padding-small;
-      cursor: pointer;
-      &:hover .pl-icon {
-        fill: white;
+      &.pl-clickable {
+        cursor: pointer;
+        &:hover .pl-icon {
+          fill: white;
+        }
       }
 
       .pl-icon {
@@ -27,7 +29,7 @@
         height: @padding-base;
         fill: @gray-lightest;
         &.pl-active {
-          fill: @brand-primary;
+          fill: @brand-primary !important;
         }
       }
     }
