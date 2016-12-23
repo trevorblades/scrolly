@@ -5,6 +5,7 @@ const sentenceCase = require('sentence-case');
 
 const Control = require('./control');
 const Icon = require('./icon');
+const TextField = require('./text-field');
 
 const {
   removeLayer,
@@ -139,6 +140,10 @@ const Layer = React.createClass({
     this.setState({expanded: !this.state.expanded});
   },
 
+  _onPropertyChange: function(property, value) {
+    this.props.onPropertiesChange({[property]: value});
+  },
+
   _addKeyframe: function(property) {
     let nextValue;
     const value = this.props.layer[property];
@@ -183,7 +188,7 @@ const Layer = React.createClass({
     const actions = [
       {
         children: (
-          <Icon className={this.state.expanded && 'pl-active'}
+          <Icon className={this.state.expanded ? 'pl-active' : null}
               name="more"/>
         ),
         onClick: this._onMoreClick,
@@ -250,17 +255,18 @@ const Layer = React.createClass({
               const highlighted = animating && this.props.percentPlayed in value;
 
               const addKeyframe = this._addKeyframe.bind(null, property);
+              const interpolatedValue = getInterpolatedValue(value, this.props.percentPlayed);
               const propertyActions = [
                 {
                   children: (
-                    <div className="pl-layer-property-value">
-                      {Math.round(getInterpolatedValue(value, this.props.percentPlayed) * 100) / 100}
-                    </div>
+                    <TextField onChange={this._onPropertyChange.bind(null, property)}
+                        type={PROPERTIES[property].type}
+                        value={Math.round(interpolatedValue * 100) / 100}/>
                   )
                 },
                 {
                   children: (
-                    <Icon className={animating && 'pl-active'}
+                    <Icon className={animating ? 'pl-active' : null}
                         name="timer"/>
                   ),
                   onClick: animating ?
@@ -269,7 +275,7 @@ const Layer = React.createClass({
                 },
                 {
                   children: (
-                    <Icon className={highlighted && 'pl-active'}
+                    <Icon className={highlighted ? 'pl-active' : null}
                         name={highlighted ? 'remove' : 'add'}/>
                   ),
                   onClick: highlighted ?
