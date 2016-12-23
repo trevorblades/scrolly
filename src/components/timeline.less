@@ -24,6 +24,9 @@
       border-right: 1px solid @shadow-dark;
       font-family: @font-family-monospace;
       .pl-timeline-header-control-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         flex-grow: 1;
         margin-right: @padding-smaller;
         padding: 0 @padding-small;
@@ -34,6 +37,15 @@
         background: linear-gradient(lighten(@brand-warning, 10%) 50%, @brand-warning 50%, darken(@brand-warning, 10%));
         overflow: hidden;
         position: relative;
+        span {
+        }
+        .pl-timeline-header-control-indicator-snap {
+          cursor: pointer;
+          .pl-icon {
+            width: @padding-base;
+            height: @padding-base;
+          }
+        }
       }
       .pl-timeline-header-control-add {
         flex-shrink: 0;

@@ -37,6 +37,7 @@ let Timeline = React.createClass({
   getInitialState: function() {
     return {
       height: 200,
+      snapToKeyframes: true,
       sortId: null,
       sortOrder: null
     };
@@ -143,27 +144,31 @@ let Timeline = React.createClass({
         this.refs.track.offsetWidth;
 
     if (event.shiftKey) {
-      const snapPositions = Object.keys(this.props.layers.reduce(function(obj, layer) {
-        for (var property in layer) {
-          const value = layer[property];
-          if ((property === 'in' || property === 'out') &&
-              shouldSnap(value, percentPlayed)) {
-            obj[value] = true;
-          } else if (typeof value === 'object') {
-            for (var key in value) {
-              if (shouldSnap(key, percentPlayed)) {
-                obj[key] = true;
+      if (this.state.snapToKeyframes) {
+        const snapPositions = Object.keys(this.props.layers.reduce(function(obj, layer) {
+          for (var property in layer) {
+            const value = layer[property];
+            if ((property === 'in' || property === 'out') &&
+                shouldSnap(value, percentPlayed)) {
+              obj[value] = true;
+            } else if (typeof value === 'object') {
+              for (var key in value) {
+                if (shouldSnap(key, percentPlayed)) {
+                  obj[key] = true;
+                }
               }
             }
           }
-        }
-        return obj;
-      }, {})).map(Number).sort();
+          return obj;
+        }, {})).map(Number).sort();
 
-      if (snapPositions.length) {
-        percentPlayed = snapPositions.reduce(function(a, b) {
-          return (Math.abs(b - percentPlayed) < Math.abs(a - percentPlayed) ? b : a);
-        });
+        if (snapPositions.length) {
+          percentPlayed = snapPositions.reduce(function(a, b) {
+            return (Math.abs(b - percentPlayed) < Math.abs(a - percentPlayed) ? b : a);
+          });
+        }
+      } else {
+        percentPlayed = Math.round(percentPlayed * 100) / 100;
       }
     }
 
@@ -173,6 +178,10 @@ let Timeline = React.createClass({
   _onPlayheadMouseUp: function() {
     document.removeEventListener('mousemove', this._onPlayheadMouseMove);
     document.removeEventListener('mouseup', this._onPlayheadMouseUp);
+  },
+
+  _onSnapToggle: function() {
+    this.setState({snapToKeyframes: !this.state.snapToKeyframes});
   },
 
   render: function() {
@@ -191,7 +200,14 @@ let Timeline = React.createClass({
       <div className="pl-timeline" style={{height: this.state.height}}>
         <div className="pl-timeline-header">
           <div className="pl-timeline-header-control">
-            <div className="pl-timeline-header-control-indicator">{`${percentPlayed.toFixed(2)}%`}</div>
+            <div className="pl-timeline-header-control-indicator">
+              <span>{`${percentPlayed.toFixed(2)}%`}</span>
+              <div className="pl-timeline-header-control-indicator-snap"
+                  onClick={this._onSnapToggle}
+                  title={`Snap to ${this.state.snapToKeyframes ? 'keyframes' : 'whole numbers'}`}>
+                <Icon name={this.state.snapToKeyframes ? 'keyframes' : 'wholeNumbers'}/>
+              </div>
+            </div>
             <Button className="pl-timeline-header-control-add"
                 onClick={this.props.onAddClick}>
               <Icon name="addLayer"/>
