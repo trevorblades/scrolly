@@ -5,7 +5,7 @@ module.exports = function(value, position) {
     return value[position];
   }
 
-  const bounds = Object.keys(value);
+  const bounds = Object.keys(value).sort();
   let lowerBound = bounds[0];
   let upperBound = bounds[bounds.length - 1];
   bounds.forEach(function(bound) {
