@@ -3,6 +3,8 @@ const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const classNames = require('classnames');
 
+const TextField = require('./text-field');
+
 const {addImageLayer, setLayerProperties} = require('../actions');
 const {ASSET_DRAG_TYPE} = require('../constants');
 const getInterpolatedValue = require('../util/get-interpolated-value');
@@ -232,22 +234,11 @@ let Viewport = React.createClass({
     delete this._boundLayerHandleMouseMove;
   },
 
-  _onTextLayerBlur: function(event) {
-    this.props.dispatch(setLayerProperties(this.state.editingLayerId, {
-      value: event.target.innerHTML
+  _onTextLayerChange: function(id, value) {
+    this.props.dispatch(setLayerProperties(id, {
+      value: value
     }));
-    this.setState({editingLayerId: null}, this.props.selectLayer);
-  },
-
-  _onTextLayerDoubleClick: function(id, event) {
-    event.stopPropagation();
-    const target = event.target;
-    if (id !== this.state.editingLayerId) {
-      this.setState({editingLayerId: id}, function() {
-        target.focus();
-        document.execCommand('selectAll', false, null);
-      });
-    }
+    this.props.selectLayer(null);
   },
 
   _getScale: function() {
@@ -299,20 +290,15 @@ let Viewport = React.createClass({
             case 'text':
               var fontSize = isResizing ?
                   this.state.resizeFontSize : layer.fontSize;
-              var isEditing = layer.id === this.state.editingLayerId;
               children = (
-                <div className="pl-viewport-layer-text"
-                    contentEditable={isEditing}
-                    dangerouslySetInnerHTML={{__html: layer.value}}
-                    onBlur={isEditing && this._onTextLayerBlur}
-                    onDoubleClick={this._onTextLayerDoubleClick.bind(null, layer.id)}
-                    spellCheck={false}
+                <TextField onChange={this._onTextLayerChange.bind(null, layer.id)}
                     style={{
                       fontSize: `${fontSize}px`,
                       fontWeight: layer.fontWeight,
                       fontStyle: layer.fontStyle,
                       opacity: layer.opacity
-                    }}/>
+                    }}
+                    value={layer.value}/>
               );
               break;
             case 'image':

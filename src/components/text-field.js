@@ -15,6 +15,7 @@ const TextField = React.createClass({
   propTypes: {
     onChange: React.PropTypes.func,
     step: React.PropTypes.number,
+    style: React.PropTypes.object,
     type: React.PropTypes.oneOf(['text', 'number']),
     value: React.PropTypes.oneOfType([
       React.PropTypes.string,
@@ -109,7 +110,8 @@ const TextField = React.createClass({
           onDoubleClick={this._onDoubleClick}
           onInput={this._onInput}
           onKeyDown={this._onKeyDown}
-          spellCheck={false}/>
+          spellCheck={false}
+          style={this.props.style}/>
     );
   }
 });

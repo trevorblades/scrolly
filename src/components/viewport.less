@@ -27,18 +27,8 @@
     img {
       display: block;
     }
-    .pl-viewport-layer-text {
-      line-height: 1em;
-      background: transparent;
-      outline: none;
-      white-space: nowrap;
-      &:not([contenteditable="true"]) {
-        cursor: default;
-      }
-
-      + .pl-viewport-layer-handles .pl-viewport-layer-handle:nth-child(2n) {
-        display: none;
-      }
+    .pl-text-field + .pl-viewport-layer-handles .pl-viewport-layer-handle:nth-child(2n) {
+      display: none;
     }
     .pl-viewport-layer-handles {
       display: none;

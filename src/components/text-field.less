@@ -1,3 +1,7 @@
 .pl-text-field {
   outline: none;
+  white-space: nowrap;
+  &:not([contenteditable="true"]) {
+    cursor: default;
+  }
 }
