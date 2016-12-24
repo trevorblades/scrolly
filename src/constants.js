@@ -37,12 +37,10 @@ module.exports = {
       max: 1
     },
     width: {
-      type: 'number',
-      animated: true
+      type: 'number'
     },
     height: {
-      type: 'number',
-      animated: true
+      type: 'number'
     },
     fontSize: {
       type: 'number',
