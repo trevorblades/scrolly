@@ -85,6 +85,7 @@ let Timeline = React.createClass({
 
   _onLayerDragStart: function(id, event) {
     event.dataTransfer.effectAllowed = 'none';
+    this.props.selectLayer(id);
     this.setState({
       sortId: id,
       sortOrder: this.props.layers.map(layer => layer.id)
@@ -238,7 +239,7 @@ let Timeline = React.createClass({
                     layer={layer}
                     onDragEnd={this._onLayerDragEnd}
                     onDragOver={this._onLayerDragOver}
-                    onDragStart={this._onLayerDragStart}
+                    onDragStart={this._onLayerDragStart.bind(null, layer.id)}
                     onSelect={this._onLayerSelect.bind(null, layer.id)}
                     percentPlayed={this.props.percentPlayed}
                     selected={layer.id === this.props.selectedLayerId}/>
