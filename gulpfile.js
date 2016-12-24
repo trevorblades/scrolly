@@ -20,7 +20,7 @@ var BUILD_DIR = path.join(__dirname, 'build');
 var DEV_DIR = path.join(BUILD_DIR, 'dev');
 var DIST_DIR = path.join(BUILD_DIR, 'dist');
 
-// Development build tasks
+// development build tasks
 
 function devMarkup() {
   return gulp.src(path.join(SRC_DIR, 'index.html'))
@@ -102,7 +102,7 @@ gulp.task('dev-watch', function(done) {
 
 gulp.task('dev', gulp.parallel('dev-serve', 'dev-watch'));
 
-// Distribution build tasks
+// distribution build tasks
 
 gulp.task('dist-clean', function() {
   return del(path.join(DIST_DIR, '**', '*'));

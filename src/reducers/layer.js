@@ -10,8 +10,8 @@ module.exports = function(state, action) {
         x: 0,
         y: 0,
         scale: 1,
-        visible: true,
-        opacity: 1
+        opacity: 1,
+        visible: true
       };
 
       switch (layer.type) {

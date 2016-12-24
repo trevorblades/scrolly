@@ -9,6 +9,7 @@ const TextField = require('./text-field');
 
 const {removeLayer, setLayerProperties, toggleLayerVisibility} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
+const layerPropType = require('../util/layer-prop-type');
 const properties = require('../util/properties');
 
 function clamp(key, value) {
@@ -24,7 +25,7 @@ function clamp(key, value) {
 const TimelineLayer = React.createClass({
 
   propTypes: {
-    layer: React.PropTypes.object.isRequired,
+    layer: layerPropType.isRequired,
     onDragEnd: React.PropTypes.func.isRequired,
     onDragOver: React.PropTypes.func.isRequired,
     onDragStart: React.PropTypes.func.isRequired,
@@ -33,7 +34,7 @@ const TimelineLayer = React.createClass({
     onSelect: React.PropTypes.func.isRequired,
     onVisiblityToggle: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
-    selected: React.PropTypes.bool
+    selected: React.PropTypes.bool.isRequired
   },
 
   getInitialState: function() {
@@ -330,7 +331,7 @@ const TimelineLayer = React.createClass({
   }
 });
 
-function mapDispatchToProps(dispatch, props) {
+module.exports = connect(null, function(dispatch, props) {
   return {
     dispatch,
     onRemoveClick: function(event) {
@@ -345,6 +346,4 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(setLayerProperties(props.layer.id, properties));
     }
   };
-}
-
-module.exports = connect(null, mapDispatchToProps)(TimelineLayer);
+})(TimelineLayer);

@@ -24,6 +24,8 @@ const App = React.createClass({
       compositionWidth: 1920,
       dragging: false,
       viewportWrapperHeight: 0,
+      viewportWrapperOffsetLeft: 0,
+      viewportWrapperOffsetTop: 0,
       viewportWrapperWidth: 0,
       percentPlayed: 0,
       selectedLayerId: null,
@@ -72,10 +74,13 @@ const App = React.createClass({
   _onResize: function() {
     const header = ReactDOM.findDOMNode(this.refs.header);
     const viewportWrapperStyle = getComputedStyle(this.refs.viewportWrapper, null);
+    const viewportWrapperPadding = parseInt(viewportWrapperStyle.padding);
     this.setState({
+      timelineMaxHeight: (window.innerHeight - header.offsetHeight) / 2,
       viewportWrapperHeight: parseFloat(viewportWrapperStyle.height),
-      viewportWrapperWidth: parseFloat(viewportWrapperStyle.width),
-      timelineMaxHeight: (window.innerHeight - header.offsetHeight) / 2
+      viewportWrapperOffsetLeft: this.refs.viewportWrapper.offsetLeft + viewportWrapperPadding,
+      viewportWrapperOffsetTop: this.refs.viewportWrapper.offsetTop + viewportWrapperPadding,
+      viewportWrapperWidth: parseFloat(viewportWrapperStyle.width)
     });
   },
 
@@ -133,6 +138,8 @@ const App = React.createClass({
                 selectLayer={this._selectLayer}
                 selectedLayerId={this.state.selectedLayerId}
                 wrapperHeight={this.state.viewportWrapperHeight}
+                wrapperOffsetLeft={this.state.viewportWrapperOffsetLeft}
+                wrapperOffsetTop={this.state.viewportWrapperOffsetTop}
                 wrapperWidth={this.state.viewportWrapperWidth}/>
           </div>
         </div>
