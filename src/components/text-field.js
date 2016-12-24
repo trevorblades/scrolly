@@ -55,7 +55,7 @@ const TextField = React.createClass({
     if (this.props.type === 'number') {
       if (!value) {
         value = 0;
-      } else if (!isNaN(value)) {
+      } else if (!isNaN(value) && value.charAt(value.length - 1) !== '.') {
         value = parseFloat(value);
       }
 
