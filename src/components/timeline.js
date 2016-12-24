@@ -216,8 +216,7 @@ let Timeline = React.createClass({
           </div>
           <div className="pl-timeline-header-track"
               onMouseDown={this._onHeaderTrackMouseDown}
-              onWheel={this._onHeaderTrackWheel}
-              ref="track">
+              onWheel={this._onHeaderTrackWheel}>
             <div className="pl-timeline-header-track-ticks">
               {ticks.map(function(tick, index) {
                 return <div className="pl-timeline-header-track-tick" key={index}/>;
@@ -231,7 +230,6 @@ let Timeline = React.createClass({
         </div>
         <div className="pl-timeline-content"
             onMouseDown={this.props.selectLayer.bind(null, null)}>
-          <div className="pl-timeline-track">{marker}</div>
           <div className="pl-timeline-layers">
             {layers.map(layer => {
               return (
@@ -246,6 +244,7 @@ let Timeline = React.createClass({
               );
             })}
           </div>
+          <div className="pl-timeline-track" ref="track">{marker}</div>
         </div>
         <div className="pl-timeline-handle"
             onMouseDown={this._onHandleMouseDown}/>

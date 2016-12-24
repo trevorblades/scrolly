@@ -129,13 +129,13 @@
     flex-grow: 1;
     background-color: @gray-darker;
     position: relative;
-    z-index: 0;
   }
   .pl-timeline-layers {
     flex-grow: 1;
     overflow: auto;
   }
   .pl-timeline-track {
+    pointer-events: none;
     position: absolute;
     top: 0;
     left: @library-width + @padding-small;
@@ -151,10 +151,6 @@
       top: 0;
       left: @padding-small * -1;
     }
-
-    .pl-timeline-marker {
-      z-index: 1;
-    }
   }
   .pl-timeline-marker, .pl-timeline-handle {
     position: absolute;
@@ -165,7 +161,6 @@
     width: 1px;
     height: 100%;
     background-color: @brand-warning;
-    pointer-events: none;
   }
   .pl-timeline-handle {
     width: 100%;
