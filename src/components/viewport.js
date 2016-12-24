@@ -279,10 +279,11 @@ let Viewport = React.createClass({
             layerY = this.state.resizeY;
           }
 
+          const layerScale = getInterpolatedValue(layer.scale, this.props.percentPlayed);
+
           const style = {
             top: this.state.height * layerY / this.props.compositionHeight,
-            left: this.state.width * layerX / this.props.compositionWidth,
-            transform: `scale(${getInterpolatedValue(layer.scale, this.props.percentPlayed)})`
+            left: this.state.width * layerX / this.props.compositionWidth
           };
 
           let children;
@@ -293,7 +294,7 @@ let Viewport = React.createClass({
               children = (
                 <TextField onChange={this._onTextLayerChange.bind(null, layer.id)}
                     style={{
-                      fontSize: `${fontSize}px`,
+                      fontSize: `${fontSize * layerScale}px`,
                       fontWeight: layer.fontWeight,
                       fontStyle: layer.fontStyle,
                       opacity: layer.opacity
@@ -309,10 +310,10 @@ let Viewport = React.createClass({
                 layerWidth = layerHeight * layer.aspectRatio;
               }
               children = (
-                <img height={layerHeight * scale}
+                <img height={layerHeight * scale * layerScale}
                     src={layer.src}
                     style={{opacity: layer.opacity}}
-                    width={layerWidth * scale}/>
+                    width={layerWidth * scale * layerScale}/>
               );
               break;
             default:

@@ -25,9 +25,7 @@ module.exports = {
     scale: {
       type: 'number',
       animated: true,
-      step: 0.01,
-      min: 0,
-      max: 1
+      step: 0.01
     },
     opacity: {
       type: 'number',
