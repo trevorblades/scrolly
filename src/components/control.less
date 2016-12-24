@@ -22,15 +22,19 @@
         &:hover .pl-icon {
           fill: white;
         }
+
+        .pl-icon {
+          fill: @gray-lightest;
+          &.pl-active {
+            fill: @brand-primary;
+          }
+        }
       }
 
       .pl-icon {
         width: @padding-base;
         height: @padding-base;
-        fill: @gray-lightest;
-        &.pl-active {
-          fill: @brand-primary !important;
-        }
+        fill: @gray;
       }
     }
   }

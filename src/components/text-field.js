@@ -94,9 +94,10 @@ const TextField = React.createClass({
         if (event.shiftKey) {
           direction *= 10;
         }
-        const value = parseFloat(this.state.value);
-        this.setState({value: value + this.props.step * direction},
-            resetCaret.bind(null, event.target));
+        let value = parseFloat(this.state.value);
+        value = value + this.props.step * direction;
+        value = Math.round(value * 100) / 100;
+        this.setState({value: value}, resetCaret.bind(null, event.target));
       }
     }
   },

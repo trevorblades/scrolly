@@ -7,23 +7,12 @@ const Control = require('./control');
 const Icon = require('./icon');
 const TextField = require('./text-field');
 
-const {
-  removeLayer,
-  setLayerProperties,
-  toggleLayerVisibility
-} = require('../actions');
-const {PROPERTIES} = require('../constants');
+const {removeLayer, setLayerProperties, toggleLayerVisibility} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
-
-const animatedKeys = [];
-for (var key in PROPERTIES) {
-  if (PROPERTIES[key].animated) {
-    animatedKeys.push(key);
-  }
-}
+const properties = require('../util/properties');
 
 function clamp(key, value) {
-  const property = PROPERTIES[key];
+  const property = properties[key];
   if (typeof property.min !== 'undefined' && value < property.min) {
     return property.min;
   } else if (typeof property.max !== 'undefined' && value > property.max) {
@@ -57,7 +46,7 @@ const Layer = React.createClass({
   },
 
   componentWillMount: function() {
-    this._keys = animatedKeys.filter(key => {
+    this._keys = Object.keys(properties).filter(key => {
       return typeof this.props.layer[key] !== 'undefined';
     });
   },
@@ -266,49 +255,44 @@ const Layer = React.createClass({
         {this.state.expanded &&
           <div className="pl-layer-properties">
             {this._keys.map(key => {
-              const value = this.props.layer[key];
-              const animating = typeof value === 'object';
-              const highlighted = animating && this.props.percentPlayed in value;
+              const property = properties[key];
+              if (!property.mutable) {
+                return null;
+              }
 
-              const addKeyframe = this._addKeyframe.bind(null, key);
-              const interpolatedValue = getInterpolatedValue(value, this.props.percentPlayed);
-              const propertyActions = [
-                {
-                  children: (
-                    <TextField onChange={this._onPropertyChange.bind(null, key)}
-                        type={PROPERTIES[key].type}
-                        value={Math.round(interpolatedValue * 100) / 100}/>
-                  )
-                },
-                {
-                  children: (
-                    <Icon className={animating ? 'pl-active' : null}
-                        name="timer"/>
-                  ),
-                  onClick: animating ?
-                      this._removeKeyframes.bind(null, key) : addKeyframe,
-                  title: `${animating ? 'Disable' : 'Enable'} animation`
-                },
-                {
-                  children: (
-                    <Icon className={highlighted ? 'pl-active' : null}
-                        name={highlighted ? 'remove' : 'add'}/>
-                  ),
-                  onClick: highlighted ?
-                      this._removeKeyframe.bind(null, key) : addKeyframe,
-                  title: `${highlighted ? 'Remove' : 'Add'} keyframe`
-                }
-              ];
+              let propertyTrack;
+              let value = this.props.layer[key];
+              const propertyActions = [];
+              if (property.animatable) {
+                const animating = typeof value === 'object';
+                const highlighted = animating && this.props.percentPlayed in value;
+                const interpolatedValue = getInterpolatedValue(value, this.props.percentPlayed);
+                value = Math.round(interpolatedValue * 100) / 100;
 
-              const keyframes = animating ?
-                  Object.keys(this.props.layer[key]) : [];
+                const addKeyframe = this._addKeyframe.bind(null, key);
+                propertyActions.push(
+                  {
+                    children: (
+                      <Icon className={animating ? 'pl-active' : null}
+                          name="timer"/>
+                    ),
+                    onClick: animating ?
+                        this._removeKeyframes.bind(null, key) : addKeyframe,
+                    title: `${animating ? 'Disable' : 'Enable'} animation`
+                  },
+                  {
+                    children: (
+                      <Icon className={highlighted ? 'pl-active' : null}
+                          name={highlighted ? 'remove' : 'add'}/>
+                    ),
+                    onClick: highlighted ?
+                        this._removeKeyframe.bind(null, key) : addKeyframe,
+                    title: `${highlighted ? 'Remove' : 'Add'} keyframe`
+                  }
+                );
 
-              return (
-                <div className="pl-layer-property"
-                    key={key}>
-                  <Control actions={propertyActions}>
-                    {sentenceCase(key)}
-                  </Control>
+                const keyframes = animating ? Object.keys(this.props.layer[key]) : [];
+                propertyTrack = (
                   <div className="pl-layer-track">
                     {keyframes.map(function(keyframe, index) {
                       return (
@@ -318,6 +302,28 @@ const Layer = React.createClass({
                       );
                     })}
                   </div>
+                );
+              } else {
+                propertyActions.push({children: <Icon name="timer"/>},
+                    {children: <Icon name="add"/>});
+              }
+
+              propertyActions.unshift({
+                children: (
+                  <TextField onChange={this._onPropertyChange.bind(null, key)}
+                      step={property.step}
+                      type={property.type}
+                      value={value}/>
+                )
+              });
+
+              return (
+                <div className="pl-layer-property"
+                    key={key}>
+                  <Control actions={propertyActions}>
+                    {sentenceCase(key)}
+                  </Control>
+                  {propertyTrack}
                 </div>
               );
             })}
