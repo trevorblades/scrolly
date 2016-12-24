@@ -21,7 +21,7 @@ function clamp(key, value) {
   return value;
 }
 
-const Layer = React.createClass({
+const TimelineLayer = React.createClass({
 
   propTypes: {
     layer: React.PropTypes.object.isRequired,
@@ -185,7 +185,7 @@ const Layer = React.createClass({
   },
 
   render: function() {
-    const layerClassName = classNames('pl-layer', {
+    const layerClassName = classNames('pl-timeline-layer', {
       'pl-selected': this.props.selected,
       'pl-hidden': !this.props.layer.visible
     });
@@ -214,7 +214,7 @@ const Layer = React.createClass({
     const handles = [];
     for (var i = 0; i < 2; i++) {
       handles.push(
-        <div className="pl-layer-bar-handle"
+        <div className="pl-timeline-layer-bar-handle"
             key={i}
             onMouseDown={this._onBarHandleMouseDown.bind(null, i)}/>
       );
@@ -232,17 +232,17 @@ const Layer = React.createClass({
           onDragOver={this.props.onDragOver}
           onMouseDown={event => event.stopPropagation()}>
         <Control actions={actions}
-            className="pl-layer-name"
+            className="pl-timeline-layer-name"
             draggable
             onClick={this.props.onSelect}
             onDragEnd={this.props.onDragEnd}
             onDragStart={this.props.onDragStart}>
           <span>{this.props.layer.name}</span>
         </Control>
-        <div className="pl-layer-track"
+        <div className="pl-timeline-layer-track"
             key={this.props.layer.id}
             ref="track">
-          <div className="pl-layer-bar"
+          <div className="pl-timeline-layer-bar"
               onClick={event => event.stopPropagation()}
               onMouseDown={this._onBarMouseDown}
               style={{
@@ -253,7 +253,7 @@ const Layer = React.createClass({
           </div>
         </div>
         {this.state.expanded &&
-          <div className="pl-layer-properties">
+          <div className="pl-timeline-layer-properties">
             {this._keys.map(key => {
               const property = properties[key];
 
@@ -291,10 +291,10 @@ const Layer = React.createClass({
 
                 const keyframes = animating ? Object.keys(this.props.layer[key]) : [];
                 propertyTrack = (
-                  <div className="pl-layer-track">
+                  <div className="pl-timeline-layer-track">
                     {keyframes.map(function(keyframe, index) {
                       return (
-                        <div className="pl-layer-property-keyframe"
+                        <div className="pl-timeline-layer-property-keyframe"
                             key={index}
                             style={{left: `${keyframe * 100}%`}}/>
                       );
@@ -315,7 +315,7 @@ const Layer = React.createClass({
               });
 
               return (
-                <div className="pl-layer-property"
+                <div className="pl-timeline-layer-property"
                     key={key}>
                   <Control actions={propertyActions}>
                     {sentenceCase(key)}
@@ -347,4 +347,4 @@ function mapDispatchToProps(dispatch, props) {
   };
 }
 
-module.exports = connect(null, mapDispatchToProps)(Layer);
+module.exports = connect(null, mapDispatchToProps)(TimelineLayer);

@@ -1,19 +1,19 @@
 @import (reference) './library';
 @import './control';
 
-.pl-layer {
+.pl-timeline-layer {
   display: flex;
   flex-wrap: wrap;
   margin: @padding-small 0;
   &.pl-selected:not(.pl-hidden) {
-    .pl-layer-name {
+    .pl-timeline-layer-name {
       color: white;
     }
-    .pl-layer-bar {
+    .pl-timeline-layer-bar {
       background-color: @gray-lightest;
     }
   }
-  &.pl-hidden .pl-layer-name span {
+  &.pl-hidden .pl-timeline-layer-name span {
     text-decoration: line-through;
     opacity: 0.5;
   }
@@ -22,12 +22,12 @@
     flex-shrink: 0;
     width: @library-width;
   }
-  .pl-layer-track {
+  .pl-timeline-layer-track {
     flex-grow: 1;
     margin: 0 @padding-small;
     position: relative;
   }
-  .pl-layer-bar {
+  .pl-timeline-layer-bar {
     height: @padding-base;
     border-radius: @border-radius-small;
     box-shadow: 0 1px 1px @shadow-dark;
@@ -36,7 +36,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    .pl-layer-bar-handle {
+    .pl-timeline-layer-bar-handle {
       width: 5px;
       height: 100%;
       cursor: ew-resize;
@@ -49,14 +49,14 @@
       }
     }
   }
-  .pl-layer-properties {
+  .pl-timeline-layer-properties {
     width: 100%;
     margin-top: @padding-small;
     padding: @padding-small 0;
     border-top: 1px solid @shadow-dark;
     border-bottom: 1px solid @shadow-dark;
     background-color: @gray-dark;
-    .pl-layer-property {
+    .pl-timeline-layer-property {
       display: flex;
       &:not(:last-child) {
         margin-bottom: @padding-smaller;
@@ -88,7 +88,7 @@
           }
         }
       }
-      .pl-layer-property-keyframe {
+      .pl-timeline-layer-property-keyframe {
         width: @font-size-smaller / 1.5;
         height: @font-size-smaller / 1.5;
         box-shadow: @box-shadow-small;

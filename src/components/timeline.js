@@ -3,7 +3,7 @@ const {connect} = require('react-redux');
 
 const Button = require('./button');
 const Icon = require('./icon');
-const Layer = require('./layer');
+const TimelineLayer = require('./timeline-layer');
 
 const {addLayer, orderLayers} = require('../actions');
 
@@ -233,7 +233,7 @@ let Timeline = React.createClass({
           <div className="pl-timeline-layers">
             {layers.map(layer => {
               return (
-                <Layer key={layer.id}
+                <TimelineLayer key={layer.id}
                     layer={layer}
                     onDragEnd={this._onLayerDragEnd}
                     onDragOver={this._onLayerDragOver}
