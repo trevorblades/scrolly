@@ -1,5 +1,15 @@
 const React = require('react');
 
+const resetCaret = function(node) {
+  const range = document.createRange();
+  range.setStart(node, 1);
+  range.collapse(true);
+
+  const selection = getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+};
+
 const TextField = React.createClass({
 
   propTypes: {
@@ -41,18 +51,21 @@ const TextField = React.createClass({
 
   _onInput: function(event) {
     let value = event.target.innerHTML;
+
     if (this.props.type === 'number') {
       if (!value) {
         value = 0;
-        event.target.innerHTML = 0;
-        document.execCommand('selectAll', false, null);
       } else if (!isNaN(value)) {
         value = parseFloat(value);
       }
-    }
-    this.setState({value: value}, function() {
 
-    });
+      if (!value || (value && !this.state.value)) {
+        event.target.innerHTML = value;
+        resetCaret(event.target);
+      }
+    }
+
+    this.setState({value: value});
   },
 
   _onDoubleClick: function(event) {
@@ -81,7 +94,8 @@ const TextField = React.createClass({
           direction *= 10;
         }
         const value = parseFloat(this.state.value);
-        this.setState({value: value + this.props.step * direction});
+        this.setState({value: value + this.props.step * direction},
+            resetCaret.bind(null, event.target));
       }
     }
   },
