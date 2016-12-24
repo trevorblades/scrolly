@@ -151,7 +151,13 @@ const Layer = React.createClass({
   },
 
   _onPropertyChange: function(key, value) {
-    this.props.onPropertiesChange({[key]: clamp(key, value)});
+    const currentValue = this.props.layer[key];
+    const clampedValue = clamp(key, value);
+    const nextValue = typeof currentValue === 'object' ?
+        Object.assign({}, currentValue, {
+          [this.props.percentPlayed]: clampedValue
+        }) : clampedValue;
+    this.props.onPropertiesChange({[key]: nextValue});
   },
 
   _addKeyframe: function(property) {
