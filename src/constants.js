@@ -2,14 +2,6 @@ module.exports = {
   ASSET_DRAG_TYPE: 'text/id',
   FILE_DRAG_TYPE: 'Files',
   PROPERTIES: {
-    x: {
-      type: 'number',
-      animated: true
-    },
-    y: {
-      type: 'number',
-      animated: true
-    },
     in: {
       type: 'number',
       step: 0.01,
@@ -18,6 +10,21 @@ module.exports = {
     },
     out: {
       type: 'number',
+      step: 0.01,
+      min: 0,
+      max: 1
+    },
+    x: {
+      type: 'number',
+      animated: true
+    },
+    y: {
+      type: 'number',
+      animated: true
+    },
+    scale: {
+      type: 'number',
+      animated: true,
       step: 0.01,
       min: 0,
       max: 1

@@ -290,7 +290,8 @@ let Viewport = React.createClass({
 
           const style = {
             top: this.state.height * layerY / this.props.compositionHeight,
-            left: this.state.width * layerX / this.props.compositionWidth
+            left: this.state.width * layerX / this.props.compositionWidth,
+            transform: `scale(${getInterpolatedValue(layer.scale, this.props.percentPlayed)})`
           };
 
           let children;

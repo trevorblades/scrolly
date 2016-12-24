@@ -5,10 +5,11 @@ module.exports = function(state, action) {
         id: action.id,
         type: action.layerType,
         name: `Layer ${action.id + 1}`,
-        x: 0,
-        y: 0,
         in: 0,
         out: 1,
+        x: 0,
+        y: 0,
+        scale: 1,
         visible: true,
         opacity: 1
       };
