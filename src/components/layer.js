@@ -256,13 +256,11 @@ const Layer = React.createClass({
           <div className="pl-layer-properties">
             {this._keys.map(key => {
               const property = properties[key];
-              if (!property.mutable) {
-                return null;
-              }
 
               let propertyTrack;
               let value = this.props.layer[key];
               const propertyActions = [];
+
               if (property.animatable) {
                 const animating = typeof value === 'object';
                 const highlighted = animating && this.props.percentPlayed in value;
@@ -309,12 +307,11 @@ const Layer = React.createClass({
               }
 
               propertyActions.unshift({
-                children: (
+                children: property.mutable ?
                   <TextField onChange={this._onPropertyChange.bind(null, key)}
                       step={property.step}
                       type={property.type}
-                      value={value}/>
-                )
+                      value={value}/> : <span>{value}</span>
               });
 
               return (
