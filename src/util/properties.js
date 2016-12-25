@@ -1,41 +1,61 @@
+const anchorOptions = ['top', 'center', 'bottom'].reduce(function(arr, y) {
+  return arr.concat(['left', 'center', 'right'].map(function(x) {
+    if (x === y) {
+      return x;
+    }
+    return `${y} ${x}`;
+  }));
+}, []);
+
 module.exports = {
   in: {
-    mutable: true,
     type: 'number',
     step: 0.01,
     min: 0,
-    max: 1
+    max: 1,
+    default: 0,
+    mutable: true
   },
   out: {
-    mutable: true,
     type: 'number',
     step: 0.01,
     min: 0,
-    max: 1
+    max: 1,
+    default: 1,
+    mutable: true
+  },
+  anchor: {
+    type: 'enum',
+    options: anchorOptions,
+    default: anchorOptions[0]
   },
   x: {
+    type: 'number',
+    default: 0,
     mutable: true,
-    animatable: true,
-    type: 'number'
+    animatable: true
   },
   y: {
+    type: 'number',
+    default: 0,
     mutable: true,
-    animatable: true,
-    type: 'number'
+    animatable: true
   },
   scale: {
-    mutable: true,
-    animatable: true,
     type: 'number',
-    step: 0.01
+    step: 0.01,
+    default: 1,
+    mutable: true,
+    animatable: true
   },
   opacity: {
-    mutable: true,
-    animatable: true,
     type: 'number',
     step: 0.01,
     min: 0,
-    max: 1
+    max: 1,
+    default: 1,
+    mutable: true,
+    animatable: true
   },
   width: {
     type: 'number'
@@ -44,16 +64,19 @@ module.exports = {
     type: 'number'
   },
   fontSize: {
-    mutable: true,
     type: 'number',
-    min: 1
+    min: 1,
+    default: 16,
+    mutable: true
   },
   fontWeight: {
-    mutable: true,
-    type: 'text'
+    type: 'text',
+    default: 'normal',
+    mutable: true
   },
   fontStyle: {
-    mutable: true,
-    type: 'text'
+    type: 'text',
+    default: 'normal',
+    mutable: true
   }
 };

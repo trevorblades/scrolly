@@ -1,3 +1,5 @@
+const properties = require('../util/properties');
+
 module.exports = function(state, action) {
   switch (action.type) {
     case 'ADD_LAYER':
@@ -5,21 +7,22 @@ module.exports = function(state, action) {
         id: action.id,
         type: action.layerType,
         name: `Layer ${action.id + 1}`,
-        in: 0,
-        out: 1,
-        x: 0,
-        y: 0,
-        scale: 1,
-        opacity: 1,
+        in: properties.in.default,
+        out: properties.out.default,
+        anchor: properties.anchor.default,
+        x: properties.x.default,
+        y: properties.y.default,
+        scale: properties.scale.default,
+        opacity: properties.opacity.default,
         visible: true
       };
 
       switch (layer.type) {
         case 'text':
           layer.value = 'Enter text here';
-          layer.fontSize = 16;
-          layer.fontWeight = 'normal';
-          layer.fontStyle = 'normal';
+          layer.fontSize = properties.fontSize.default;
+          layer.fontWeight = properties.fontWeight.default;
+          layer.fontStyle = properties.fontStyle.default;
           break;
         case 'image':
           layer.src = action.src;
