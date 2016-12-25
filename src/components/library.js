@@ -141,7 +141,8 @@ const Library = React.createClass({
                   onDragStart={this._onAssetDragStart.bind(null, asset.id)}>
                 <span title={asset.name}>{asset.name}</span>
                 <span>{bytes(asset.size)}</span>
-                <span onClick={this.props.onRemoveClick.bind(null, asset.id)}>
+                <span onClick={this.props.onRemoveClick.bind(null, asset.id)}
+                    title="Remove asset">
                   <Icon name="trash"/>
                 </span>
               </div>
