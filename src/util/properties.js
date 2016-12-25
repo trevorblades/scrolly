@@ -27,7 +27,8 @@ module.exports = {
   anchor: {
     type: 'enum',
     options: anchorOptions,
-    default: anchorOptions[0]
+    default: anchorOptions[0],
+    mutable: true
   },
   x: {
     type: 'number',
