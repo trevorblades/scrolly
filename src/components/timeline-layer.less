@@ -21,6 +21,31 @@
   .pl-control {
     flex-shrink: 0;
     width: @library-width;
+    .pl-text-field {
+      box-shadow: 0 1px @gray-light;
+      position: relative;
+      &:before {
+        content: '';
+        width: 100%;
+        height: 1px;
+        background-color: @brand-primary;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        transform: scaleX(0);
+        transform-origin: left bottom;
+        transition: transform @transition-duration-medium ease-in;
+      }
+      &:focus {
+        background-color: @shadow;
+        &:before {
+          transform: scaleX(1);
+        }
+      }
+    }
+  }
+  .pl-timeline-layer-name .pl-text-field {
+    padding-right: @padding-smaller;
   }
   .pl-timeline-layer-track {
     flex-grow: 1;
@@ -67,27 +92,10 @@
         span {
           color: @gray-light;
         }
-      }
-      .pl-text-field {
-        padding-left: @padding-smaller;
-        box-shadow: 0 1px @gray-light;
-        position: relative;
-        &:before {
-          content: '';
-          width: 100%;
-          height: 1px;
-          background-color: @brand-primary;
-          position: absolute;
-          top: 100%;
-          left: 0;
-          transform: scaleX(0);
-          transform-origin: right bottom;
-          transition: transform @transition-duration-medium ease-in;
-        }
-        &:focus {
-          background-color: @shadow;
+        .pl-text-field {
+          padding-left: @padding-smaller;
           &:before {
-            transform: scaleX(1);
+            transform-origin: right bottom;
           }
         }
       }

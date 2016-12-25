@@ -140,6 +140,10 @@ const TimelineLayer = React.createClass({
     this.setState({expanded: !this.state.expanded});
   },
 
+  _onNameChange: function(value) {
+    this.props.onPropertiesChange({name: value});
+  },
+
   _onPropertyChange: function(key, value) {
     const currentValue = this.props.layer[key];
     const clampedValue = clamp(key, value);
@@ -238,7 +242,8 @@ const TimelineLayer = React.createClass({
             onClick={this.props.onSelect}
             onDragEnd={this.props.onDragEnd}
             onDragStart={this.props.onDragStart}>
-          <span>{this.props.layer.name}</span>
+          <TextField onChange={this._onNameChange}
+              value={this.props.layer.name}/>
         </Control>
         <div className="pl-timeline-layer-track"
             key={this.props.layer.id}
