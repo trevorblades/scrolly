@@ -53,8 +53,8 @@ const ViewportLayer = React.createClass({
       });
 
       const rect = event.target.getBoundingClientRect();
-      const offsetX = event.clientX - rect.left;
-      const offsetY = event.clientY - rect.top;
+      const offsetX = event.clientX - rect.left - rect.width * this.props.layer.anchorX;
+      const offsetY = event.clientY - rect.top - rect.height * this.props.layer.anchorY;
       this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY);
       document.addEventListener('mousemove', this._boundMouseMove);
       document.addEventListener('mouseup', this._onMouseUp);
@@ -165,7 +165,7 @@ const ViewportLayer = React.createClass({
     delete this._boundHandleMouseMove;
   },
 
-  _onTextLayerChange: function(value) {
+  _onTextChange: function(value) {
     this.props.onPropertiesChange({value: value});
     this.props.selectLayer(null);
   },
@@ -192,7 +192,7 @@ const ViewportLayer = React.createClass({
         var fontSize = this.state.resizing ?
             this.state.resizeFontSize : this.props.layer.fontSize;
         children = (
-          <TextField onChange={this._onTextLayerChange}
+          <TextField onChange={this._onTextChange}
               style={{
                 fontSize: `${fontSize * layerScale}px`,
                 fontWeight: this.props.layer.fontWeight,
