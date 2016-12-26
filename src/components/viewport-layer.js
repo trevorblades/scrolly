@@ -181,7 +181,8 @@ const ViewportLayer = React.createClass({
     }
     const style = {
       top: this.props.viewportHeight * layerY / this.props.compositionHeight,
-      left: this.props.viewportWidth * layerX / this.props.compositionWidth
+      left: this.props.viewportWidth * layerX / this.props.compositionWidth,
+      transform: `translate(${this.props.layer.anchorX * -100}%, ${this.props.layer.anchorY * -100}%)`
     };
 
     let children;

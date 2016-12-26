@@ -4,7 +4,6 @@ const classNames = require('classnames');
 const sentenceCase = require('sentence-case');
 
 const Control = require('./control');
-const Dropdown = require('./dropdown');
 const Icon = require('./icon');
 const TextField = require('./text-field');
 
@@ -316,13 +315,6 @@ const TimelineLayer = React.createClass({
               let propertyField;
               if (!property.mutable) {
                 propertyField = <span>{value}</span>;
-              } else if (property.type === 'enum') {
-                propertyField = (
-                  <Dropdown onChange={this._onPropertyChange.bind(null, key)}
-                      options={property.options}>
-                    {value}
-                  </Dropdown>
-                );
               } else {
                 propertyField = (
                   <TextField onChange={this._onPropertyChange.bind(null, key)}

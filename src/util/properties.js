@@ -1,12 +1,3 @@
-const anchorOptions = ['top', 'center', 'bottom'].reduce(function(arr, y) {
-  return arr.concat(['left', 'center', 'right'].map(function(x) {
-    if (x === y) {
-      return x;
-    }
-    return `${y} ${x}`;
-  }));
-}, []);
-
 module.exports = {
   in: {
     type: 'number',
@@ -24,10 +15,20 @@ module.exports = {
     default: 1,
     mutable: true
   },
-  anchor: {
-    type: 'enum',
-    options: anchorOptions,
-    default: anchorOptions[0],
+  anchorX: {
+    type: 'number',
+    step: 0.01,
+    min: 0,
+    max: 1,
+    default: 0,
+    mutable: true
+  },
+  anchorY: {
+    type: 'number',
+    step: 0.01,
+    min: 0,
+    max: 1,
+    default: 0,
     mutable: true
   },
   x: {

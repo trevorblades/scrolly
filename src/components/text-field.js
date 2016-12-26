@@ -13,7 +13,7 @@ const resetCaret = function(node) {
 const TextField = React.createClass({
 
   propTypes: {
-    onChange: React.PropTypes.func,
+    onChange: React.PropTypes.func.isRequired,
     step: React.PropTypes.number,
     style: React.PropTypes.object,
     type: React.PropTypes.oneOf(['text', 'number']),
@@ -45,9 +45,7 @@ const TextField = React.createClass({
 
   _onBlur: function() {
     this.setState({editing: false});
-    if (this.props.onChange) {
-      this.props.onChange(this.state.value);
-    }
+    this.props.onChange(this.state.value);
   },
 
   _onInput: function(event) {
