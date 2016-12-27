@@ -3,7 +3,6 @@ const {connect} = require('react-redux');
 const classNames = require('classnames');
 const sentenceCase = require('sentence-case');
 
-const Control = require('./control');
 const Icon = require('./icon');
 const TextField = require('./text-field');
 
@@ -191,6 +190,33 @@ const TimelineLayer = React.createClass({
     });
   },
 
+  _renderControl: function(children, actions, props = {}) {
+    return (
+      <div className={classNames('pl-timeline-layer-control', props.className)}
+          draggable={props.draggable}
+          onClick={props.onClick}
+          onDragEnd={props.onDragEnd}
+          onDragStart={props.onDragStart}>
+        {children}
+        <div className="pl-timeline-layer-control-actions">
+          {actions.map(function(action, index) {
+            const actionClassName = classNames('pl-timeline-layer-control-action', {
+              'pl-clickable': action.onClick
+            });
+            return (
+              <div className={actionClassName}
+                  key={index}
+                  onClick={action.onClick}
+                  title={action.title}>
+                {action.children}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  },
+
   render: function() {
     const layerClassName = classNames('pl-timeline-layer', {
       'pl-hidden': !this.props.layer.visible,
@@ -199,7 +225,27 @@ const TimelineLayer = React.createClass({
       'pl-stuck': this.state.expanded && this.props.stuck
     });
 
-    const actions = [
+    const handles = [];
+    for (var i = 0; i < 2; i++) {
+      handles.push(
+        <div className="pl-timeline-layer-bar-handle"
+            key={i}
+            onMouseDown={this._onBarHandleMouseDown.bind(null, i)}/>
+      );
+    }
+
+    let layerIn = this.props.layer.in;
+    let layerOut = this.props.layer.out;
+    if (this.state.dragging) {
+      layerIn = this.state.dragIn;
+      layerOut = this.state.dragOut;
+    }
+
+    const controlChildren = (
+      <TextField onChange={this._onNameChange}
+          value={this.props.layer.name}/>
+    );
+    const controlActions = [
       {
         children: (
           <Icon className={this.state.expanded ? 'pl-active' : null}
@@ -219,36 +265,19 @@ const TimelineLayer = React.createClass({
         title: 'Remove layer'
       }
     ];
-
-    const handles = [];
-    for (var i = 0; i < 2; i++) {
-      handles.push(
-        <div className="pl-timeline-layer-bar-handle"
-            key={i}
-            onMouseDown={this._onBarHandleMouseDown.bind(null, i)}/>
-      );
-    }
-
-    let layerIn = this.props.layer.in;
-    let layerOut = this.props.layer.out;
-    if (this.state.dragging) {
-      layerIn = this.state.dragIn;
-      layerOut = this.state.dragOut;
-    }
+    const controlProps = {
+      draggable: true,
+      onClick: this.props.onSelect,
+      onDragEnd: this.props.onDragEnd,
+      onDragStart: this.props.onDragStart
+    };
 
     return (
       <div className={layerClassName}
           onDragOver={this.props.onDragOver}
           onMouseDown={event => event.stopPropagation()}>
         <div className="pl-timeline-layer-top">
-          <Control actions={actions}
-              draggable
-              onClick={this.props.onSelect}
-              onDragEnd={this.props.onDragEnd}
-              onDragStart={this.props.onDragStart}>
-            <TextField onChange={this._onNameChange}
-                value={this.props.layer.name}/>
-          </Control>
+          {this._renderControl(controlChildren, controlActions, controlProps)}
           <div className="pl-timeline-layer-track"
               key={this.props.layer.id}
               ref="track">
@@ -335,9 +364,7 @@ const TimelineLayer = React.createClass({
               return (
                 <div className="pl-timeline-layer-property"
                     key={key}>
-                  <Control actions={propertyActions}>
-                    {sentenceCase(key)}
-                  </Control>
+                  {this._renderControl(sentenceCase(key), propertyActions)}
                   {propertyTrack}
                 </div>
               );
