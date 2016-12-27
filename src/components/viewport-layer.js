@@ -30,10 +30,6 @@ const ViewportLayer = React.createClass({
       moveX: null,
       moveY: null,
       moving: false,
-      resizeX: null,
-      resizeY: null,
-      resizeAnchorX: null,
-      resizeAnchorY: null,
       resizeScale: null,
       resizing: false
     };
@@ -117,31 +113,15 @@ const ViewportLayer = React.createClass({
       event.stopPropagation();
 
       const node = ReactDOM.findDOMNode(this);
-      const anchorX = Number(!index || index === 3);
-      const anchorY = Number(index < 2);
       const width = node.offsetWidth / this.props.layer.scale;
       const height = node.offsetHeight / this.props.layer.scale;
-      let originX = node.offsetLeft + this.props.viewportOffsetLeft;
-      if (anchorX) {
-        originX -= width - node.offsetWidth;
-      } else {
-        originX += width;
-      }
-      let originY = node.offsetTop + this.props.viewportOffsetTop;
-      if (anchorY) {
-        originY -= height - node.offsetHeight;
-      } else {
-        originY += height;
-      }
+      const originX = node.offsetLeft + this.props.viewportOffsetLeft + width;
+      const originY = node.offsetTop + this.props.viewportOffsetTop + height;
       this._boundHandleMouseMove = this._onHandleMouseMove.bind(null, index, width, height, originX, originY);
       document.addEventListener('mousemove', this._boundHandleMouseMove);
       document.addEventListener('mouseup', this._onHandleMouseUp);
 
       this.setState({
-        resizeX: this.props.layer.x + (anchorX * node.offsetWidth) / this.props.viewportScale,
-        resizeY: this.props.layer.y + (anchorY * node.offsetHeight) / this.props.viewportScale,
-        resizeAnchorX: anchorX,
-        resizeAnchorY: anchorY,
         resizeScale: this.props.layer.scale,
         resizing: true
       });
@@ -183,26 +163,20 @@ const ViewportLayer = React.createClass({
   },
 
   render: function() {
-    let layerX = getInterpolatedValue(this.props.layer.x, this.props.percentPlayed);
-    let layerY = getInterpolatedValue(this.props.layer.y, this.props.percentPlayed);
-    let layerAnchorX = this.props.layer.anchorX;
-    let layerAnchorY = this.props.layer.anchorY;
-    let layerScale = getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed);
-    if (this.state.moving) {
-      layerX = this.state.moveX;
-      layerY = this.state.moveY;
-    } else if (this.state.resizing) {
-      layerX = this.state.resizeX;
-      layerY = this.state.resizeY;
-      layerAnchorX = this.state.resizeAnchorX;
-      layerAnchorY = this.state.resizeAnchorY;
-      layerScale = this.state.resizeScale;
-    }
+    const layerX = this.state.moving ?
+        this.state.moveX :
+        getInterpolatedValue(this.props.layer.x, this.props.percentPlayed);
+    const layerY = this.state.moving ?
+        this.state.moveY :
+        getInterpolatedValue(this.props.layer.y, this.props.percentPlayed);
+    const layerScale = this.state.resizing ?
+        this.state.resizeScale :
+        getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed);
 
     const style = {
       top: layerY * this.props.viewportScale,
       left: layerX * this.props.viewportScale,
-      transform: `translate(${layerAnchorX * -100}%, ${layerAnchorY * -100}%)`
+      transform: `translate(${this.props.layer.anchorX * -100}%, ${this.props.layer.anchorY * -100}%)`
     };
 
     let children;
