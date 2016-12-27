@@ -1,3 +1,5 @@
+@import './viewport-layer';
+
 .pl-viewport {
   width: 100%;
   height: 100%;
@@ -8,59 +10,5 @@
   position: relative;
   &.pl-dragging {
     box-shadow: 0 0 0 3px @brand-primary, @box-shadow-large;
-  }
-
-  .pl-viewport-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    &:hover {
-      box-shadow: 0 0 0 1px fade(red, 25%);
-    }
-    &.pl-selected {
-      box-shadow: 0 0 0 1px red;
-      .pl-viewport-layer-handles {
-        display: block;
-      }
-    }
-
-    img {
-      display: block;
-    }
-    .pl-text-field + .pl-viewport-layer-handles .pl-viewport-layer-handle:nth-child(2n) {
-      display: none;
-    }
-    .pl-viewport-layer-handles {
-      display: none;
-      .pl-viewport-layer-handle {
-        width: 3px;
-        height: 3px;
-        background-color: red;
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform: translate(-50%, -50%);
-        &:nth-child(1), &:nth-child(5) {
-          cursor: nwse-resize;
-        }
-        &:nth-child(2), &:nth-child(6) {
-          cursor: ns-resize;
-          left: 50%;
-        }
-        &:nth-child(3), &:nth-child(7) {
-          cursor: nesw-resize;
-        }
-        &:nth-child(4), &:nth-child(8) {
-          cursor: ew-resize;
-          top: 50%;
-        }
-        &:nth-child(n + 3):nth-child(-n + 5) {
-          left: 100%;
-        }
-        &:nth-child(n + 5):nth-child(-n + 7) {
-          top: 100%;
-        }
-      }
-    }
   }
 }

@@ -1,4 +1,5 @@
 const React = require('react');
+const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const classNames = require('classnames');
 
@@ -31,9 +32,7 @@ const ViewportLayer = React.createClass({
       moveX: null,
       moveY: null,
       moving: false,
-      resizeFontSize: null,
-      resizeX: null,
-      resizeY: null,
+      resizeScale: null,
       resizing: false
     };
   },
@@ -88,12 +87,16 @@ const ViewportLayer = React.createClass({
 
   _onMouseUp: function() {
     this.props.onPropertiesChange({
-      x: typeof this.props.layer.x === 'object' ? Object.assign({}, this.props.layer.x, {
-        [this.props.percentPlayed]: this.state.moveX
-      }) : this.state.moveX,
-      y: typeof this.props.layer.y === 'object' ? Object.assign({}, this.props.layer.y, {
-        [this.props.percentPlayed]: this.state.moveY
-      }) : this.state.moveY
+      x: typeof this.props.layer.x === 'object' ?
+          Object.assign({}, this.props.layer.x, {
+            [this.props.percentPlayed]: this.state.moveX
+          }) :
+          this.state.moveX,
+      y: typeof this.props.layer.y === 'object' ?
+          Object.assign({}, this.props.layer.y, {
+            [this.props.percentPlayed]: this.state.moveY
+          }) :
+          this.state.moveY
     });
     this.setState({
       moveX: null,
@@ -108,58 +111,46 @@ const ViewportLayer = React.createClass({
   _onHandleMouseDown: function(index, event) {
     if (event.button === 0) {
       event.stopPropagation();
-      const nextState = {
-        resizeY: this.props.layer.y,
+      this.setState({
+        resizeScale: this.props.layer.scale,
         resizing: true
-      };
-      switch (this.props.layer.type) {
-        case 'text':
-          nextState.resizeFontSize = this.props.layer.fontSize;
-          break;
-        case 'image':
-          nextState.resizeHeight = this.props.layer.height;
-          break;
-        default:
-          break;
-      }
-      this.setState(nextState);
-      this._boundHandleMouseMove = this._onHandleMouseMove.bind(null, index);
+      });
+      const node = ReactDOM.findDOMNode(this);
+      this._boundHandleMouseMove = this._onHandleMouseMove.bind(
+        null,
+        index,
+        node.offsetWidth,
+        node.offsetHeight,
+        event.clientX,
+        event.clientY
+      );
       document.addEventListener('mousemove', this._boundHandleMouseMove);
       document.addEventListener('mouseup', this._onHandleMouseUp);
     }
   },
 
-  _onHandleMouseMove: function(index, event) {
-    let layerY = this.state.resizeY;
-    let movementY = event.movementY;
-    if (index <= 2) {
-      layerY += event.movementY / this.props.viewportScale;
-      movementY *= -1;
-    }
-    const nextState = {resizeY: layerY};
-    if (this.state.resizeFontSize !== null) {
-      nextState.resizeFontSize = Math.round(this.state.resizeFontSize + movementY);
-    } else if (this.state.resizeHeight !== null) {
-      nextState.resizeHeight = this.state.resizeHeight + movementY / this.props.viewportScale;
-    }
-    return this.setState(nextState);
+  _onHandleMouseMove: function(index, width, height, originX, originY, event) {
+    const directionX = index === 1 || index === 2 ? -1 : 1;
+    const directionY = index === 2 || index === 3 ? -1 : 1;
+    const deltaX = (originX - event.clientX) * directionX;
+    const deltaY = (originY - event.clientY) * directionY;
+    const scaleX = (width + deltaX) / width;
+    const scaleY = (height + deltaY) / height;
+    return this.setState({resizeScale: Math.max(scaleX, scaleY)});
   },
 
   _onHandleMouseUp: function() {
-    const nextProps = {y: this.state.resizeY};
-    if (this.state.resizeFontSize !== null) {
-      nextProps.fontSize = this.state.resizeFontSize;
-    } else if (this.state.resizeHeight !== null) {
-      nextProps.height = this.state.resizeHeight;
-    }
-    this.props.onPropertiesChange(nextProps);
+    this.props.onPropertiesChange({
+      scale: typeof this.props.layer.scale === 'object' ?
+          Object.assign({}, this.props.layer.scale, {
+            [this.props.percentPlayed]: this.state.resizeScale
+          }) :
+          this.state.resizeScale
+    });
     this.setState({
-      resizeFontSize: null,
-      resizeHeight: null,
-      resizeY: null,
+      resizeScale: null,
       resizing: false
     });
-
     document.removeEventListener('mousemove', this._boundHandleMouseMove);
     document.removeEventListener('mouseup', this._onHandleMouseUp);
     delete this._boundHandleMouseMove;
@@ -171,14 +162,16 @@ const ViewportLayer = React.createClass({
   },
 
   render: function() {
-    let layerX = getInterpolatedValue(this.props.layer.x, this.props.percentPlayed);
-    let layerY = getInterpolatedValue(this.props.layer.y, this.props.percentPlayed);
-    if (this.state.moving) {
-      layerX = this.state.moveX;
-      layerY = this.state.moveY;
-    } else if (this.state.resizing) {
-      layerY = this.state.resizeY;
-    }
+    let layerX = this.state.moving ?
+        this.state.moveX :
+        getInterpolatedValue(this.props.layer.x, this.props.percentPlayed);
+    let layerY = this.state.moving ?
+        this.state.moveY :
+        getInterpolatedValue(this.props.layer.y, this.props.percentPlayed);
+    let layerScale = this.state.resizing ?
+        this.state.resizeScale :
+        getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed);
+
     const style = {
       top: this.props.viewportHeight * layerY / this.props.compositionHeight,
       left: this.props.viewportWidth * layerX / this.props.compositionWidth,
@@ -186,15 +179,12 @@ const ViewportLayer = React.createClass({
     };
 
     let children;
-    const layerScale = getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed);
     switch (this.props.layer.type) {
       case 'text':
-        var fontSize = this.state.resizing ?
-            this.state.resizeFontSize : this.props.layer.fontSize;
         children = (
           <TextField onChange={this._onTextChange}
               style={{
-                fontSize: `${fontSize * layerScale}px`,
+                fontSize: `${this.props.layer.fontSize * layerScale}px`,
                 fontWeight: this.props.layer.fontWeight,
                 fontStyle: this.props.layer.fontStyle,
                 opacity: this.props.layer.opacity
@@ -203,17 +193,11 @@ const ViewportLayer = React.createClass({
         );
         break;
       case 'image':
-        var layerHeight = this.props.layer.height;
-        var layerWidth = this.props.layer.width;
-        if (this.state.resizing) {
-          layerHeight = this.state.resizeHeight;
-          layerWidth = layerHeight * this.props.layer.aspectRatio;
-        }
         children = (
-          <img height={layerHeight * this.props.viewportScale * layerScale}
+          <img height={this.props.layer.height * this.props.viewportScale * layerScale}
               src={this.props.layer.src}
               style={{opacity: this.props.layer.opacity}}
-              width={layerWidth * this.props.viewportScale * layerScale}/>
+              width={this.props.layer.width * this.props.viewportScale * layerScale}/>
         );
         break;
       default:
@@ -221,7 +205,7 @@ const ViewportLayer = React.createClass({
     }
 
     const handles = [];
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 4; i++) {
       handles.push(
         <div className="pl-viewport-layer-handle"
             key={i}
