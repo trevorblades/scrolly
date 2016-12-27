@@ -188,9 +188,9 @@ const ViewportLayer = React.createClass({
     let parentScale = properties.scale.default;
     if (this.props.layer.parent !== null) {
       const parent = this.props.layers.find(layer => layer.id === this.props.layer.parent);
-      parentX = parent.x;
-      parentY = parent.y;
-      parentScale = parent.scale;
+      parentX = getInterpolatedValue(parent.x, this.props.percentPlayed);
+      parentY = getInterpolatedValue(parent.y, this.props.percentPlayed);
+      parentScale = getInterpolatedValue(parent.scale, this.props.percentPlayed);
     }
 
     const layerX = parentX + (this.state.moving ? this.state.moveX :
