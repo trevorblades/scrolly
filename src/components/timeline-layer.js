@@ -25,12 +25,16 @@ const TimelineLayer = React.createClass({
 
   propTypes: {
     layer: layerPropType.isRequired,
+    linkable: React.PropTypes.bool.isRequired,
     onDragEnd: React.PropTypes.func.isRequired,
     onDragOver: React.PropTypes.func.isRequired,
     onDragStart: React.PropTypes.func.isRequired,
+    onLinkClick: React.PropTypes.func.isRequired,
+    onLinkTargetClick: React.PropTypes.func.isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
     onRemoveClick: React.PropTypes.func.isRequired,
     onSelect: React.PropTypes.func.isRequired,
+    onUnlinkClick: React.PropTypes.func.isRequired,
     onVisiblityToggle: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
     selected: React.PropTypes.bool.isRequired,
@@ -200,9 +204,11 @@ const TimelineLayer = React.createClass({
         {children}
         <div className="pl-timeline-layer-control-actions">
           {actions.map(function(action, index) {
-            const actionClassName = classNames('pl-timeline-layer-control-action', {
-              'pl-clickable': action.onClick
-            });
+            const actionClassName = classNames(
+              'pl-timeline-layer-control-action',
+              action.className,
+              {'pl-clickable': action.onClick}
+            );
             return (
               <div className={actionClassName}
                   key={index}
@@ -220,6 +226,7 @@ const TimelineLayer = React.createClass({
   render: function() {
     const layerClassName = classNames('pl-timeline-layer', {
       'pl-hidden': !this.props.layer.visible,
+      'pl-linkable': this.props.linkable,
       'pl-selected': this.props.selected,
       'pl-sticky': this.state.expanded && this.props.sticky,
       'pl-stuck': this.state.expanded && this.props.stuck
@@ -241,6 +248,23 @@ const TimelineLayer = React.createClass({
       layerOut = this.state.dragOut;
     }
 
+    const linkAction = {
+      className: 'pl-timeline-layer-top-link'
+    };
+    if (this.props.linkable) {
+      linkAction.children = <Icon name="target"/>;
+      linkAction.onClick = this.props.onLinkTargetClick;
+      linkAction.title = 'Link to this layer';
+    } else {
+      const linked = this.props.layer.parent !== null;
+      linkAction.children = (
+        <Icon className={linked ? 'pl-active' : null}
+            name="link"/>
+      );
+      linkAction.onClick = linked ? this.props.onUnlinkClick : this.props.onLinkClick;
+      linkAction.title = `${linked ? 'Unlink' : 'Link'} layer`;
+    }
+
     return (
       <div className={layerClassName}
           onDragOver={this.props.onDragOver}
@@ -252,14 +276,7 @@ const TimelineLayer = React.createClass({
                   value={this.props.layer.name}/>
             ),
             [
-              {
-                children: (
-                  <Icon className={this.props.layer.link ? 'pl-active' : null}
-                      name="link"/>
-                ),
-                onClick: this._onLinkClick,
-                title: `${this.props.layer.link ? 'Unlink' : 'Link'} layer`
-              },
+              linkAction,
               {
                 children: (
                   <Icon className={this.state.expanded ? 'pl-active' : null}

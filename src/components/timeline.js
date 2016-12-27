@@ -6,7 +6,7 @@ const Button = require('./button');
 const Icon = require('./icon');
 const TimelineLayer = require('./timeline-layer');
 
-const {addLayer, orderLayers} = require('../actions');
+const {addLayer, linkLayers, orderLayers} = require('../actions');
 
 const MIN_HEIGHT = 100;
 const SNAP_TOLERANCE = 0.01;
@@ -38,6 +38,7 @@ let Timeline = React.createClass({
   getInitialState: function() {
     return {
       height: 200,
+      linkingLayerId: null,
       scrolling: false,
       snapToKeyframes: true,
       sortId: null,
@@ -138,6 +139,22 @@ let Timeline = React.createClass({
       sortId: id,
       sortOrder: this.props.layers.map(layer => layer.id)
     });
+  },
+
+  _onLayerLinkClick: function(id, event) {
+    event.stopPropagation();
+    this.setState({linkingLayerId: this.state.linkingLayerId === null ? id : null});
+  },
+
+  _onLayerUnlinkClick: function(id, event) {
+    event.stopPropagation();
+    this.props.dispatch(linkLayers(id, null));
+  },
+
+  _onLayerLinkTargetClick: function(id, event) {
+    event.stopPropagation();
+    this.props.dispatch(linkLayers(this.state.linkingLayerId, id));
+    this.setState({linkingLayerId: null});
   },
 
   _onLayerSelect: function(id, event) {
@@ -289,10 +306,15 @@ let Timeline = React.createClass({
               return (
                 <TimelineLayer key={layer.id}
                     layer={layer}
+                    linkable={this.state.linkingLayerId !== null &&
+                        layer.id !== this.state.linkingLayerId}
                     onDragEnd={this._onLayerDragEnd}
                     onDragOver={this._onLayerDragOver}
                     onDragStart={this._onLayerDragStart.bind(null, layer.id)}
+                    onLinkClick={this._onLayerLinkClick.bind(null, layer.id)}
+                    onLinkTargetClick={this._onLayerLinkTargetClick.bind(null, layer.id)}
                     onSelect={this._onLayerSelect.bind(null, layer.id)}
+                    onUnlinkClick={this._onLayerUnlinkClick.bind(null, layer.id)}
                     percentPlayed={this.props.percentPlayed}
                     selected={layer.id === this.props.selectedLayerId}
                     sticky={layer.id === this.state.stickyLayerId}

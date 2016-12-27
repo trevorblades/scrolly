@@ -15,7 +15,8 @@ module.exports = function(state, action) {
         y: properties.y.default,
         scale: properties.scale.default,
         opacity: properties.opacity.default,
-        visible: true
+        visible: true,
+        parent: null
       };
 
       switch (layer.type) {
@@ -54,6 +55,11 @@ module.exports = function(state, action) {
         return state;
       }
       return Object.assign({}, state, {visible: !state.visible});
+    case 'LINK_LAYERS':
+      if (state.id !== action.child) {
+        return state;
+      }
+      return Object.assign({}, state, {parent: action.parent});
     default:
       return state;
   }

@@ -17,6 +17,7 @@ module.exports = function(state = [], action) {
       return action.order.map(id => state.find(layer => layer.id === id));
     case 'SET_LAYER_PROPERTIES':
     case 'TOGGLE_LAYER_VISIBILITY':
+    case 'LINK_LAYERS':
       return state.map(layer => layerReducer(layer, action));
     default:
       return state;

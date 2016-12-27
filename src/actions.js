@@ -46,6 +46,14 @@ function toggleLayerVisibility(id) {
   };
 }
 
+function linkLayers(child, parent) {
+  return {
+    type: 'LINK_LAYERS',
+    child,
+    parent
+  };
+}
+
 function addAsset(name, filetype, size, data, width, height) {
   return {
     type: 'ADD_ASSET',
@@ -73,6 +81,7 @@ module.exports = {
   orderLayers,
   setLayerProperties,
   toggleLayerVisibility,
+  linkLayers,
   addAsset,
   removeAsset
 };
