@@ -241,48 +241,55 @@ const TimelineLayer = React.createClass({
       layerOut = this.state.dragOut;
     }
 
-    const controlChildren = (
-      <TextField onChange={this._onNameChange}
-          value={this.props.layer.name}/>
-    );
-    const controlActions = [
-      {
-        children: (
-          <Icon className={this.state.expanded ? 'pl-active' : null}
-              name="more"/>
-        ),
-        onClick: this._onMoreClick,
-        title: `${this.state.expanded ? 'Hide' : 'Show'} properties`
-      },
-      {
-        children: <Icon name={this.props.layer.visible ? 'visible' : 'invisible'}/>,
-        onClick: this.props.onVisiblityToggle,
-        title: `${this.props.layer.visible ? 'Hide' : 'Show'} layer`
-      },
-      {
-        children: <Icon name="trash"/>,
-        onClick: this.props.onRemoveClick,
-        title: 'Remove layer'
-      }
-    ];
-    const controlProps = {
-      draggable: true,
-      onClick: this.props.onSelect,
-      onDragEnd: this.props.onDragEnd,
-      onDragStart: this.props.onDragStart
-    };
-
     return (
       <div className={layerClassName}
           onDragOver={this.props.onDragOver}
           onMouseDown={event => event.stopPropagation()}>
         <div className="pl-timeline-layer-top">
-          {this._renderControl(controlChildren, controlActions, controlProps)}
+          {this._renderControl(
+            (
+              <TextField onChange={this._onNameChange}
+                  value={this.props.layer.name}/>
+            ),
+            [
+              {
+                children: (
+                  <Icon className={this.props.layer.link ? 'pl-active' : null}
+                      name="link"/>
+                ),
+                onClick: this._onLinkClick,
+                title: `${this.props.layer.link ? 'Unlink' : 'Link'} layer`
+              },
+              {
+                children: (
+                  <Icon className={this.state.expanded ? 'pl-active' : null}
+                      name="more"/>
+                ),
+                onClick: this._onMoreClick,
+                title: `${this.state.expanded ? 'Hide' : 'Show'} properties`
+              },
+              {
+                children: <Icon name={this.props.layer.visible ? 'visible' : 'invisible'}/>,
+                onClick: this.props.onVisiblityToggle,
+                title: `${this.props.layer.visible ? 'Hide' : 'Show'} layer`
+              },
+              {
+                children: <Icon name="trash"/>,
+                onClick: this.props.onRemoveClick,
+                title: 'Remove layer'
+              }
+            ],
+            {
+              draggable: true,
+              onClick: this.props.onSelect,
+              onDragEnd: this.props.onDragEnd,
+              onDragStart: this.props.onDragStart
+            }
+          )}
           <div className="pl-timeline-layer-track"
               key={this.props.layer.id}
               ref="track">
             <div className="pl-timeline-layer-top-bar"
-                onClick={event => event.stopPropagation()}
                 onMouseDown={this._onBarMouseDown}
                 style={{
                   left: `${layerIn * 100}%`,
@@ -304,8 +311,7 @@ const TimelineLayer = React.createClass({
               if (property.animatable) {
                 const animating = typeof value === 'object';
                 const highlighted = animating && this.props.percentPlayed in value;
-                const interpolatedValue = getInterpolatedValue(value, this.props.percentPlayed);
-                value = Math.round(interpolatedValue * 100) / 100;
+                value = getInterpolatedValue(value, this.props.percentPlayed);
 
                 const addKeyframe = this._addKeyframe.bind(null, key);
                 propertyActions.push(
@@ -344,6 +350,10 @@ const TimelineLayer = React.createClass({
               } else {
                 propertyActions.push({children: <Icon name="timer"/>},
                     {children: <Icon name="add"/>});
+              }
+
+              if (typeof value === 'number') {
+                value = Math.round(value * 100) / 100;
               }
 
               let propertyField;
