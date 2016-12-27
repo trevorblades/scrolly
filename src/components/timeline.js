@@ -68,7 +68,9 @@ let Timeline = React.createClass({
       if (layer.childNodes.length > 1 &&
           layer.offsetTop <= scrollPos) {
         const nextLayer = layers[i + 1];
-        if (nextLayer && nextLayer.offsetTop <= layer.childNodes[0].offsetHeight + scrollPos) {
+        const marginTop = parseInt(getComputedStyle(layer).marginTop);
+        const layerTopHeight = layer.childNodes[0].offsetHeight + marginTop + scrollPos;
+        if (nextLayer && nextLayer.offsetTop <= layerTopHeight) {
           stuckLayerIndex = i;
         } else {
           stickyLayerIndex = i;

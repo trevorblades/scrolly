@@ -22,7 +22,6 @@
     padding-top: @padding-base + @padding-small * 2;
     .pl-timeline-layer-top {
       width: 100%;
-      margin-bottom: @padding-small;
       background-color: @gray-darker;
       position: absolute;
       top: 0;
@@ -109,15 +108,12 @@
   .pl-timeline-layer-top {
     display: flex;
     flex-grow: 1;
-    .pl-timeline-layer-control {
-      padding: @padding-small;
-      .pl-text-field {
-        padding-right: @padding-smaller;
-      }
+    padding: @padding-small 0;
+    .pl-timeline-layer-control .pl-text-field {
+      padding-right: @padding-smaller;
     }
     .pl-timeline-layer-top-bar {
       height: @padding-base;
-      margin: @padding-small 0;
       border-radius: @border-radius-small;
       box-shadow: 0 1px 1px @shadow-dark;
       background-color: @gray-light;
