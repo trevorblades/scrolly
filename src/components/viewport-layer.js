@@ -47,18 +47,18 @@ const ViewportLayer = React.createClass({
         this.props.selectLayer(this.props.layer.id);
       }
 
-      this.setState({
-        moveX: getInterpolatedValue(this.props.layer.x, this.props.percentPlayed),
-        moveY: getInterpolatedValue(this.props.layer.y, this.props.percentPlayed),
-        moving: true
-      });
-
       const rect = event.target.getBoundingClientRect();
       const offsetX = event.clientX - rect.left - rect.width * this.props.layer.anchorX;
       const offsetY = event.clientY - rect.top - rect.height * this.props.layer.anchorY;
       this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY);
       document.addEventListener('mousemove', this._boundMouseMove);
       document.addEventListener('mouseup', this._onMouseUp);
+
+      this.setState({
+        moveX: getInterpolatedValue(this.props.layer.x, this.props.percentPlayed),
+        moveY: getInterpolatedValue(this.props.layer.y, this.props.percentPlayed),
+        moving: true
+      });
     }
   },
 
@@ -100,14 +100,16 @@ const ViewportLayer = React.createClass({
           }) :
           this.state.moveY
     });
+
+    document.removeEventListener('mousemove', this._boundMouseMove);
+    document.removeEventListener('mouseup', this._onMouseUp);
+    delete this._boundMouseMove;
+
     this.setState({
       moveX: null,
       moveY: null,
       moving: false
     });
-    document.removeEventListener('mousemove', this._boundMouseMove);
-    document.removeEventListener('mouseup', this._onMouseUp);
-    delete this._boundMouseMove;
   },
 
   _onHandleMouseDown: function(index, event) {
@@ -117,6 +119,24 @@ const ViewportLayer = React.createClass({
       const node = ReactDOM.findDOMNode(this);
       const anchorX = Number(!index || index === 3);
       const anchorY = Number(index < 2);
+      const width = node.offsetWidth / this.props.layer.scale;
+      const height = node.offsetHeight / this.props.layer.scale;
+      let originX = node.offsetLeft + this.props.viewportOffsetLeft;
+      if (anchorX) {
+        originX -= width - node.offsetWidth;
+      } else {
+        originX += width;
+      }
+      let originY = node.offsetTop + this.props.viewportOffsetTop;
+      if (anchorY) {
+        originY -= height - node.offsetHeight;
+      } else {
+        originY += height;
+      }
+      this._boundHandleMouseMove = this._onHandleMouseMove.bind(null, index, width, height, originX, originY);
+      document.addEventListener('mousemove', this._boundHandleMouseMove);
+      document.addEventListener('mouseup', this._onHandleMouseUp);
+
       this.setState({
         resizeX: this.props.layer.x + (anchorX * node.offsetWidth) / this.props.viewportScale,
         resizeY: this.props.layer.y + (anchorY * node.offsetHeight) / this.props.viewportScale,
@@ -125,20 +145,6 @@ const ViewportLayer = React.createClass({
         resizeScale: this.props.layer.scale,
         resizing: true
       });
-
-      const width = node.offsetWidth / this.props.layer.scale;
-      const height = node.offsetHeight / this.props.layer.scale;
-      let originX = node.offsetLeft + this.props.viewportOffsetLeft;
-      if (index === 1 || index === 2) {
-        originX += width;
-      }
-      let originY = node.offsetTop + this.props.viewportOffsetTop;
-      if (index === 2 || index === 3) {
-        originY += height;
-      }
-      this._boundHandleMouseMove = this._onHandleMouseMove.bind(null, index, width, height, originX, originY);
-      document.addEventListener('mousemove', this._boundHandleMouseMove);
-      document.addEventListener('mouseup', this._onHandleMouseUp);
     }
   },
 
@@ -160,13 +166,15 @@ const ViewportLayer = React.createClass({
           }) :
           this.state.resizeScale
     });
+
+    document.removeEventListener('mousemove', this._boundHandleMouseMove);
+    document.removeEventListener('mouseup', this._onHandleMouseUp);
+    delete this._boundHandleMouseMove;
+
     this.setState({
       resizeScale: null,
       resizing: false
     });
-    document.removeEventListener('mousemove', this._boundHandleMouseMove);
-    document.removeEventListener('mouseup', this._onHandleMouseUp);
-    delete this._boundHandleMouseMove;
   },
 
   _onTextChange: function(value) {
