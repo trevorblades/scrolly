@@ -35,9 +35,13 @@ const ViewportLayer = React.createClass({
     };
   },
 
+  _onClick: function(event) {
+    event.stopPropagation();
+  },
+
   _onMouseDown: function(event) {
     if (event.button === 0) {
-      event.preventDefault();
+      event.stopPropagation();
 
       if (!this.props.selected) {
         this.props.selectLayer(this.props.layer.id);
@@ -115,9 +119,23 @@ const ViewportLayer = React.createClass({
       const node = ReactDOM.findDOMNode(this);
       const width = node.offsetWidth / this.props.layer.scale;
       const height = node.offsetHeight / this.props.layer.scale;
-      const originX = node.offsetLeft + this.props.viewportOffsetLeft + width;
-      const originY = node.offsetTop + this.props.viewportOffsetTop + height;
-      this._boundHandleMouseMove = this._onHandleMouseMove.bind(null, index, width, height, originX, originY);
+      const handleX = Number(index === 1 || index === 2);
+      const handleY = Number(index > 1);
+      const originX = this.props.viewportOffsetLeft + node.offsetLeft -
+          width * this.props.layer.anchorX +
+          width * handleX;
+      const originY = this.props.viewportOffsetTop + node.offsetTop -
+          height * this.props.layer.anchorY +
+          height * handleY;
+      this._boundHandleMouseMove = this._onHandleMouseMove.bind(
+        null,
+        width,
+        height,
+        originX,
+        originY,
+        handleX - this.props.layer.anchorX,
+        handleY - this.props.layer.anchorY
+      );
       document.addEventListener('mousemove', this._boundHandleMouseMove);
       document.addEventListener('mouseup', this._onHandleMouseUp);
 
@@ -128,14 +146,14 @@ const ViewportLayer = React.createClass({
     }
   },
 
-  _onHandleMouseMove: function(index, width, height, originX, originY, event) {
-    const directionX = index === 1 || index === 2 ? -1 : 1;
-    const directionY = index === 2 || index === 3 ? -1 : 1;
-    const deltaX = (originX - event.clientX) * directionX;
-    const deltaY = (originY - event.clientY) * directionY;
-    const scaleX = (width + deltaX) / width;
-    const scaleY = (height + deltaY) / height;
-    return this.setState({resizeScale: (scaleX + scaleY) / 2});
+  _onHandleMouseMove: function(width, height, originX, originY, scaleFactorX, scaleFactorY, event) {
+    if (scaleFactorX || scaleFactorY) {
+      const deltaX = event.clientX - originX;
+      const deltaY = event.clientY - originY;
+      const scaleX = scaleFactorX && (width + deltaX / scaleFactorX) / width;
+      const scaleY = scaleFactorY && (height + deltaY / scaleFactorY) / height;
+      this.setState({resizeScale: Math.max(scaleX, scaleY)});
+    }
   },
 
   _onHandleMouseUp: function() {
@@ -221,7 +239,7 @@ const ViewportLayer = React.createClass({
     return (
       <div className={layerClassName}
           key={this.props.layer.id}
-          onClick={event => event.stopPropagation()}
+          onClick={this._onClick}
           onMouseDown={this._onMouseDown}
           style={style}>
         {children}

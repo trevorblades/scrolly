@@ -66,7 +66,7 @@ let Viewport = React.createClass({
     }
   },
 
-  _onClick: function() {
+  _onMouseDown: function() {
     if (this.props.selectedLayerId !== null) {
       this.props.selectLayer(null);
     }
@@ -114,11 +114,11 @@ let Viewport = React.createClass({
 
     return (
       <div className={viewportClassName}
-          onClick={this._onClick}
           onDragEnter={this._onDragEnter}
           onDragLeave={this._onDragLeave}
           onDragOver={this._onDragOver}
           onDrop={this._onDrop}
+          onMouseDown={this._onMouseDown}
           style={{
             width: this.state.width,
             height: this.state.height
