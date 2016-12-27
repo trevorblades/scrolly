@@ -59,6 +59,8 @@ let Viewport = React.createClass({
     if (nextProps.compositionHeight !== this.props.compositionHeight ||
         nextProps.compositionWidth !== this.props.compositionWidth ||
         nextProps.wrapperHeight !== this.props.wrapperHeight ||
+        nextProps.wrapperOffsetLeft !== this.props.wrapperOffsetLeft ||
+        nextProps.wrapperOffsetTop !== this.props.wrapperOffsetTop ||
         nextProps.wrapperWidth !== this.props.wrapperWidth) {
       this.setState(getViewportDimensions(nextProps));
     }
@@ -128,9 +130,7 @@ let Viewport = React.createClass({
           }
 
           return (
-            <ViewportLayer compositionHeight={this.props.compositionHeight}
-                compositionWidth={this.props.compositionWidth}
-                key={layer.id}
+            <ViewportLayer key={layer.id}
                 layer={layer}
                 percentPlayed={this.props.percentPlayed}
                 selectLayer={this.props.selectLayer}

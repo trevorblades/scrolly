@@ -12,8 +12,6 @@ const layerPropType = require('../util/layer-prop-type');
 const ViewportLayer = React.createClass({
 
   propTypes: {
-    compositionHeight: React.PropTypes.number.isRequired,
-    compositionWidth: React.PropTypes.number.isRequired,
     dispatch: React.PropTypes.func.isRequired,
     layer: layerPropType.isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
@@ -32,6 +30,10 @@ const ViewportLayer = React.createClass({
       moveX: null,
       moveY: null,
       moving: false,
+      resizeX: null,
+      resizeY: null,
+      resizeAnchorX: null,
+      resizeAnchorY: null,
       resizeScale: null,
       resizing: false
     };
@@ -80,8 +82,8 @@ const ViewportLayer = React.createClass({
     }
 
     this.setState({
-      moveX: layerX / this.props.viewportScale,
-      moveY: layerY / this.props.viewportScale
+      moveX: Math.round(layerX / this.props.viewportScale),
+      moveY: Math.round(layerY / this.props.viewportScale)
     });
   },
 
@@ -111,19 +113,30 @@ const ViewportLayer = React.createClass({
   _onHandleMouseDown: function(index, event) {
     if (event.button === 0) {
       event.stopPropagation();
+
+      const node = ReactDOM.findDOMNode(this);
+      const anchorX = Number(!index || index === 3);
+      const anchorY = Number(index < 2);
       this.setState({
+        resizeX: this.props.layer.x + (anchorX * node.offsetWidth) / this.props.viewportScale,
+        resizeY: this.props.layer.y + (anchorY * node.offsetHeight) / this.props.viewportScale,
+        resizeAnchorX: anchorX,
+        resizeAnchorY: anchorY,
         resizeScale: this.props.layer.scale,
         resizing: true
       });
-      const node = ReactDOM.findDOMNode(this);
-      this._boundHandleMouseMove = this._onHandleMouseMove.bind(
-        null,
-        index,
-        node.offsetWidth,
-        node.offsetHeight,
-        event.clientX,
-        event.clientY
-      );
+
+      const width = node.offsetWidth / this.props.layer.scale;
+      const height = node.offsetHeight / this.props.layer.scale;
+      let originX = node.offsetLeft + this.props.viewportOffsetLeft;
+      if (index === 1 || index === 2) {
+        originX += width;
+      }
+      let originY = node.offsetTop + this.props.viewportOffsetTop;
+      if (index === 2 || index === 3) {
+        originY += height;
+      }
+      this._boundHandleMouseMove = this._onHandleMouseMove.bind(null, index, width, height, originX, originY);
       document.addEventListener('mousemove', this._boundHandleMouseMove);
       document.addEventListener('mouseup', this._onHandleMouseUp);
     }
@@ -136,7 +149,7 @@ const ViewportLayer = React.createClass({
     const deltaY = (originY - event.clientY) * directionY;
     const scaleX = (width + deltaX) / width;
     const scaleY = (height + deltaY) / height;
-    return this.setState({resizeScale: Math.max(scaleX, scaleY)});
+    return this.setState({resizeScale: (scaleX + scaleY) / 2});
   },
 
   _onHandleMouseUp: function() {
@@ -162,20 +175,26 @@ const ViewportLayer = React.createClass({
   },
 
   render: function() {
-    let layerX = this.state.moving ?
-        this.state.moveX :
-        getInterpolatedValue(this.props.layer.x, this.props.percentPlayed);
-    let layerY = this.state.moving ?
-        this.state.moveY :
-        getInterpolatedValue(this.props.layer.y, this.props.percentPlayed);
-    let layerScale = this.state.resizing ?
-        this.state.resizeScale :
-        getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed);
+    let layerX = getInterpolatedValue(this.props.layer.x, this.props.percentPlayed);
+    let layerY = getInterpolatedValue(this.props.layer.y, this.props.percentPlayed);
+    let layerAnchorX = this.props.layer.anchorX;
+    let layerAnchorY = this.props.layer.anchorY;
+    let layerScale = getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed);
+    if (this.state.moving) {
+      layerX = this.state.moveX;
+      layerY = this.state.moveY;
+    } else if (this.state.resizing) {
+      layerX = this.state.resizeX;
+      layerY = this.state.resizeY;
+      layerAnchorX = this.state.resizeAnchorX;
+      layerAnchorY = this.state.resizeAnchorY;
+      layerScale = this.state.resizeScale;
+    }
 
     const style = {
-      top: this.props.viewportHeight * layerY / this.props.compositionHeight,
-      left: this.props.viewportWidth * layerX / this.props.compositionWidth,
-      transform: `translate(${this.props.layer.anchorX * -100}%, ${this.props.layer.anchorY * -100}%)`
+      top: layerY * this.props.viewportScale,
+      left: layerX * this.props.viewportScale,
+      transform: `translate(${layerAnchorX * -100}%, ${layerAnchorY * -100}%)`
     };
 
     let children;
