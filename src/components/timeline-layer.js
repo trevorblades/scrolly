@@ -34,7 +34,9 @@ const TimelineLayer = React.createClass({
     onSelect: React.PropTypes.func.isRequired,
     onVisiblityToggle: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
-    selected: React.PropTypes.bool.isRequired
+    selected: React.PropTypes.bool.isRequired,
+    sticky: React.PropTypes.bool.isRequired,
+    stuck: React.PropTypes.bool.isRequired
   },
 
   getInitialState: function() {
@@ -191,8 +193,10 @@ const TimelineLayer = React.createClass({
 
   render: function() {
     const layerClassName = classNames('pl-timeline-layer', {
+      'pl-hidden': !this.props.layer.visible,
       'pl-selected': this.props.selected,
-      'pl-hidden': !this.props.layer.visible
+      'pl-sticky': this.state.expanded && this.props.sticky,
+      'pl-stuck': this.state.expanded && this.props.stuck
     });
 
     const actions = [
@@ -236,26 +240,28 @@ const TimelineLayer = React.createClass({
       <div className={layerClassName}
           onDragOver={this.props.onDragOver}
           onMouseDown={event => event.stopPropagation()}>
-        <Control actions={actions}
-            className="pl-timeline-layer-name"
-            draggable
-            onClick={this.props.onSelect}
-            onDragEnd={this.props.onDragEnd}
-            onDragStart={this.props.onDragStart}>
-          <TextField onChange={this._onNameChange}
-              value={this.props.layer.name}/>
-        </Control>
-        <div className="pl-timeline-layer-track"
-            key={this.props.layer.id}
-            ref="track">
-          <div className="pl-timeline-layer-bar"
-              onClick={event => event.stopPropagation()}
-              onMouseDown={this._onBarMouseDown}
-              style={{
-                left: `${layerIn * 100}%`,
-                right: `${100 - layerOut * 100}%`
-              }}>
-            {handles}
+        <div className="pl-timeline-layer-top">
+          <Control actions={actions}
+              className="pl-timeline-layer-top-name"
+              draggable
+              onClick={this.props.onSelect}
+              onDragEnd={this.props.onDragEnd}
+              onDragStart={this.props.onDragStart}>
+            <TextField onChange={this._onNameChange}
+                value={this.props.layer.name}/>
+          </Control>
+          <div className="pl-timeline-layer-track"
+              key={this.props.layer.id}
+              ref="track">
+            <div className="pl-timeline-layer-bar"
+                onClick={event => event.stopPropagation()}
+                onMouseDown={this._onBarMouseDown}
+                style={{
+                  left: `${layerIn * 100}%`,
+                  right: `${100 - layerOut * 100}%`
+                }}>
+              {handles}
+            </div>
           </div>
         </div>
         {this.state.expanded &&

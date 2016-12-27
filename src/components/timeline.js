@@ -1,5 +1,6 @@
 const React = require('react');
 const {connect} = require('react-redux');
+const classNames = require('classnames');
 
 const Button = require('./button');
 const Icon = require('./icon');
@@ -37,9 +38,12 @@ let Timeline = React.createClass({
   getInitialState: function() {
     return {
       height: 200,
+      scrolling: false,
       snapToKeyframes: true,
       sortId: null,
-      sortOrder: null
+      sortOrder: null,
+      stickyLayerIndex: -1,
+      stuckLayerIndex: -1
     };
   },
 
@@ -52,6 +56,48 @@ let Timeline = React.createClass({
       }
       this.setState({height: height});
     }
+  },
+
+  _onLayersScroll: function(event) {
+    let stickyLayerIndex = -1;
+    let stuckLayerIndex = -1;
+    const scrollPos = event.currentTarget.scrollTop;
+    const layers = event.currentTarget.childNodes;
+    for (var i = layers.length - 1; i >= 0; i--) {
+      const layer = layers[i];
+      if (layer.childNodes.length > 1 &&
+          layer.offsetTop <= scrollPos) {
+        const nextLayer = layers[i + 1];
+        if (nextLayer && nextLayer.offsetTop <= layer.childNodes[0].offsetHeight + scrollPos) {
+          stuckLayerIndex = i;
+        } else {
+          stickyLayerIndex = i;
+        }
+        break;
+      }
+    }
+    this.setState({
+      stickyLayerIndex: stickyLayerIndex,
+      stuckLayerIndex: stuckLayerIndex
+    });
+  },
+
+  _onLayersWheel: function(event) {
+    if (this._wheelTimeout) {
+      this._onLayersWheelEnd(true);
+    }
+    this._wheelTimeout = setTimeout(this._onLayersWheelEnd, 100);
+    if (!this.state.scrolling) {
+      this.setState({scrolling: true});
+    }
+  },
+
+  _onLayersWheelEnd: function(reset) {
+    if (!reset) {
+      this.setState({scrolling: false});
+    }
+    clearTimeout(this._wheelTimeout);
+    delete this._wheelTimeout;
   },
 
   _onLayerDragEnd: function() {
@@ -197,6 +243,10 @@ let Timeline = React.createClass({
           return this.props.layers.find(layer => layer.id === id);
         }) : this.props.layers;
 
+    const layersClassName = classNames('pl-timeline-layers', {
+      'pl-scrolling': this.state.scrolling
+    });
+
     return (
       <div className="pl-timeline" style={{height: this.state.height}}>
         <div className="pl-timeline-header">
@@ -230,8 +280,10 @@ let Timeline = React.createClass({
         </div>
         <div className="pl-timeline-content"
             onMouseDown={this.props.selectLayer.bind(null, null)}>
-          <div className="pl-timeline-layers">
-            {layers.map(layer => {
+          <div className={layersClassName}
+              onScroll={this._onLayersScroll}
+              onWheel={this._onLayersWheel}>
+            {layers.map((layer, index) => {
               return (
                 <TimelineLayer key={layer.id}
                     layer={layer}
@@ -240,7 +292,9 @@ let Timeline = React.createClass({
                     onDragStart={this._onLayerDragStart.bind(null, layer.id)}
                     onSelect={this._onLayerSelect.bind(null, layer.id)}
                     percentPlayed={this.props.percentPlayed}
-                    selected={layer.id === this.props.selectedLayerId}/>
+                    selected={layer.id === this.props.selectedLayerId}
+                    sticky={index === this.state.stickyLayerIndex}
+                    stuck={index === this.state.stuckLayerIndex}/>
               );
             })}
           </div>
