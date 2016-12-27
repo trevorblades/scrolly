@@ -242,7 +242,6 @@ const TimelineLayer = React.createClass({
           onMouseDown={event => event.stopPropagation()}>
         <div className="pl-timeline-layer-top">
           <Control actions={actions}
-              className="pl-timeline-layer-top-name"
               draggable
               onClick={this.props.onSelect}
               onDragEnd={this.props.onDragEnd}
