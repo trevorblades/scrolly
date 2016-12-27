@@ -281,7 +281,7 @@ const TimelineLayer = React.createClass({
           <div className="pl-timeline-layer-track"
               key={this.props.layer.id}
               ref="track">
-            <div className="pl-timeline-layer-bar"
+            <div className="pl-timeline-layer-top-bar"
                 onClick={event => event.stopPropagation()}
                 onMouseDown={this._onBarMouseDown}
                 style={{
