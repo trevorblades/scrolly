@@ -25,6 +25,7 @@ const TimelineLayer = React.createClass({
 
   propTypes: {
     layer: layerPropType.isRequired,
+    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     linkable: React.PropTypes.bool.isRequired,
     onDragEnd: React.PropTypes.func.isRequired,
     onDragOver: React.PropTypes.func.isRequired,
@@ -256,13 +257,21 @@ const TimelineLayer = React.createClass({
       linkAction.onClick = this.props.onLinkTargetClick;
       linkAction.title = 'Link to this layer';
     } else {
-      const linked = this.props.layer.parent !== null;
-      linkAction.children = (
-        <Icon className={linked ? 'pl-active' : null}
-            name="link"/>
-      );
-      linkAction.onClick = linked ? this.props.onUnlinkClick : this.props.onLinkClick;
-      linkAction.title = `${linked ? 'Unlink' : 'Link'} layer`;
+      if (this.props.layer.parent !== null) {
+        const parent = this.props.layers.find(layer => layer.id === this.props.layer.parent);
+        linkAction.children = (
+          <div>
+            <span>{parent.name}</span>
+            <Icon className="pl-active" name="link"/>
+          </div>
+        );
+        linkAction.onClick = this.props.onUnlinkClick;
+        linkAction.title = `Linked to ${parent.name}`;
+      } else {
+        linkAction.children = <Icon name="link"/>;
+        linkAction.onClick = this.props.onLinkClick;
+        linkAction.title = 'Link Layer';
+      }
     }
 
     return (
@@ -402,7 +411,13 @@ const TimelineLayer = React.createClass({
   }
 });
 
-module.exports = connect(null, function(dispatch, props) {
+function mapStateToProps(state) {
+  return {
+    layers: state.layers.present
+  };
+}
+
+function mapDispatchToProps(dispatch, props) {
   return {
     dispatch,
     onRemoveClick: function(event) {
@@ -417,4 +432,6 @@ module.exports = connect(null, function(dispatch, props) {
       dispatch(setLayerProperties(props.layer.id, properties));
     }
   };
-})(TimelineLayer);
+}
+
+module.exports = connect(mapStateToProps, mapDispatchToProps)(TimelineLayer);

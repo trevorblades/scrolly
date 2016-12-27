@@ -10,12 +10,13 @@ const Viewport = require('./viewport');
 
 const {FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
+const layerPropType = require('../util/layer-prop-type');
 
 const App = React.createClass({
 
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
-    layers: React.PropTypes.array.isRequired
+    layers: React.PropTypes.arrayOf(layerPropType).isRequired
   },
 
   getInitialState: function() {

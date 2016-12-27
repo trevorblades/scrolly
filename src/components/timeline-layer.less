@@ -47,10 +47,6 @@
     font-size: @font-size-small;
     line-height: @padding-base;
     color: @gray-lightest;
-    span {
-      .pl-ellipsized;
-      flex-grow: 1;
-    }
     .pl-text-field {
       box-shadow: 0 1px @gray-light;
       position: relative;
@@ -112,9 +108,27 @@
     padding: @padding-small 0;
     .pl-timeline-layer-control .pl-text-field {
       padding-right: @padding-smaller;
+      overflow: hidden;
+      white-space: nowrap;
+      &:not([contenteditable="true"]) {
+        text-overflow: ellipsis;
+      }
     }
-    .pl-timeline-layer-top-link .pl-icon {
-      transition: transform @transition-duration-fast ease-in;
+    .pl-timeline-layer-top-link {
+      span, .pl-icon {
+        display: inline-block;
+        vertical-align: top;
+      }
+      span {
+        .pl-ellipsized;
+        max-width: @padding-larger;
+        margin-right: @padding-smallest;
+        font-size: @font-size-smaller;
+        color: @brand-primary;
+      }
+      .pl-icon {
+        transition: transform @transition-duration-fast ease-in;
+      }
     }
     .pl-timeline-layer-top-bar {
       height: @padding-base;

@@ -7,6 +7,7 @@ const Icon = require('./icon');
 const TimelineLayer = require('./timeline-layer');
 
 const {addLayer, linkLayers, orderLayers} = require('../actions');
+const layerPropType = require('../util/layer-prop-type');
 
 const MIN_HEIGHT = 100;
 const SNAP_TOLERANCE = 0.01;
@@ -25,7 +26,7 @@ let Timeline = React.createClass({
 
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
-    layers: React.PropTypes.array.isRequired,
+    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     maxHeight: React.PropTypes.number.isRequired,
     onAddClick: React.PropTypes.func.isRequired,
     onResize: React.PropTypes.func.isRequired,

@@ -7,6 +7,7 @@ const ViewportLayer = require('./viewport-layer');
 const {addImageLayer} = require('../actions');
 const {ASSET_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
+const layerPropType = require('../util/layer-prop-type');
 
 function getViewportDimensions(props) {
   const compositionAspectRatio = props.compositionWidth / props.compositionHeight;
@@ -37,7 +38,7 @@ let Viewport = React.createClass({
     compositionHeight: React.PropTypes.number.isRequired,
     compositionWidth: React.PropTypes.number.isRequired,
     dispatch: React.PropTypes.func.isRequired,
-    layers: React.PropTypes.array.isRequired,
+    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
     selectLayer: React.PropTypes.func.isRequired,
     selectedLayerId: React.PropTypes.number,
