@@ -8,12 +8,14 @@ const TextField = require('./text-field');
 const {setLayerProperties} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const layerPropType = require('../util/layer-prop-type');
+const properties = require('../util/properties');
 
 const ViewportLayer = React.createClass({
 
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
     layer: layerPropType.isRequired,
+    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
     selectLayer: React.PropTypes.func.isRequired,
@@ -181,12 +183,22 @@ const ViewportLayer = React.createClass({
   },
 
   render: function() {
-    const layerX = this.state.moving ? this.state.moveX :
-        getInterpolatedValue(this.props.layer.x, this.props.percentPlayed);
-    const layerY = this.state.moving ? this.state.moveY :
-        getInterpolatedValue(this.props.layer.y, this.props.percentPlayed);
-    const layerScale = this.state.resizing ? this.state.resizeScale :
-        getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed);
+    let parentX = properties.x.default;
+    let parentY = properties.y.default;
+    let parentScale = properties.scale.default;
+    if (this.props.layer.parent !== null) {
+      const parent = this.props.layers.find(layer => layer.id === this.props.layer.parent);
+      parentX = parent.x;
+      parentY = parent.y;
+      parentScale = parent.scale;
+    }
+
+    const layerX = parentX + (this.state.moving ? this.state.moveX :
+        getInterpolatedValue(this.props.layer.x, this.props.percentPlayed));
+    const layerY = parentY + (this.state.moving ? this.state.moveY :
+        getInterpolatedValue(this.props.layer.y, this.props.percentPlayed));
+    const layerScale = parentScale * (this.state.resizing ? this.state.resizeScale :
+        getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed));
 
     const style = {
       top: layerY * this.props.viewportScale,
@@ -253,11 +265,19 @@ const ViewportLayer = React.createClass({
   }
 });
 
-module.exports = connect(null, function(dispatch, props) {
+function mapStateToProps(state) {
+  return {
+    layers: state.layers.present
+  };
+}
+
+function mapDispatchToProps(dispatch, props) {
   return {
     dispatch,
     onPropertiesChange: function(properties) {
       dispatch(setLayerProperties(props.layer.id, properties));
     }
   };
-})(ViewportLayer);
+}
+
+module.exports = connect(mapStateToProps, mapDispatchToProps)(ViewportLayer);
