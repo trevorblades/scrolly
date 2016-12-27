@@ -42,8 +42,8 @@ let Timeline = React.createClass({
       snapToKeyframes: true,
       sortId: null,
       sortOrder: null,
-      stickyLayerIndex: -1,
-      stuckLayerIndex: -1
+      stickyLayerId: null,
+      stuckLayerId: null
     };
   },
 
@@ -59,8 +59,8 @@ let Timeline = React.createClass({
   },
 
   _onLayersScroll: function(event) {
-    let stickyLayerIndex = -1;
-    let stuckLayerIndex = -1;
+    let stickyLayerId = null;
+    let stuckLayerId = null;
     const scrollPos = event.currentTarget.scrollTop;
     const layers = event.currentTarget.childNodes;
     for (var i = layers.length - 1; i >= 0; i--) {
@@ -71,16 +71,16 @@ let Timeline = React.createClass({
         const marginTop = parseInt(getComputedStyle(layer).marginTop);
         const layerTopHeight = layer.childNodes[0].offsetHeight + marginTop + scrollPos;
         if (nextLayer && nextLayer.offsetTop <= layerTopHeight) {
-          stuckLayerIndex = i;
+          stuckLayerId = this.props.layers[i].id;
         } else {
-          stickyLayerIndex = i;
+          stickyLayerId = this.props.layers[i].id;
         }
         break;
       }
     }
     this.setState({
-      stickyLayerIndex: stickyLayerIndex,
-      stuckLayerIndex: stuckLayerIndex
+      stickyLayerId: stickyLayerId,
+      stuckLayerId: stuckLayerId
     });
   },
 
@@ -285,7 +285,7 @@ let Timeline = React.createClass({
           <div className={layersClassName}
               onScroll={this._onLayersScroll}
               onWheel={this._onLayersWheel}>
-            {layers.map((layer, index) => {
+            {layers.map(layer => {
               return (
                 <TimelineLayer key={layer.id}
                     layer={layer}
@@ -295,8 +295,8 @@ let Timeline = React.createClass({
                     onSelect={this._onLayerSelect.bind(null, layer.id)}
                     percentPlayed={this.props.percentPlayed}
                     selected={layer.id === this.props.selectedLayerId}
-                    sticky={index === this.state.stickyLayerIndex}
-                    stuck={index === this.state.stuckLayerIndex}/>
+                    sticky={layer.id === this.state.stickyLayerId}
+                    stuck={layer.id === this.state.stuckLayerId}/>
               );
             })}
           </div>
