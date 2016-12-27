@@ -1,13 +1,17 @@
+.pl-viewport-layer-box-shadow(@color) {
+  box-shadow: 0 0 0 0.5px @color, inset 0 0 0 0.5px @color;
+}
+
 .pl-viewport-layer {
   position: absolute;
   top: 0;
   left: 0;
   &:hover {
-    box-shadow: 0 0 0 1px fade(red, 25%);
+    .pl-viewport-layer-box-shadow(fade(red, 25%));
   }
   &.pl-selected {
-    box-shadow: 0 0 0 1px red;
-    .pl-viewport-layer-handles {
+    .pl-viewport-layer-box-shadow(red);
+    .pl-viewport-layer-anchor, .pl-viewport-layer-handles {
       display: block;
     }
   }
@@ -16,28 +20,51 @@
     display: block;
     pointer-events: none;
   }
-  .pl-viewport-layer-handles {
+  .pl-viewport-layer-anchor, .pl-viewport-layer-handles {
     display: none;
-    .pl-viewport-layer-handle {
-      width: 4px;
-      height: 4px;
+  }
+  .pl-viewport-layer-anchor {
+    width: @padding-small;
+    height: @padding-small;
+    border: 1px solid red;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    &:before, &:after {
+      content: '';
+      width: @padding-base;
+      height: 1px;
       background-color: red;
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 50%;
+      left: 50%;
+    }
+    &:before {
       transform: translate(-50%, -50%);
-      &:nth-child(1), &:nth-child(3) {
-        cursor: nwse-resize;
-      }
-      &:nth-child(2), &:nth-child(4) {
-        cursor: nesw-resize;
-      }
-      &:nth-child(3), &:nth-child(4) {
-        top: 100%;
-      }
-      &:nth-child(2), &:nth-child(3) {
-        left: 100%;
-      }
+    }
+    &:after {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+  }
+  .pl-viewport-layer-handles .pl-viewport-layer-handle {
+    width: 4px;
+    height: 4px;
+    background-color: red;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    &:nth-child(1), &:nth-child(3) {
+      cursor: nwse-resize;
+    }
+    &:nth-child(2), &:nth-child(4) {
+      cursor: nesw-resize;
+    }
+    &:nth-child(3), &:nth-child(4) {
+      top: 100%;
+    }
+    &:nth-child(2), &:nth-child(3) {
+      left: 100%;
     }
   }
 }

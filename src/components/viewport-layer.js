@@ -63,27 +63,27 @@ const ViewportLayer = React.createClass({
   },
 
   _onMouseMove: function(offsetX, offsetY, event) {
-    let layerX = event.clientX - this.props.viewportOffsetLeft - offsetX;
+    let x = event.clientX - this.props.viewportOffsetLeft - offsetX;
     const minX = offsetX * -1;
     const maxX = this.props.viewportWidth - offsetX;
-    if (layerX < minX) {
-      layerX = minX;
-    } else if (layerX > maxX) {
-      layerX = maxX;
+    if (x < minX) {
+      x = minX;
+    } else if (x > maxX) {
+      x = maxX;
     }
 
-    let layerY = event.clientY - this.props.viewportOffsetTop - offsetY;
+    let y = event.clientY - this.props.viewportOffsetTop - offsetY;
     const minY = offsetY * -1;
     const maxY = this.props.viewportHeight - offsetY;
-    if (layerY < minY) {
-      layerY = minY;
-    } else if (layerY > maxY) {
-      layerY = maxY;
+    if (y < minY) {
+      y = minY;
+    } else if (y > maxY) {
+      y = maxY;
     }
 
     this.setState({
-      moveX: Math.round(layerX / this.props.viewportScale),
-      moveY: Math.round(layerY / this.props.viewportScale)
+      moveX: Math.round(x / this.props.viewportScale),
+      moveY: Math.round(y / this.props.viewportScale)
     });
   },
 
@@ -181,19 +181,16 @@ const ViewportLayer = React.createClass({
   },
 
   render: function() {
-    const layerX = this.state.moving ?
-        this.state.moveX :
+    const x = this.state.moving ? this.state.moveX :
         getInterpolatedValue(this.props.layer.x, this.props.percentPlayed);
-    const layerY = this.state.moving ?
-        this.state.moveY :
+    const y = this.state.moving ? this.state.moveY :
         getInterpolatedValue(this.props.layer.y, this.props.percentPlayed);
-    const layerScale = this.state.resizing ?
-        this.state.resizeScale :
+    const scale = this.state.resizing ? this.state.resizeScale :
         getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed);
 
     const style = {
-      top: layerY * this.props.viewportScale,
-      left: layerX * this.props.viewportScale,
+      top: y * this.props.viewportScale,
+      left: x * this.props.viewportScale,
       transform: `translate(${this.props.layer.anchorX * -100}%, ${this.props.layer.anchorY * -100}%)`
     };
 
@@ -203,7 +200,7 @@ const ViewportLayer = React.createClass({
         children = (
           <TextField onChange={this._onTextChange}
               style={{
-                fontSize: `${this.props.layer.fontSize * layerScale}px`,
+                fontSize: `${this.props.layer.fontSize * scale}px`,
                 fontWeight: this.props.layer.fontWeight,
                 fontStyle: this.props.layer.fontStyle,
                 opacity: this.props.layer.opacity
@@ -213,10 +210,10 @@ const ViewportLayer = React.createClass({
         break;
       case 'image':
         children = (
-          <img height={this.props.layer.height * this.props.viewportScale * layerScale}
+          <img height={this.props.layer.height * this.props.viewportScale * scale}
               src={this.props.layer.src}
               style={{opacity: this.props.layer.opacity}}
-              width={this.props.layer.width * this.props.viewportScale * layerScale}/>
+              width={this.props.layer.width * this.props.viewportScale * scale}/>
         );
         break;
       default:
@@ -243,6 +240,11 @@ const ViewportLayer = React.createClass({
           onMouseDown={this._onMouseDown}
           style={style}>
         {children}
+        <div className="pl-viewport-layer-anchor"
+            style={{
+              top: `${this.props.layer.anchorY * 100}%`,
+              left: `${this.props.layer.anchorX * 100}%`
+            }}/>
         <div className="pl-viewport-layer-handles">
           {handles}
         </div>
