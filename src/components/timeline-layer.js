@@ -257,7 +257,13 @@ const TimelineLayer = React.createClass({
       linkAction.onClick = this.props.onLinkTargetClick;
       linkAction.title = 'Link to this layer';
     } else {
-      if (this.props.layer.parent !== null) {
+      if (this.props.layer.parent === null) {
+        linkAction.children = <Icon name="link"/>;
+        if (this.props.layers.length > 1) {
+          linkAction.onClick = this.props.onLinkClick;
+          linkAction.title = 'Link Layer';
+        }
+      } else {
         const parent = this.props.layers.find(layer => layer.id === this.props.layer.parent);
         linkAction.children = (
           <div>
@@ -267,10 +273,6 @@ const TimelineLayer = React.createClass({
         );
         linkAction.onClick = this.props.onUnlinkClick;
         linkAction.title = `Linked to ${parent.name}`;
-      } else {
-        linkAction.children = <Icon name="link"/>;
-        linkAction.onClick = this.props.onLinkClick;
-        linkAction.title = 'Link Layer';
       }
     }
 
