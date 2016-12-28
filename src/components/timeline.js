@@ -7,6 +7,7 @@ const Icon = require('./icon');
 const TimelineLayer = require('./timeline-layer');
 
 const {addLayer, linkLayers, orderLayers} = require('../actions');
+const getInterpolatedValue = require('../util/get-interpolated-value');
 const layerPropType = require('../util/layer-prop-type');
 
 const MIN_HEIGHT = 100;
@@ -157,9 +158,9 @@ let Timeline = React.createClass({
     const parent = this.props.layers.find(layer => layer.id === id);
     this.props.dispatch(linkLayers(this.state.linkingLayerId, {
       id: parent.id,
-      offsetX: parent.x,
-      offsetY: parent.y,
-      offsetScale: parent.scale
+      offsetX: getInterpolatedValue(parent.x, this.props.percentPlayed),
+      offsetY: getInterpolatedValue(parent.y, this.props.percentPlayed),
+      offsetScale: getInterpolatedValue(parent.scale, this.props.percentPlayed)
     }));
     this.setState({linkingLayerId: null});
   },
