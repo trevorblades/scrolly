@@ -222,6 +222,7 @@ const ViewportLayer = React.createClass({
                 fontSize: `${this.props.layer.fontSize * layerScale}px`,
                 fontWeight: this.props.layer.fontWeight,
                 fontStyle: this.props.layer.fontStyle,
+                color: this.props.layer.fontColor,
                 opacity: this.props.layer.opacity
               }}
               value={this.props.layer.value}/>

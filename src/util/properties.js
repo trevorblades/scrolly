@@ -80,5 +80,10 @@ module.exports = {
     type: 'text',
     default: 'normal',
     mutable: true
+  },
+  fontColor: {
+    type: 'text',
+    default: 'black',
+    mutable: true
   }
 };

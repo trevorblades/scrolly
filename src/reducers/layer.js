@@ -25,6 +25,7 @@ module.exports = function(state, action) {
           layer.fontSize = properties.fontSize.default;
           layer.fontWeight = properties.fontWeight.default;
           layer.fontStyle = properties.fontStyle.default;
+          layer.fontColor = properties.fontColor.default;
           break;
         case 'image':
           layer.src = action.src;
