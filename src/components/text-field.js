@@ -81,7 +81,7 @@ const TextField = React.createClass({
     }
 
     const isUpOrDown = event.keyCode === 38 || event.keyCode === 40;
-    const isDisallowed = [8, 37, 39, 46, 190].indexOf(event.keyCode) === -1 && // isn't backspace, left, right, delete, or period
+    const isDisallowed = [8, 37, 39, 46, 189, 190].indexOf(event.keyCode) === -1 && // isn't backspace, left, right, delete, or period
         (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && // isn't a top row number
         (event.keyCode < 96 || event.keyCode > 105) && // isn't a numpad number
         !event.metaKey && !event.ctrlKey;

@@ -322,7 +322,8 @@ const TimelineLayer = React.createClass({
                 style={{
                   left: `${layerIn * 100}%`,
                   right: `${100 - layerOut * 100}%`
-                }}>
+                }}
+                type={this.props.layer.type}>
               {handles}
             </div>
           </div>

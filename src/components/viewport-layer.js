@@ -259,13 +259,18 @@ const ViewportLayer = React.createClass({
           key={this.props.layer.id}
           onClick={this._onClick}
           onMouseDown={this._onMouseDown}
-          style={style}>
+          style={style}
+          type={this.props.layer.type}>
         {children}
-        <div className="pl-viewport-layer-anchor"
-            style={{
-              top: `${this.props.layer.anchorY * 100}%`,
-              left: `${this.props.layer.anchorX * 100}%`
-            }}/>
+        <div className="pl-viewport-layer-borders">
+          {handles.map(function(handle, index) {
+            return <div className="pl-viewport-layer-border" key={index}/>;
+          })}
+        </div>
+        <div className="pl-viewport-layer-anchor" style={{
+          top: `${this.props.layer.anchorY * 100}%`,
+          left: `${this.props.layer.anchorX * 100}%`
+        }}/>
         <div className="pl-viewport-layer-handles">
           {handles}
         </div>

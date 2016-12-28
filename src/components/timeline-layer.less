@@ -17,6 +17,12 @@
     }
     .pl-timeline-layer-top-bar {
       background-color: @gray-lightest;
+      &[type="text"] {
+        background-color: mix(@gray-lightest, @text-layer-color, 25%);
+      }
+      &[type="image"] {
+        background-color: mix(@gray-lightest, @image-layer-color, 25%);
+      }
     }
   }
   &.pl-sticky, &.pl-stuck {
@@ -139,6 +145,13 @@
       position: absolute;
       top: 0;
       left: 0;
+      &[type="text"] {
+        background-color: mix(@gray-light, @text-layer-color, 75%);
+      }
+      &[type="image"] {
+        background-color: mix(@gray-light, @image-layer-color, 75%);
+      }
+
       .pl-timeline-layer-bar-handle {
         width: 5px;
         height: 100%;
