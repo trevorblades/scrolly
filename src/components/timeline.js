@@ -307,6 +307,7 @@ let Timeline = React.createClass({
               return (
                 <TimelineLayer key={layer.id}
                     layer={layer}
+                    layers={this.props.layers}
                     linkable={this.state.linkingLayerId !== null &&
                         layer.id !== this.state.linkingLayerId}
                     onDragEnd={this._onLayerDragEnd}

@@ -133,6 +133,7 @@ let Viewport = React.createClass({
           return (
             <ViewportLayer key={layer.id}
                 layer={layer}
+                layers={this.props.layers}
                 percentPlayed={this.props.percentPlayed}
                 selectLayer={this.props.selectLayer}
                 selected={layer.id === this.props.selectedLayerId}

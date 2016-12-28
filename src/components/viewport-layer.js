@@ -265,19 +265,11 @@ const ViewportLayer = React.createClass({
   }
 });
 
-function mapStateToProps(state) {
-  return {
-    layers: state.layers.present
-  };
-}
-
-function mapDispatchToProps(dispatch, props) {
+module.exports = connect(null, function(dispatch, props) {
   return {
     dispatch,
     onPropertiesChange: function(properties) {
       dispatch(setLayerProperties(props.layer.id, properties));
     }
   };
-}
-
-module.exports = connect(mapStateToProps, mapDispatchToProps)(ViewportLayer);
+})(ViewportLayer);

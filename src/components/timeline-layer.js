@@ -413,13 +413,7 @@ const TimelineLayer = React.createClass({
   }
 });
 
-function mapStateToProps(state) {
-  return {
-    layers: state.layers.present
-  };
-}
-
-function mapDispatchToProps(dispatch, props) {
+module.exports = connect(null, function(dispatch, props) {
   return {
     dispatch,
     onRemoveClick: function(event) {
@@ -434,6 +428,4 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(setLayerProperties(props.layer.id, properties));
     }
   };
-}
-
-module.exports = connect(mapStateToProps, mapDispatchToProps)(TimelineLayer);
+})(TimelineLayer);
