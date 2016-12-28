@@ -118,11 +118,6 @@ const Library = React.createClass({
             </div>}
           </div>
         </div>
-        <div className="pl-library-header">
-          <span>Name</span>
-          <span>Size</span>
-          <span/>
-        </div>
         <div className={assetsClassName}
             onClick={this._onAssetsClick}
             onDragEnter={this._onDragEnter}
