@@ -1,14 +1,19 @@
+.pl-viewport-layer-border {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .pl-viewport-layer {
   position: absolute;
   top: 0;
   left: 0;
   &:before, &:after {
-    content: '';
+    .pl-viewport-layer-border;
     width: 100%;
     height: 1px;
-    position: absolute;
-    top: 0;
-    left: 0;
     transform: translateY(-50%);
   }
   &:after {
@@ -60,12 +65,9 @@
   }
   .pl-viewport-layer-handles {
     &:before, &:after {
-      content: '';
+      .pl-viewport-layer-border;
       width: 1px;
       height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
       transform: translateX(-50%);
     }
     &:after {
