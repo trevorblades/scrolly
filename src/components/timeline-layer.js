@@ -37,6 +37,7 @@ const TimelineLayer = React.createClass({
     onSelect: React.PropTypes.func.isRequired,
     onUnlinkClick: React.PropTypes.func.isRequired,
     onVisiblityToggle: React.PropTypes.func.isRequired,
+    parent: React.PropTypes.object,
     percentPlayed: React.PropTypes.number.isRequired,
     selected: React.PropTypes.bool.isRequired,
     sticky: React.PropTypes.bool.isRequired,
@@ -264,10 +265,9 @@ const TimelineLayer = React.createClass({
           linkAction.title = 'Link Layer';
         }
       } else {
-        const parent = this.props.layers.find(layer => layer.id === this.props.layer.parent);
         linkAction.children = (
           <div>
-            <span>{parent.name}</span>
+            <span>{this.props.parent.name}</span>
             <Icon className="pl-active" name="link"/>
           </div>
         );

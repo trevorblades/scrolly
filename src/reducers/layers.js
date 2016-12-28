@@ -7,8 +7,7 @@ module.exports = function(state = [], action) {
       return [...state, layerReducer(undefined, action)];
     case 'REMOVE_LAYER':
       var nextState = state.map(function(layer) {
-        if (layer.parent === action.id) {
-           // this could be Object.assign({}, layer, {parent: null})
+        if (layer.parent && layer.parent.id === action.id) {
           return layerReducer(layer, linkLayers(layer.id, null));
         }
         return layer;

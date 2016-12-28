@@ -17,6 +17,7 @@ const ViewportLayer = React.createClass({
     layer: layerPropType.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
+    parent: React.PropTypes.object,
     percentPlayed: React.PropTypes.number.isRequired,
     selectLayer: React.PropTypes.func.isRequired,
     selected: React.PropTypes.bool.isRequired,
@@ -49,10 +50,17 @@ const ViewportLayer = React.createClass({
         this.props.selectLayer(this.props.layer.id);
       }
 
+      let parentX = properties.x.default;
+      let parentY = properties.y.default;
+      if (this.props.layer.parent !== null) {
+        parentX = getInterpolatedValue(this.props.parent.x, this.props.percentPlayed) - this.props.layer.parent.offsetX;
+        parentY = getInterpolatedValue(this.props.parent.y, this.props.percentPlayed) - this.props.layer.parent.offsetY;
+      }
+
       const rect = event.target.getBoundingClientRect();
       const offsetX = event.clientX - rect.left - rect.width * this.props.layer.anchorX;
       const offsetY = event.clientY - rect.top - rect.height * this.props.layer.anchorY;
-      this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY);
+      this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY, parentX, parentY);
       document.addEventListener('mousemove', this._boundMouseMove);
       document.addEventListener('mouseup', this._onMouseUp);
 
@@ -64,7 +72,7 @@ const ViewportLayer = React.createClass({
     }
   },
 
-  _onMouseMove: function(offsetX, offsetY, event) {
+  _onMouseMove: function(offsetX, offsetY, parentX, parentY, event) {
     let layerX = event.clientX - this.props.viewportOffsetLeft - offsetX;
     const minX = offsetX * -1;
     const maxX = this.props.viewportWidth - offsetX;
@@ -84,8 +92,8 @@ const ViewportLayer = React.createClass({
     }
 
     this.setState({
-      moveX: Math.round(layerX / this.props.viewportScale),
-      moveY: Math.round(layerY / this.props.viewportScale)
+      moveX: Math.round(layerX / this.props.viewportScale) - parentX,
+      moveY: Math.round(layerY / this.props.viewportScale) - parentY
     });
   },
 
@@ -187,10 +195,9 @@ const ViewportLayer = React.createClass({
     let parentY = properties.y.default;
     let parentScale = properties.scale.default;
     if (this.props.layer.parent !== null) {
-      const parent = this.props.layers.find(layer => layer.id === this.props.layer.parent);
-      parentX = getInterpolatedValue(parent.x, this.props.percentPlayed);
-      parentY = getInterpolatedValue(parent.y, this.props.percentPlayed);
-      parentScale = getInterpolatedValue(parent.scale, this.props.percentPlayed);
+      parentX = getInterpolatedValue(this.props.parent.x, this.props.percentPlayed) - this.props.layer.parent.offsetX;
+      parentY = getInterpolatedValue(this.props.parent.y, this.props.percentPlayed) - this.props.layer.parent.offsetY;
+      parentScale = getInterpolatedValue(this.props.parent.scale, this.props.percentPlayed) * this.props.layer.parent.offsetScale;
     }
 
     const layerX = parentX + (this.state.moving ? this.state.moveX :

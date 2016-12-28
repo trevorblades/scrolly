@@ -154,7 +154,13 @@ let Timeline = React.createClass({
 
   _onLayerLinkTargetClick: function(id, event) {
     event.stopPropagation();
-    this.props.dispatch(linkLayers(this.state.linkingLayerId, id));
+    const parent = this.props.layers.find(layer => layer.id === id);
+    this.props.dispatch(linkLayers(this.state.linkingLayerId, {
+      id: parent.id,
+      offsetX: parent.x,
+      offsetY: parent.y,
+      offsetScale: parent.scale
+    }));
     this.setState({linkingLayerId: null});
   },
 
@@ -317,6 +323,7 @@ let Timeline = React.createClass({
                     onLinkTargetClick={this._onLayerLinkTargetClick.bind(null, layer.id)}
                     onSelect={this._onLayerSelect.bind(null, layer.id)}
                     onUnlinkClick={this._onLayerUnlinkClick.bind(null, layer.id)}
+                    parent={layer.parent && this.props.layers.find(l => l.id === layer.parent.id)}
                     percentPlayed={this.props.percentPlayed}
                     selected={layer.id === this.props.selectedLayerId}
                     sticky={layer.id === this.state.stickyLayerId}
