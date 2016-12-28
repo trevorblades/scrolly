@@ -94,6 +94,7 @@ const App = React.createClass({
   },
 
   _onDragLeave: function(event) {
+    event.preventDefault();
     if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
       this._dragCounter--;
       if (!this._dragCounter) {

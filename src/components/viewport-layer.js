@@ -123,6 +123,7 @@ const ViewportLayer = React.createClass({
   },
 
   _onHandleMouseDown: function(index, event) {
+    event.preventDefault();
     if (event.button === 0) {
       event.stopPropagation();
 
