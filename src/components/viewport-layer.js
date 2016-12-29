@@ -50,17 +50,11 @@ const ViewportLayer = React.createClass({
         this.props.selectLayer(this.props.layer.id);
       }
 
-      let parentX = properties.x.default;
-      let parentY = properties.y.default;
-      if (this.props.layer.parent !== null) {
-        parentX = getInterpolatedValue(this.props.parent.x, this.props.percentPlayed) - this.props.layer.parent.offsetX;
-        parentY = getInterpolatedValue(this.props.parent.y, this.props.percentPlayed) - this.props.layer.parent.offsetY;
-      }
-
       const rect = event.target.getBoundingClientRect();
       const offsetX = event.clientX - rect.left - rect.width * this.props.layer.anchorX;
       const offsetY = event.clientY - rect.top - rect.height * this.props.layer.anchorY;
-      this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY, parentX, parentY);
+      const {parentX, parentY, parentScale} = this._getParentProperties();
+      this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY, parentX, parentY, parentScale);
       document.addEventListener('mousemove', this._boundMouseMove);
       document.addEventListener('mouseup', this._onMouseUp);
 
@@ -72,7 +66,7 @@ const ViewportLayer = React.createClass({
     }
   },
 
-  _onMouseMove: function(offsetX, offsetY, parentX, parentY, event) {
+  _onMouseMove: function(offsetX, offsetY, parentX, parentY, parentScale, event) {
     let layerX = event.clientX - this.props.viewportOffsetLeft - offsetX;
     const minX = offsetX * -1;
     const maxX = this.props.viewportWidth - offsetX;
@@ -191,7 +185,7 @@ const ViewportLayer = React.createClass({
     this.props.selectLayer(null);
   },
 
-  render: function() {
+  _getParentProperties: function() {
     let parentX = properties.x.default;
     let parentY = properties.y.default;
     let parentScale = properties.scale.default;
@@ -200,11 +194,16 @@ const ViewportLayer = React.createClass({
       parentY = getInterpolatedValue(this.props.parent.y, this.props.percentPlayed) - this.props.layer.parent.offsetY;
       parentScale = getInterpolatedValue(this.props.parent.scale, this.props.percentPlayed) * this.props.layer.parent.offsetScale;
     }
+    return {parentX, parentY, parentScale};
+  },
+
+  render: function() {
+    const {parentX, parentY, parentScale} = this._getParentProperties();
 
     const layerX = parentX + (this.state.moving ? this.state.moveX :
-        getInterpolatedValue(this.props.layer.x, this.props.percentPlayed));
+        getInterpolatedValue(this.props.layer.x, this.props.percentPlayed)) * parentScale;
     const layerY = parentY + (this.state.moving ? this.state.moveY :
-        getInterpolatedValue(this.props.layer.y, this.props.percentPlayed));
+        getInterpolatedValue(this.props.layer.y, this.props.percentPlayed)) * parentScale;
     const layerScale = parentScale * (this.state.resizing ? this.state.resizeScale :
         getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed));
 
