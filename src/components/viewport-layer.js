@@ -86,8 +86,8 @@ const ViewportLayer = React.createClass({
     }
 
     this.setState({
-      moveX: Math.round(layerX / this.props.viewportScale) - parentX,
-      moveY: Math.round(layerY / this.props.viewportScale) - parentY
+      moveX: Math.round((layerX / parentScale) / this.props.viewportScale) - parentX,
+      moveY: Math.round((layerY / parentScale) / this.props.viewportScale) - parentY
     });
   },
 
@@ -192,7 +192,7 @@ const ViewportLayer = React.createClass({
     if (this.props.layer.parent !== null) {
       parentX = getInterpolatedValue(this.props.parent.x, this.props.percentPlayed) - this.props.layer.parent.offsetX;
       parentY = getInterpolatedValue(this.props.parent.y, this.props.percentPlayed) - this.props.layer.parent.offsetY;
-      parentScale = getInterpolatedValue(this.props.parent.scale, this.props.percentPlayed) * this.props.layer.parent.offsetScale;
+      parentScale = getInterpolatedValue(this.props.parent.scale, this.props.percentPlayed) / this.props.layer.parent.offsetScale;
     }
     return {parentX, parentY, parentScale};
   },
