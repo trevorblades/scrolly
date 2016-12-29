@@ -7,10 +7,15 @@
   border-right: 1px solid @shadow-dark;
   color: @gray-lightest;
   overflow: hidden;
+  position: relative;
+  z-index: 0;
   .pl-library-preview {
     display: flex;
     flex-shrink: 0;
     height: 4.75rem;
+    box-shadow: 0 1px @shadow-dark;
+    position: relative;
+    z-index: 1;
     .pl-library-preview-thumb {
       display: flex;
       flex-shrink: 0;
@@ -44,7 +49,6 @@
   }
   .pl-library-assets {
     flex-grow: 1;
-    box-shadow: inset 0 1px @shadow-dark;
     background-color: @gray-darker;
     overflow: auto;
     position: relative;
@@ -77,7 +81,10 @@
       }
       &.pl-selected {
         color: white;
-        background-color: @shadow;
+        background-color: @gray-dark;
+        .pl-icon {
+          fill: white;
+        }
       }
 
       span {
@@ -86,6 +93,7 @@
         &:first-child {
           .pl-ellipsized;
           flex-grow: 1;
+          font-size: @font-size-small;
         }
         &:last-child {
           flex-shrink: 0;
