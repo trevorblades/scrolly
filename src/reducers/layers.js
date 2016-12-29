@@ -4,7 +4,7 @@ const {linkLayers} = require('../actions');
 module.exports = function(state = [], action) {
   switch (action.type) {
     case 'ADD_LAYER':
-      return [...state, layerReducer(undefined, action)];
+      return [layerReducer(undefined, action), ...state];
     case 'REMOVE_LAYER':
       var nextState = state.map(function(layer) {
         if (layer.parent && layer.parent.id === action.id) {
