@@ -8,6 +8,7 @@ const TimelineLayer = require('./timeline-layer');
 
 const {addLayer, linkLayers, orderLayers} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
+const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
 
 const MIN_HEIGHT = 100;
@@ -50,6 +51,14 @@ let Timeline = React.createClass({
     };
   },
 
+  componentWillMount: function() {
+    window.addEventListener('keydown', this._onKeyDown);
+  },
+
+  componentWillUnmount: function() {
+    window.removeEventListener('keydown', this._onKeyDown);
+  },
+
   componentWillReceiveProps: function(nextProps) {
     if (nextProps.maxHeight !== this.props.maxHeight &&
           this.state.height > nextProps.maxHeight) {
@@ -58,6 +67,12 @@ let Timeline = React.createClass({
         height = MIN_HEIGHT;
       }
       this.setState({height: height});
+    }
+  },
+
+  _onKeyDown: function(event) {
+    if (event.keyCode === 75 && !isInput(event.target)) { // k key pressed
+      this.setState({snapToKeyframes: !this.state.snapToKeyframes});
     }
   },
 
@@ -282,7 +297,7 @@ let Timeline = React.createClass({
               <span>{`${percentPlayed.toFixed(2)}%`}</span>
               <div className="pl-timeline-header-control-indicator-snap"
                   onClick={this._onSnapToggle}
-                  title={`Snapping to ${this.state.snapToKeyframes ? 'keyframes' : 'whole numbers'}`}>
+                  title={`Snapping to ${this.state.snapToKeyframes ? 'keyframes' : 'whole numbers'} (K)`}>
                 <Icon name={this.state.snapToKeyframes ? 'keyframes' : 'wholeNumbers'}/>
               </div>
             </div>

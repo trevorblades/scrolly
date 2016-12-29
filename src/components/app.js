@@ -10,6 +10,7 @@ const Viewport = require('./viewport');
 
 const {FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
+const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
 
 const App = React.createClass({
@@ -50,21 +51,17 @@ const App = React.createClass({
   },
 
   _onKeyDown: function(event) {
-    const tagName = event.target.tagName.toUpperCase();
-    const isInput = event.target.contentEditable === 'true' ||
-        tagName === 'INPUT' || tagName === 'TEXTAREA';
-
     if (event.keyCode === 90 && event.metaKey) { // cmd + z pressed
       const action = event.shiftKey ?
           ActionCreators.redo() :
           ActionCreators.undo();
       this.props.dispatch(action);
     } else if (this.state.selectedLayerId !== null && event.keyCode === 27) { // esc key pressed
-      if (isInput) {
+      if (isInput(event.target)) {
         return event.target.blur();
       }
       this._selectLayer(null);
-    } else if (!isInput && (event.keyCode === 188 || event.keyCode === 190)) { // < or > key pressed
+    } else if ((event.keyCode === 188 || event.keyCode === 190) && !isInput(event.target)) { // < or > key pressed
       event.preventDefault();
       let movement = event.keyCode === 188 ? -1 : 1;
       movement /= event.shiftKey ? 10 : 100;
