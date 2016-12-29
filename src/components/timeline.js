@@ -282,7 +282,7 @@ let Timeline = React.createClass({
               <span>{`${percentPlayed.toFixed(2)}%`}</span>
               <div className="pl-timeline-header-control-indicator-snap"
                   onClick={this._onSnapToggle}
-                  title={`Snap to ${this.state.snapToKeyframes ? 'keyframes' : 'whole numbers'}`}>
+                  title={`Snapping to ${this.state.snapToKeyframes ? 'keyframes' : 'whole numbers'}`}>
                 <Icon name={this.state.snapToKeyframes ? 'keyframes' : 'wholeNumbers'}/>
               </div>
             </div>
