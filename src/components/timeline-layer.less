@@ -4,6 +4,9 @@
   display: flex;
   flex-wrap: wrap;
   margin-top: @padding-small * -1;
+  &:not(:last-child) .pl-timeline-layer-properties {
+    margin-bottom: @padding-small;
+  }
   &.pl-hidden .pl-timeline-layer-top .pl-timeline-layer-control .pl-text-field {
     text-decoration: line-through;
     opacity: 0.5;
@@ -168,7 +171,6 @@
   }
   .pl-timeline-layer-properties {
     width: 100%;
-    margin-bottom: @padding-small;
     padding: @padding-small 0;
     background-color: @gray-dark;
     .pl-timeline-layer-property {
