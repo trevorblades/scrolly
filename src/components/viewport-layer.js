@@ -8,7 +8,6 @@ const TextField = require('./text-field');
 const {setLayerProperties} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const layerPropType = require('../util/layer-prop-type');
-const properties = require('../util/properties');
 
 const ViewportLayer = React.createClass({
 
@@ -49,24 +48,27 @@ const ViewportLayer = React.createClass({
       if (!this.props.selected) {
         this.props.selectLayer(this.props.layer.id);
       }
-
-      const rect = event.target.getBoundingClientRect();
-      const offsetX = event.clientX - rect.left - rect.width * this.props.layer.anchorX;
-      const offsetY = event.clientY - rect.top - rect.height * this.props.layer.anchorY;
-      const {parentX, parentY, parentScale} = this._getParentProperties();
-      this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY, parentX, parentY, parentScale);
+      const offsetX = event.clientX -
+          this.props.viewportOffsetLeft -
+          event.target.offsetLeft -
+          event.target.clientHeight * this.props.layer.anchorX;
+      const offsetY = event.clientY -
+          this.props.viewportOffsetTop -
+          event.target.offsetTop -
+          event.target.clientHeight * this.props.layer.anchorY;
+      this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY);
       document.addEventListener('mousemove', this._boundMouseMove);
       document.addEventListener('mouseup', this._onMouseUp);
 
       this.setState({
-        moveX: getInterpolatedValue(this.props.layer.x, this.props.percentPlayed),
-        moveY: getInterpolatedValue(this.props.layer.y, this.props.percentPlayed),
+        moveX: (event.clientX - this.props.viewportOffsetLeft - offsetX) / this.props.viewportScale,
+        moveY: (event.clientY - this.props.viewportOffsetTop - offsetY) / this.props.viewportScale,
         moving: true
       });
     }
   },
 
-  _onMouseMove: function(offsetX, offsetY, parentX, parentY, parentScale, event) {
+  _onMouseMove: function(offsetX, offsetY, event) {
     let layerX = event.clientX - this.props.viewportOffsetLeft - offsetX;
     const minX = offsetX * -1;
     const maxX = this.props.viewportWidth - offsetX;
@@ -86,24 +88,29 @@ const ViewportLayer = React.createClass({
     }
 
     this.setState({
-      moveX: Math.round((layerX / parentScale) / this.props.viewportScale) - parentX,
-      moveY: Math.round((layerY / parentScale) / this.props.viewportScale) - parentY
+      moveX: layerX / this.props.viewportScale,
+      moveY: layerY / this.props.viewportScale
     });
   },
 
   _onMouseUp: function() {
-    this.props.onPropertiesChange({
+    const properties = {
       x: typeof this.props.layer.x === 'object' ?
           Object.assign({}, this.props.layer.x, {
             [this.props.percentPlayed]: this.state.moveX
-          }) :
-          this.state.moveX,
+          }) : this.state.moveX,
       y: typeof this.props.layer.y === 'object' ?
           Object.assign({}, this.props.layer.y, {
             [this.props.percentPlayed]: this.state.moveY
-          }) :
-          this.state.moveY
-    });
+          }) : this.state.moveY
+    };
+    if (this.props.layer.parent !== null) {
+      properties.parent = Object.assign({}, this.props.layer.parent, {
+        offsetX: getInterpolatedValue(this.props.parent.x, this.props.percentPlayed),
+        offsetY: getInterpolatedValue(this.props.parent.y, this.props.percentPlayed)
+      });
+    }
+    this.props.onPropertiesChange(properties);
 
     document.removeEventListener('mousemove', this._boundMouseMove);
     document.removeEventListener('mouseup', this._onMouseUp);
@@ -185,27 +192,21 @@ const ViewportLayer = React.createClass({
     this.props.selectLayer(null);
   },
 
-  _getParentProperties: function() {
-    let parentX = properties.x.default;
-    let parentY = properties.y.default;
-    let parentScale = properties.scale.default;
-    if (this.props.layer.parent !== null) {
-      parentX = getInterpolatedValue(this.props.parent.x, this.props.percentPlayed) - this.props.layer.parent.offsetX;
-      parentY = getInterpolatedValue(this.props.parent.y, this.props.percentPlayed) - this.props.layer.parent.offsetY;
-      parentScale = getInterpolatedValue(this.props.parent.scale, this.props.percentPlayed) / this.props.layer.parent.offsetScale;
-    }
-    return {parentX, parentY, parentScale};
-  },
-
   render: function() {
-    const {parentX, parentY, parentScale} = this._getParentProperties();
-
-    const layerX = parentX + (this.state.moving ? this.state.moveX :
-        getInterpolatedValue(this.props.layer.x, this.props.percentPlayed)) * parentScale;
-    const layerY = parentY + (this.state.moving ? this.state.moveY :
-        getInterpolatedValue(this.props.layer.y, this.props.percentPlayed)) * parentScale;
-    const layerScale = parentScale * (this.state.resizing ? this.state.resizeScale :
-        getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed));
+    let layerX = this.state.moving ? this.state.moveX :
+        getInterpolatedValue(this.props.layer.x, this.props.percentPlayed);
+    let layerY = this.state.moving ? this.state.moveY :
+        getInterpolatedValue(this.props.layer.y, this.props.percentPlayed);
+    let layerScale = this.state.resizing ? this.state.resizeScale :
+        getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed);
+    if (!this.state.moving && this.props.layer.parent !== null) {
+      const parentScale = getInterpolatedValue(this.props.parent.scale, this.props.percentPlayed) / this.props.layer.parent.offsetScale;
+      layerX = getInterpolatedValue(this.props.parent.x, this.props.percentPlayed) +
+          (layerX - this.props.layer.parent.offsetX) * parentScale;
+      layerY = getInterpolatedValue(this.props.parent.y, this.props.percentPlayed) +
+          (layerY - this.props.layer.parent.offsetY) * parentScale;
+      layerScale *= parentScale;
+    }
 
     const style = {
       top: layerY * this.props.viewportScale,
