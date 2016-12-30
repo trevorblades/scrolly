@@ -94,22 +94,26 @@ const ViewportLayer = React.createClass({
   },
 
   _onMouseUp: function() {
-    const properties = {
-      x: typeof this.props.layer.x === 'object' ?
-          Object.assign({}, this.props.layer.x, {
-            [this.props.percentPlayed]: this.state.moveX
-          }) : this.state.moveX,
-      y: typeof this.props.layer.y === 'object' ?
-          Object.assign({}, this.props.layer.y, {
-            [this.props.percentPlayed]: this.state.moveY
-          }) : this.state.moveY
-    };
+    let layerX = this.state.moveX;
+    let layerY = this.state.moveY;
+    const properties = {};
     if (this.props.layer.parent !== null) {
+      const parentScale = getInterpolatedValue(this.props.parent.scale, this.props.percentPlayed) / this.props.layer.parent.offsetScale;
+      layerX *= parentScale;
+      layerY *= parentScale;
       properties.parent = Object.assign({}, this.props.layer.parent, {
         offsetX: getInterpolatedValue(this.props.parent.x, this.props.percentPlayed),
         offsetY: getInterpolatedValue(this.props.parent.y, this.props.percentPlayed)
       });
     }
+    properties.x = typeof this.props.layer.x === 'object' ?
+        Object.assign({}, this.props.layer.x, {
+          [this.props.percentPlayed]: layerX
+        }) : layerX;
+    properties.y = typeof this.props.layer.y === 'object' ?
+        Object.assign({}, this.props.layer.y, {
+          [this.props.percentPlayed]: layerY
+        }) : layerY;
     this.props.onPropertiesChange(properties);
 
     document.removeEventListener('mousemove', this._boundMouseMove);
@@ -199,13 +203,15 @@ const ViewportLayer = React.createClass({
         getInterpolatedValue(this.props.layer.y, this.props.percentPlayed);
     let layerScale = this.state.resizing ? this.state.resizeScale :
         getInterpolatedValue(this.props.layer.scale, this.props.percentPlayed);
-    if (!this.state.moving && this.props.layer.parent !== null) {
+    if (this.props.layer.parent !== null) {
       const parentScale = getInterpolatedValue(this.props.parent.scale, this.props.percentPlayed) / this.props.layer.parent.offsetScale;
-      layerX = getInterpolatedValue(this.props.parent.x, this.props.percentPlayed) +
-          (layerX - this.props.layer.parent.offsetX) * parentScale;
-      layerY = getInterpolatedValue(this.props.parent.y, this.props.percentPlayed) +
-          (layerY - this.props.layer.parent.offsetY) * parentScale;
       layerScale *= parentScale;
+      if (!this.state.moving) {
+        layerX = getInterpolatedValue(this.props.parent.x, this.props.percentPlayed) +
+            (layerX - this.props.layer.parent.offsetX) * parentScale;
+        layerY = getInterpolatedValue(this.props.parent.y, this.props.percentPlayed) +
+            (layerY - this.props.layer.parent.offsetY) * parentScale;
+      }
     }
 
     const style = {
