@@ -104,6 +104,10 @@ const App = React.createClass({
     event.preventDefault();
   },
 
+  _onViewportWrapperClick: function() {
+    this._selectLayer(null);
+  },
+
   _setPercentPlayed: function(value) {
     if (value < 0) {
       value = 0;
@@ -130,7 +134,9 @@ const App = React.createClass({
               dragging={this.state.dragging}
               onDragEnter={this._onDragEnter}
               onDrop={this._onLibraryDrop}/>
-          <div className="pl-app-viewport-wrapper" ref="viewportWrapper">
+          <div className="pl-app-viewport-wrapper"
+              onClick={this._onViewportWrapperClick}
+              ref="viewportWrapper">
             <Viewport compositionHeight={this.state.compositionHeight}
                 compositionWidth={this.state.compositionWidth}
                 percentPlayed={this.state.percentPlayed}
