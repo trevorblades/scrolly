@@ -56,14 +56,9 @@ const ViewportLayer = React.createClass({
       if (!this.props.selected) {
         this.props.selectLayer(this.props.layer.id);
       }
-      const offsetX = event.clientX -
-          this.props.viewportOffsetLeft -
-          event.target.offsetLeft -
-          event.target.clientHeight * this.props.layer.anchorX;
-      const offsetY = event.clientY -
-          this.props.viewportOffsetTop -
-          event.target.offsetTop -
-          event.target.clientHeight * this.props.layer.anchorY;
+
+      const offsetX = event.clientX - this.props.viewportOffsetLeft - event.target.offsetLeft;
+      const offsetY = event.clientY - this.props.viewportOffsetTop - event.target.offsetTop;
       this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY);
       document.addEventListener('mousemove', this._boundMouseMove);
       document.addEventListener('mouseup', this._onMouseUp);
