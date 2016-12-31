@@ -1,0 +1,52 @@
+.pl-control {
+  display: flex;
+  justify-content: space-between;
+  flex-shrink: 0;
+  padding: 0 @padding-small;
+  .pl-text-field {
+    padding-right: @padding-smaller;
+    box-shadow: 0 1px @shadow;
+    position: relative;
+    &:before {
+      content: '';
+      width: 100%;
+      height: 1px;
+      background-color: black;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      transform: scaleX(0);
+      transform-origin: left bottom;
+      transition: transform @transition-duration-medium ease-in;
+    }
+    &:focus {
+      background-color: @shadow;
+      &:before {
+        transform: scaleX(1);
+      }
+    }
+  }
+  .pl-control-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    .pl-control-action {
+      margin-left: @padding-small;
+      &.pl-clickable {
+        cursor: pointer;
+      }
+
+      .pl-icon {
+        width: @padding-base;
+        height: @padding-base;
+      }
+      .pl-text-field {
+        padding-right: 0;
+        padding-left: @padding-smaller;
+        &:before {
+          transform-origin: right bottom;
+        }
+      }
+    }
+  }
+}

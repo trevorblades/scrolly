@@ -7,7 +7,7 @@
   &:not(:last-child) .pl-timeline-layer-properties {
     margin-bottom: @padding-small;
   }
-  &.pl-hidden .pl-timeline-layer-top .pl-timeline-layer-control .pl-text-field {
+  &.pl-hidden .pl-timeline-layer-top .pl-control .pl-text-field {
     text-decoration: line-through;
     opacity: 0.5;
   }
@@ -15,7 +15,7 @@
     transform: rotate(-45deg);
   }
   &.pl-selected:not(.pl-hidden) .pl-timeline-layer-top {
-    .pl-timeline-layer-control {
+    .pl-control {
       color: white;
     }
     .pl-timeline-layer-top-bar {
@@ -47,62 +47,33 @@
     }
   }
 
-  .pl-timeline-layer-control {
-    display: flex;
-    justify-content: space-between;
-    flex-shrink: 0;
+  .pl-control {
     width: @library-width;
     padding: 0 @padding-small;
-    font-size: @font-size-small;
     line-height: @padding-base;
     color: @gray-lightest;
     .pl-text-field {
       box-shadow: 0 1px @gray-light;
-      position: relative;
       &:before {
-        content: '';
-        width: 100%;
-        height: 1px;
         background-color: @brand-primary;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        transform: scaleX(0);
-        transform-origin: left bottom;
-        transition: transform @transition-duration-medium ease-in;
-      }
-      &:focus {
-        background-color: @shadow;
-        &:before {
-          transform: scaleX(1);
-        }
       }
     }
-    .pl-timeline-layer-control-actions {
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-      .pl-timeline-layer-control-action {
-        margin-left: @padding-small;
-        &.pl-clickable {
-          cursor: pointer;
-          &:hover .pl-icon {
-            fill: white;
-          }
-
-          .pl-icon {
-            fill: @gray-lightest;
-            &.pl-active {
-              fill: @brand-primary;
-            }
-          }
+    .pl-control-actions .pl-control-action {
+      &.pl-clickable {
+        &:hover .pl-icon {
+          fill: white;
         }
 
         .pl-icon {
-          width: @padding-base;
-          height: @padding-base;
-          fill: @gray-light;
+          fill: @gray-lightest;
+          &.pl-active {
+            fill: @brand-primary;
+          }
         }
+      }
+
+      .pl-icon {
+        fill: @gray-light;
       }
     }
   }
@@ -115,12 +86,14 @@
     display: flex;
     flex-grow: 1;
     padding: @padding-small 0;
-    .pl-timeline-layer-control .pl-text-field {
-      padding-right: @padding-smaller;
-      overflow: hidden;
-      white-space: nowrap;
-      &:not([contenteditable="true"]) {
-        text-overflow: ellipsis;
+    .pl-control {
+      font-size: @font-size-small;
+      .pl-text-field {
+        overflow: hidden;
+        white-space: nowrap;
+        &:not([contenteditable="true"]) {
+          text-overflow: ellipsis;
+        }
       }
     }
     .pl-timeline-layer-top-link {
@@ -179,16 +152,10 @@
         margin-bottom: @padding-smaller;
       }
 
-      .pl-timeline-layer-control {
+      .pl-control {
         font-size: @font-size-smaller;
         span {
           color: @gray-light;
-        }
-        .pl-text-field {
-          padding-left: @padding-smaller;
-          &:before {
-            transform-origin: right bottom;
-          }
         }
       }
       .pl-timeline-layer-property-keyframe {

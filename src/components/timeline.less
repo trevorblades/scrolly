@@ -17,36 +17,31 @@
     display: flex;
     flex-shrink: 0;
     border-bottom: 1px solid black;
-    .pl-timeline-header-control {
+    .pl-timeline-header-indicator {
       display: flex;
       flex-shrink: 0;
       width: @library-width;
       padding: @padding-smaller;
       border-right: 1px solid @shadow-dark;
       font-family: @font-family-monospace;
-      .pl-timeline-header-control-indicator {
-        display: flex;
+      .pl-control {
         align-items: center;
-        justify-content: space-between;
         flex-grow: 1;
+        height: @padding-larger;
         margin-right: @padding-smaller;
         padding: 0 @padding-small;
         border-radius: @border-radius-small;
-        box-shadow: inset 0 1px @highlight-dark, inset 0 -1px @shadow, 0 0 0 1px @shadow-dark;
         font-family: @font-family-monospace;
-        line-height: @padding-larger;
-        background: linear-gradient(lighten(@brand-warning, 10%) 50%, @brand-warning 50%, darken(@brand-warning, 10%));
-        overflow: hidden;
-        position: relative;
-        .pl-timeline-header-control-indicator-snap {
-          cursor: pointer;
-          .pl-icon {
-            width: @padding-base;
-            height: @padding-base;
-          }
+        background: @brand-warning;
+      }
+      .pl-timeline-header-indicator-step {
+        font-size: @font-size-small;
+        .pl-icon, .pl-text-field {
+          display: inline-block;
+          vertical-align: middle;
         }
       }
-      .pl-timeline-header-control-add {
+      .pl-timeline-header-indicator-add {
         flex-shrink: 0;
         position: relative;
         .pl-icon {

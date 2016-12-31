@@ -3,10 +3,12 @@ const {connect} = require('react-redux');
 const classNames = require('classnames');
 
 const Button = require('./button');
+const Control = require('./control');
 const Icon = require('./icon');
+const TextField = require('./text-field');
 const TimelineLayer = require('./timeline-layer');
 
-const {addLayer, linkLayers, orderLayers} = require('../actions');
+const {addLayer, linkLayers, orderLayers, changeStep} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
@@ -32,10 +34,12 @@ let Timeline = React.createClass({
     maxHeight: React.PropTypes.number.isRequired,
     onAddClick: React.PropTypes.func.isRequired,
     onResize: React.PropTypes.func.isRequired,
+    onStepChange: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
     selectLayer: React.PropTypes.func.isRequired,
     selectedLayerId: React.PropTypes.number,
-    setPercentPlayed: React.PropTypes.func.isRequired
+    setPercentPlayed: React.PropTypes.func.isRequired,
+    step: React.PropTypes.number.isRequired
   },
 
   getInitialState: function() {
@@ -209,7 +213,8 @@ let Timeline = React.createClass({
   },
 
   _onHeaderTrackWheel: function(event) {
-    const percentPlayed = (this.refs.track.offsetWidth * this.props.percentPlayed + event.deltaY) / this.refs.track.offsetWidth;
+    const movementY = event.deltaY / this.props.step;
+    const percentPlayed = (this.refs.track.offsetWidth * this.props.percentPlayed + movementY) / this.refs.track.offsetWidth;
     this.props.setPercentPlayed(percentPlayed);
   },
 
@@ -289,19 +294,33 @@ let Timeline = React.createClass({
       'pl-scrolling': this.state.scrolling
     });
 
+    const indicatorActions = [
+      {
+        content: (
+          <div className="pl-timeline-header-indicator-step">
+            <TextField onChange={this.props.onStepChange}
+                type="number"
+                value={this.props.step}/>
+            <Icon name="scroll"/>
+          </div>
+        ),
+        title: 'Step amount (pixels scrolled for every percent played)'
+      },
+      {
+        content: <Icon name={this.state.snapToKeyframes ? 'keyframes' : 'wholeNumbers'}/>,
+        onClick: this._onSnapToggle,
+        title: `Snapping to ${this.state.snapToKeyframes ? 'keyframes' : 'whole numbers'} (K)`
+      }
+    ];
+
     return (
       <div className="pl-timeline" style={{height: this.state.height}}>
         <div className="pl-timeline-header">
-          <div className="pl-timeline-header-control">
-            <div className="pl-timeline-header-control-indicator">
-              <span>{`${percentPlayed.toFixed(2)}%`}</span>
-              <div className="pl-timeline-header-control-indicator-snap"
-                  onClick={this._onSnapToggle}
-                  title={`Snapping to ${this.state.snapToKeyframes ? 'keyframes' : 'whole numbers'} (K)`}>
-                <Icon name={this.state.snapToKeyframes ? 'keyframes' : 'wholeNumbers'}/>
-              </div>
-            </div>
-            <Button className="pl-timeline-header-control-add"
+          <div className="pl-timeline-header-indicator">
+            <Control actions={indicatorActions}>
+              {`${percentPlayed.toFixed(2)}%`}
+            </Control>
+            <Button className="pl-timeline-header-indicator-add"
                 onClick={this.props.onAddClick}>
               <Icon name="addLayer"/>
             </Button>
@@ -358,7 +377,8 @@ let Timeline = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    layers: state.layers.present
+    layers: state.layers.present,
+    step: state.step.present
   };
 }
 
@@ -367,6 +387,9 @@ function mapDispatchToProps(dispatch) {
     dispatch,
     onAddClick: function() {
       dispatch(addLayer('text'));
+    },
+    onStepChange: function(value) {
+      dispatch(changeStep(value));
     }
   };
 }

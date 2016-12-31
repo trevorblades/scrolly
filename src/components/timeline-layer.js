@@ -3,6 +3,7 @@ const {connect} = require('react-redux');
 const classNames = require('classnames');
 const sentenceCase = require('sentence-case');
 
+const Control = require('./control');
 const Icon = require('./icon');
 const TextField = require('./text-field');
 
@@ -196,35 +197,6 @@ const TimelineLayer = React.createClass({
     });
   },
 
-  _renderControl: function(children, actions, props = {}) {
-    return (
-      <div className={classNames('pl-timeline-layer-control', props.className)}
-          draggable={props.draggable}
-          onClick={props.onClick}
-          onDragEnd={props.onDragEnd}
-          onDragStart={props.onDragStart}>
-        {children}
-        <div className="pl-timeline-layer-control-actions">
-          {actions.map(function(action, index) {
-            const actionClassName = classNames(
-              'pl-timeline-layer-control-action',
-              action.className,
-              {'pl-clickable': action.onClick}
-            );
-            return (
-              <div className={actionClassName}
-                  key={index}
-                  onClick={action.onClick}
-                  title={action.title}>
-                {action.children}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  },
-
   render: function() {
     const layerClassName = classNames('pl-timeline-layer', {
       'pl-hidden': !this.props.layer.visible,
@@ -254,18 +226,18 @@ const TimelineLayer = React.createClass({
       className: 'pl-timeline-layer-top-link'
     };
     if (this.props.linkable) {
-      linkAction.children = <Icon name="target"/>;
+      linkAction.content = <Icon name="target"/>;
       linkAction.onClick = this.props.onLinkTargetClick;
       linkAction.title = 'Link to this layer';
     } else {
       if (this.props.layer.parent === null) {
-        linkAction.children = <Icon name="link"/>;
+        linkAction.content = <Icon name="link"/>;
         if (this.props.layers.length > 1) {
           linkAction.onClick = this.props.onLinkClick;
           linkAction.title = 'Link Layer';
         }
       } else {
-        linkAction.children = (
+        linkAction.content = (
           <div>
             <span>{this.props.parent.name}</span>
             <Icon className="pl-active" name="link"/>
@@ -276,44 +248,41 @@ const TimelineLayer = React.createClass({
       }
     }
 
+    const topActions = [
+      linkAction,
+      {
+        content: (
+          <Icon className={this.state.expanded ? 'pl-active' : null}
+              name="more"/>
+        ),
+        onClick: this._onMoreClick,
+        title: `${this.state.expanded ? 'Hide' : 'Show'} properties`
+      },
+      {
+        content: <Icon name={this.props.layer.visible ? 'visible' : 'invisible'}/>,
+        onClick: this.props.onVisiblityToggle,
+        title: `${this.props.layer.visible ? 'Hide' : 'Show'} layer`
+      },
+      {
+        content: <Icon name="trash"/>,
+        onClick: this.props.onRemoveClick,
+        title: 'Remove layer'
+      }
+    ];
+
     return (
       <div className={layerClassName}
           onDragOver={this.props.onDragOver}
           onMouseDown={event => event.stopPropagation()}>
         <div className="pl-timeline-layer-top">
-          {this._renderControl(
-            (
-              <TextField onChange={this._onNameChange}
-                  value={this.props.layer.name}/>
-            ),
-            [
-              linkAction,
-              {
-                children: (
-                  <Icon className={this.state.expanded ? 'pl-active' : null}
-                      name="more"/>
-                ),
-                onClick: this._onMoreClick,
-                title: `${this.state.expanded ? 'Hide' : 'Show'} properties`
-              },
-              {
-                children: <Icon name={this.props.layer.visible ? 'visible' : 'invisible'}/>,
-                onClick: this.props.onVisiblityToggle,
-                title: `${this.props.layer.visible ? 'Hide' : 'Show'} layer`
-              },
-              {
-                children: <Icon name="trash"/>,
-                onClick: this.props.onRemoveClick,
-                title: 'Remove layer'
-              }
-            ],
-            {
-              draggable: true,
-              onClick: this.props.onSelect,
-              onDragEnd: this.props.onDragEnd,
-              onDragStart: this.props.onDragStart
-            }
-          )}
+          <Control actions={topActions}
+              draggable
+              onClick={this.props.onSelect}
+              onDragEnd={this.props.onDragEnd}
+              onDragStart={this.props.onDragStart}>
+            <TextField onChange={this._onNameChange}
+                value={this.props.layer.name}/>
+          </Control>
           <div className="pl-timeline-layer-track"
               key={this.props.layer.id}
               ref="track">
@@ -345,7 +314,7 @@ const TimelineLayer = React.createClass({
                 const addKeyframe = this._addKeyframe.bind(null, key);
                 propertyActions.push(
                   {
-                    children: (
+                    content: (
                       <Icon className={animating ? 'pl-active' : null}
                           name="timer"/>
                     ),
@@ -354,7 +323,7 @@ const TimelineLayer = React.createClass({
                     title: `${animating ? 'Disable' : 'Enable'} animation`
                   },
                   {
-                    children: (
+                    content: (
                       <Icon className={highlighted ? 'pl-active' : null}
                           name={highlighted ? 'remove' : 'add'}/>
                     ),
@@ -377,8 +346,8 @@ const TimelineLayer = React.createClass({
                   </div>
                 );
               } else {
-                propertyActions.push({children: <Icon name="timer"/>},
-                    {children: <Icon name="add"/>});
+                propertyActions.push({content: <Icon name="timer"/>},
+                    {content: <Icon name="add"/>});
               }
 
               if (typeof value === 'number') {
@@ -397,13 +366,13 @@ const TimelineLayer = React.createClass({
                 );
               }
               propertyActions.unshift({
-                children: propertyField
+                content: propertyField
               });
 
               return (
                 <div className="pl-timeline-layer-property"
                     key={key}>
-                  {this._renderControl(sentenceCase(key), propertyActions)}
+                  <Control actions={propertyActions}>{sentenceCase(key)}</Control>
                   {propertyTrack}
                 </div>
               );

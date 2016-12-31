@@ -10,11 +10,7 @@ function addLayer(type) {
 }
 
 function addImageLayer(src, width, height) {
-  const action = addLayer('image');
-  action.src = src;
-  action.width = width;
-  action.height = height;
-  return action;
+  return Object.assign({}, addLayer('image'), {src, width, height});
 }
 
 function removeLayer(id) {
@@ -74,6 +70,13 @@ function removeAsset(id) {
   };
 }
 
+function changeStep(value) {
+  return {
+    type: 'CHANGE_STEP',
+    value
+  };
+}
+
 module.exports = {
   addLayer,
   addImageLayer,
@@ -83,5 +86,6 @@ module.exports = {
   toggleLayerVisibility,
   linkLayers,
   addAsset,
-  removeAsset
+  removeAsset,
+  changeStep
 };

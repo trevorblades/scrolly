@@ -6,5 +6,11 @@ const layersReducer = require('./layers');
 
 module.exports = combineReducers({
   assets: undoable(assetsReducer),
-  layers: undoable(layersReducer)
+  layers: undoable(layersReducer),
+  step: undoable(function(state = 1, action) {
+    if (action.type === 'CHANGE_STEP') {
+      return action.value;
+    }
+    return state;
+  })
 });
