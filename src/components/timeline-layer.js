@@ -33,6 +33,8 @@ const TimelineLayer = React.createClass({
     onDragStart: React.PropTypes.func.isRequired,
     onLinkClick: React.PropTypes.func.isRequired,
     onLinkTargetClick: React.PropTypes.func.isRequired,
+    onMouseDown: React.PropTypes.func.isRequired,
+    onMouseUp: React.PropTypes.func.isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
     onRemoveClick: React.PropTypes.func.isRequired,
     onSelect: React.PropTypes.func.isRequired,
@@ -50,7 +52,10 @@ const TimelineLayer = React.createClass({
       dragIn: null,
       dragOut: null,
       dragging: false,
-      expanded: false
+      expanded: false,
+      keyframeDragKey: null,
+      keyframeDragProperty: null,
+      keyframeDragPosition: null
     };
   },
 
@@ -62,7 +67,6 @@ const TimelineLayer = React.createClass({
 
   _onBarMouseDown: function(event) {
     if (event.button === 0) {
-      event.stopPropagation();
       if (!this.props.selected) {
         this.props.onSelect(event);
       }
@@ -73,8 +77,8 @@ const TimelineLayer = React.createClass({
         dragging: true
       });
 
-      const rect = event.target.getBoundingClientRect();
-      const offsetX = event.clientX - rect.left;
+      const offsetX = event.clientX -
+          (event.target.offsetLeft + this.refs.track.offsetLeft);
       this._boundBarMouseMove = this._onBarMouseMove.bind(null, offsetX);
       document.addEventListener('mousemove', this._boundBarMouseMove);
       document.addEventListener('mouseup', this._onBarMouseUp);
@@ -111,7 +115,7 @@ const TimelineLayer = React.createClass({
 
   _onBarHandleMouseDown: function(index, event) {
     if (event.button === 0) {
-      event.stopPropagation();
+      this.props.onMouseDown(event); // this stops propagation as well
       this.setState({
         dragIn: this.props.layer.in,
         dragOut: this.props.layer.out,
@@ -124,12 +128,7 @@ const TimelineLayer = React.createClass({
   },
 
   _onBarHandleMouseMove: function(index, event) {
-    let position = (event.clientX - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
-    if (position < 0) {
-      position = 0;
-    } else if (position > 1) {
-      position = 1;
-    }
+    const position = this._getTrackPosition(event.clientX);
     this.setState({[`drag${index ? 'Out' : 'In'}`]: position});
   },
 
@@ -139,9 +138,48 @@ const TimelineLayer = React.createClass({
       out: this.state.dragOut
     });
     this.setState({dragging: false});
-    document.removeEventListener('mouseup', this._onBarHandleMouseUp);
     document.removeEventListener('mousemove', this._boundBarHandleMouseMove);
+    document.removeEventListener('mouseup', this._onBarHandleMouseUp);
     delete this._boundBarHandleMouseMove;
+  },
+
+  _onKeyframeMouseDown: function(key, position, event) {
+    if (event.button === 0) {
+      this.setState({
+        keyframeDragKey: position,
+        keyframeDragProperty: key,
+        keyframeDragPosition: position
+      });
+      document.addEventListener('mousemove', this._onKeyframeMouseMove);
+      document.addEventListener('mouseup', this._onKeyframeMouseUp);
+    }
+  },
+
+  _onKeyframeMouseMove: function(event) {
+    const position = this._getTrackPosition(event.clientX);
+    this.setState({keyframeDragPosition: position});
+  },
+
+  _onKeyframeMouseUp: function() {
+    const value = this.props.layer[this.state.keyframeDragProperty];
+    const nextValue = Object.assign({}, value, {
+      [this.state.keyframeDragPosition]: value[this.state.keyframeDragKey]
+    });
+    if (this.state.keyframeDragKey !== this.state.keyframeDragPosition.toString()) {
+      delete nextValue[this.state.keyframeDragKey];
+    }
+    this.props.onPropertiesChange({
+      [this.state.keyframeDragProperty]: nextValue
+    });
+
+    this.setState({
+      keyframeDragKey: null,
+      keyframeDragProperty: null,
+      keyframeDragPosition: null
+    });
+
+    document.removeEventListener('mousemove', this._onKeyframeMouseMove);
+    document.removeEventListener('mouseup', this._onKeyframeMouseUp);
   },
 
   _onMoreClick: function() {
@@ -195,6 +233,16 @@ const TimelineLayer = React.createClass({
     this.props.onPropertiesChange({
       [property]: getInterpolatedValue(value, this.props.percentPlayed)
     });
+  },
+
+  _getTrackPosition: function(position) {
+    let trackPosition = (position - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
+    if (trackPosition < 0) {
+      trackPosition = 0;
+    } else if (trackPosition > 1) {
+      trackPosition = 1;
+    }
+    return trackPosition;
   },
 
   render: function() {
@@ -273,7 +321,8 @@ const TimelineLayer = React.createClass({
     return (
       <div className={layerClassName}
           onDragOver={this.props.onDragOver}
-          onMouseDown={event => event.stopPropagation()}>
+          onMouseDown={this.props.onMouseDown}
+          onMouseUp={this.props.onMouseUp}>
         <div className="pl-timeline-layer-top">
           <Control actions={topActions}
               draggable
@@ -336,11 +385,16 @@ const TimelineLayer = React.createClass({
                 const keyframes = animating ? Object.keys(this.props.layer[key]) : [];
                 propertyTrack = (
                   <div className="pl-timeline-layer-track">
-                    {keyframes.map(function(keyframe, index) {
+                    {keyframes.map((keyframe, index) => {
+                      const dragging = key === this.state.keyframeDragProperty &&
+                          keyframe === this.state.keyframeDragKey;
+                      const position = dragging ?
+                          this.state.keyframeDragPosition : keyframe;
                       return (
                         <div className="pl-timeline-layer-property-keyframe"
                             key={index}
-                            style={{left: `${keyframe * 100}%`}}/>
+                            onMouseDown={this._onKeyframeMouseDown.bind(null, key, keyframe)}
+                            style={{left: `${position * 100}%`}}/>
                       );
                     })}
                   </div>

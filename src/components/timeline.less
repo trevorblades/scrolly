@@ -128,6 +128,9 @@
     flex-grow: 1;
     padding-top: @padding-small;
     overflow: auto;
+    &.pl-locked {
+      overflow: hidden;
+    }
     &.pl-scrolling .pl-timeline-layer {
       &.pl-sticky, &.pl-stuck {
         pointer-events: none;
