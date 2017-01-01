@@ -5,7 +5,7 @@ const classNames = require('classnames');
 
 const TextField = require('./text-field');
 
-const {setLayerProperties} = require('../actions');
+const {setLayerProperties, selectLayer} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const layerPropType = require('../util/layer-prop-type');
 
@@ -20,13 +20,13 @@ function getUnlinkedPosition(layer, parent, parentOffset, parentScale) {
 const ViewportLayer = React.createClass({
 
   propTypes: {
+    dispatch: React.PropTypes.func.isRequired,
     getInterpolatedValue: React.PropTypes.func.isRequired,
     layer: layerPropType.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
     parent: React.PropTypes.object,
     percentPlayed: React.PropTypes.number.isRequired,
-    selectLayer: React.PropTypes.func.isRequired,
     selected: React.PropTypes.bool.isRequired,
     viewportHeight: React.PropTypes.number.isRequired,
     viewportOffsetLeft: React.PropTypes.number.isRequired,
@@ -54,18 +54,18 @@ const ViewportLayer = React.createClass({
       event.stopPropagation();
 
       if (!this.props.selected) {
-        this.props.selectLayer(this.props.layer.id);
+        this.props.dispatch(selectLayer(this.props.layer.id));
       }
 
-      const offsetX = event.clientX - this.props.viewportOffsetLeft - event.target.offsetLeft;
-      const offsetY = event.clientY - this.props.viewportOffsetTop - event.target.offsetTop;
+      const offsetX = event.clientX - this.props.viewportOffsetLeft - event.currentTarget.offsetLeft;
+      const offsetY = event.clientY - this.props.viewportOffsetTop - event.currentTarget.offsetTop;
       this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY);
       document.addEventListener('mousemove', this._boundMouseMove);
       document.addEventListener('mouseup', this._onMouseUp);
 
       this.setState({
-        moveX: (event.clientX - this.props.viewportOffsetLeft - offsetX) / this.props.viewportScale,
-        moveY: (event.clientY - this.props.viewportOffsetTop - offsetY) / this.props.viewportScale,
+        moveX: event.currentTarget.offsetLeft / this.props.viewportScale,
+        moveY: event.currentTarget.offsetTop / this.props.viewportScale,
         moving: true
       });
     }
@@ -194,7 +194,7 @@ const ViewportLayer = React.createClass({
 
   _onTextChange: function(value) {
     this.props.onPropertiesChange({value: value});
-    this.props.selectLayer(null);
+    this.props.dispatch(selectLayer(null));
   },
 
   _getParentScale: function() {
@@ -293,6 +293,7 @@ const ViewportLayer = React.createClass({
 
 module.exports = connect(null, function(dispatch, props) {
   return {
+    dispatch,
     getInterpolatedValue: function(value) {
       return getInterpolatedValue(value, props.percentPlayed);
     },

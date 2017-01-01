@@ -8,7 +8,14 @@ const Icon = require('./icon');
 const TextField = require('./text-field');
 const TimelineLayer = require('./timeline-layer');
 
-const {addLayer, linkLayers, orderLayers, setStep, setPercentPlayed} = require('../actions');
+const {
+  addLayer,
+  linkLayers,
+  orderLayers,
+  setStep,
+  setPercentPlayed,
+  selectLayer
+} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
@@ -34,7 +41,7 @@ let Timeline = React.createClass({
     onStepChange: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
     selectLayer: React.PropTypes.func.isRequired,
-    selectedLayerId: React.PropTypes.number,
+    selectedLayer: React.PropTypes.number,
     setPercentPlayed: React.PropTypes.func.isRequired,
     step: React.PropTypes.number.isRequired
   },
@@ -290,6 +297,10 @@ let Timeline = React.createClass({
     this.setState({snapToKeyframes: !this.state.snapToKeyframes});
   },
 
+  _deselectLayer: function() {
+    this.props.selectLayer(null);
+  },
+
   render: function() {
     const percentPlayed = this.props.percentPlayed * 100;
     const marker = (
@@ -353,7 +364,7 @@ let Timeline = React.createClass({
           </div>
         </div>
         <div className="pl-timeline-content"
-            onMouseDown={this.props.selectLayer.bind(null, null)}>
+            onMouseDown={this._deselectLayer}>
           <div className={layersClassName}
               onScroll={this._onLayersScroll}
               onWheel={this._onLayersWheel}>
@@ -371,11 +382,10 @@ let Timeline = React.createClass({
                     onLinkTargetClick={this._onLayerLinkTargetClick.bind(null, layer.id)}
                     onMouseDown={this._onLayerMouseDown}
                     onMouseUp={this._onLayerMouseUp}
-                    onSelect={this._onLayerSelect.bind(null, layer.id)}
                     onUnlinkClick={this._onLayerUnlinkClick.bind(null, layer.id)}
                     parent={layer.parent && this.props.layers.find(l => l.id === layer.parent.id)}
                     percentPlayed={this.props.percentPlayed}
-                    selected={layer.id === this.props.selectedLayerId}
+                    selected={layer.id === this.props.selectedLayer}
                     sticky={layer.id === this.state.stickyLayerId}
                     stuck={layer.id === this.state.stuckLayerId}/>
               );
@@ -394,6 +404,7 @@ function mapStateToProps(state) {
   return {
     layers: state.layers.present,
     percentPlayed: state.percentPlayed,
+    selectedLayer: state.selectedLayer,
     step: state.step.present
   };
 }
@@ -420,6 +431,9 @@ function mapDispatchToProps(dispatch, props) {
         value = 1;
       }
       dispatch(setPercentPlayed(value));
+    },
+    selectLayer: function(id) {
+      dispatch(selectLayer(id));
     }
   };
 }

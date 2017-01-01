@@ -84,6 +84,13 @@ function setPercentPlayed(value) {
   };
 }
 
+function selectLayer(id) {
+  return {
+    type: 'SELECT_LAYER',
+    id
+  };
+}
+
 module.exports = {
   addLayer,
   addImageLayer,
@@ -95,5 +102,6 @@ module.exports = {
   addAsset,
   removeAsset,
   setStep,
-  setPercentPlayed
+  setPercentPlayed,
+  selectLayer
 };

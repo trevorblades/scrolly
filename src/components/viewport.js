@@ -4,7 +4,7 @@ const classNames = require('classnames');
 
 const ViewportLayer = require('./viewport-layer');
 
-const {addImageLayer} = require('../actions');
+const {addImageLayer, selectLayer} = require('../actions');
 const {ASSET_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const layerPropType = require('../util/layer-prop-type');
@@ -40,8 +40,7 @@ let Viewport = React.createClass({
     dispatch: React.PropTypes.func.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
-    selectLayer: React.PropTypes.func.isRequired,
-    selectedLayerId: React.PropTypes.number,
+    selectedLayer: React.PropTypes.number,
     wrapperHeight: React.PropTypes.number.isRequired,
     wrapperOffsetLeft: React.PropTypes.number.isRequired,
     wrapperOffsetTop: React.PropTypes.number.isRequired,
@@ -68,8 +67,8 @@ let Viewport = React.createClass({
   },
 
   _onMouseDown: function() {
-    if (this.props.selectedLayerId !== null) {
-      this.props.selectLayer(null);
+    if (this.props.selectedLayer !== null) {
+      this.props.dispatch(selectLayer(null));
     }
   },
 
@@ -137,8 +136,7 @@ let Viewport = React.createClass({
                 parent={layer.parent &&
                     this.props.layers.find(l => l.id === layer.parent.id)}
                 percentPlayed={this.props.percentPlayed}
-                selectLayer={this.props.selectLayer}
-                selected={layer.id === this.props.selectedLayerId}
+                selected={layer.id === this.props.selectedLayer}
                 viewportHeight={this.state.height}
                 viewportOffsetLeft={this.state.offsetLeft}
                 viewportOffsetTop={this.state.offsetTop}
@@ -155,6 +153,7 @@ module.exports = connect(function(state) {
   return {
     assets: state.assets.present,
     layers: state.layers.present.filter(layer => layer.visible),
-    percentPlayed: state.percentPlayed
+    percentPlayed: state.percentPlayed,
+    selectedLayer: state.selectedLayer
   };
 })(Viewport);

@@ -8,6 +8,7 @@ const Library = require('./library');
 const Timeline = require('./timeline');
 const Viewport = require('./viewport');
 
+const {selectLayer} = require('../actions');
 const {FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
@@ -17,7 +18,8 @@ const App = React.createClass({
 
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
-    layers: React.PropTypes.arrayOf(layerPropType).isRequired
+    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
+    selectedLayer: React.PropTypes.number
   },
 
   getInitialState: function() {
@@ -29,7 +31,6 @@ const App = React.createClass({
       viewportWrapperOffsetLeft: 0,
       viewportWrapperOffsetTop: 0,
       viewportWrapperWidth: 0,
-      selectedLayerId: null,
       timelineMaxHeight: 0
     };
   },
@@ -51,15 +52,12 @@ const App = React.createClass({
 
   _onKeyDown: function(event) {
     if (event.keyCode === 90 && event.metaKey) { // cmd + z pressed
-      const action = event.shiftKey ?
-          ActionCreators.redo() :
-          ActionCreators.undo();
-      this.props.dispatch(action);
-    } else if (this.state.selectedLayerId !== null && event.keyCode === 27) { // esc key pressed
+      this.props.dispatch(ActionCreators[event.shiftKey ? 'redo' : 'undo']());
+    } else if (this.props.selectedLayer !== null && event.keyCode === 27) { // esc key pressed
       if (isInput(event.target)) {
         return event.target.blur();
       }
-      this._selectLayer(null);
+      this._deselectLayer();
     }
   },
 
@@ -98,12 +96,8 @@ const App = React.createClass({
     event.preventDefault();
   },
 
-  _onViewportWrapperClick: function() {
-    this._selectLayer(null);
-  },
-
-  _selectLayer: function(id) {
-    this.setState({selectedLayerId: id});
+  _deselectLayer: function() {
+    this.props.dispatch(selectLayer(null));
   },
 
   render: function() {
@@ -120,12 +114,10 @@ const App = React.createClass({
               onDragEnter={this._onDragEnter}
               onDrop={this._onLibraryDrop}/>
           <div className="pl-app-viewport-wrapper"
-              onClick={this._onViewportWrapperClick}
+              onClick={this._deselectLayer}
               ref="viewportWrapper">
             <Viewport compositionHeight={this.state.compositionHeight}
                 compositionWidth={this.state.compositionWidth}
-                selectLayer={this._selectLayer}
-                selectedLayerId={this.state.selectedLayerId}
                 wrapperHeight={this.state.viewportWrapperHeight}
                 wrapperOffsetLeft={this.state.viewportWrapperOffsetLeft}
                 wrapperOffsetTop={this.state.viewportWrapperOffsetTop}
@@ -133,9 +125,7 @@ const App = React.createClass({
           </div>
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}
-            onResize={this._onResize}
-            selectLayer={this._selectLayer}
-            selectedLayerId={this.state.selectedLayerId}/>
+            onResize={this._onResize}/>
       </div>
     );
   }
@@ -143,6 +133,7 @@ const App = React.createClass({
 
 module.exports = connect(function(state) {
   return {
-    layers: state.layers.present
+    layers: state.layers.present,
+    selectedLayer: state.selectedLayer
   };
 })(App);

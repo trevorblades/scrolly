@@ -7,7 +7,12 @@ const Control = require('./control');
 const Icon = require('./icon');
 const TextField = require('./text-field');
 
-const {removeLayer, setLayerProperties, toggleLayerVisibility} = require('../actions');
+const {
+  removeLayer,
+  setLayerProperties,
+  toggleLayerVisibility,
+  selectLayer
+} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const layerPropType = require('../util/layer-prop-type');
 const properties = require('../util/properties');
@@ -39,11 +44,11 @@ const TimelineLayer = React.createClass({
     onMouseUp: React.PropTypes.func.isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
     onRemoveClick: React.PropTypes.func.isRequired,
-    onSelect: React.PropTypes.func.isRequired,
     onUnlinkClick: React.PropTypes.func.isRequired,
     onVisiblityToggle: React.PropTypes.func.isRequired,
     parent: React.PropTypes.object,
     percentPlayed: React.PropTypes.number.isRequired,
+    selectLayer: React.PropTypes.func.isRequired,
     selected: React.PropTypes.bool.isRequired,
     sticky: React.PropTypes.bool.isRequired,
     stuck: React.PropTypes.bool.isRequired
@@ -70,7 +75,7 @@ const TimelineLayer = React.createClass({
   _onBarMouseDown: function(event) {
     if (event.button === 0) {
       if (!this.props.selected) {
-        this.props.onSelect(event);
+        this.props.selectLayer(event);
       }
 
       this.setState({
@@ -340,7 +345,7 @@ const TimelineLayer = React.createClass({
         <div className="pl-timeline-layer-top">
           <Control actions={topActions}
               draggable
-              onClick={this.props.onSelect}
+              onClick={this.props.selectLayer}
               onDragEnd={this.props.onDragEnd}
               onDragStart={this.props.onDragStart}>
             <TextField onChange={this._onNameChange}
@@ -466,6 +471,10 @@ module.exports = connect(null, function(dispatch, props) {
     },
     onPropertiesChange: function(properties) {
       dispatch(setLayerProperties(props.layer.id, properties));
+    },
+    selectLayer: function(event) {
+      event.stopPropagation();
+      dispatch(selectLayer(props.layer.id));
     }
   };
 })(TimelineLayer);
