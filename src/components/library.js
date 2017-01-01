@@ -9,9 +9,9 @@ const {addAsset, removeAsset} = require('../actions');
 const {ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 
-const ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/gif'];
+const ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
 const allowedFiletypesString = ALLOWED_FILETYPES.map(function(filetype, index, array) {
-  let string = filetype.slice(filetype.indexOf('/') + 1);
+  let string = (filetype + ' ').slice(filetype.indexOf('/') + 1, filetype.indexOf('+'));
   if (index === array.length - 1) {
     string = `and ${string}`;
   }
