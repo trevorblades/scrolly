@@ -97,21 +97,18 @@ let Viewport = React.createClass({
     event.preventDefault();
     const id = event.dataTransfer.getData(ASSET_DRAG_TYPE);
     if (id) {
-      const asset = this.props.assets.find(asset => asset.id === parseInt(id));
-      this.props.dispatch(addImageLayer(asset.data, asset.width, asset.height));
+      this.props.dispatch(addImageLayer(parseInt(id)));
       this._dragCounter = 0;
       this.setState({dragging: false});
     }
   },
 
   _renderLayer: function(layer) {
-    if (layer.in > this.props.percentPlayed ||
-        layer.out < this.props.percentPlayed) {
-      return null;
-    }
-
+    const hidden = layer.in > this.props.percentPlayed ||
+        layer.out < this.props.percentPlayed;
     return (
-      <ViewportLayer key={layer.id}
+      <ViewportLayer hidden={hidden}
+          key={layer.id}
           layer={layer}
           layers={this.props.layers}
           parent={layer.parent &&

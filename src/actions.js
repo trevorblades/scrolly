@@ -9,8 +9,8 @@ function addLayer(type) {
   };
 }
 
-function addImageLayer(src, width, height) {
-  return Object.assign({}, addLayer('image'), {src, width, height});
+function addImageLayer(asset) {
+  return Object.assign({}, addLayer('image'), {asset});
 }
 
 function removeLayer(id) {

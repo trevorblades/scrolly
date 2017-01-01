@@ -22,8 +22,10 @@ function getUnlinkedPosition(layer, parent, parentOffset, parentScale) {
 const ViewportLayer = React.createClass({
 
   propTypes: {
+    assets: React.PropTypes.array.isRequired,
     dispatch: React.PropTypes.func.isRequired,
     getInterpolatedValue: React.PropTypes.func.isRequired,
+    hidden: React.PropTypes.bool,
     layer: layerPropType.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
@@ -39,6 +41,8 @@ const ViewportLayer = React.createClass({
 
   getInitialState: function() {
     return {
+      asset: typeof this.props.layer.asset !== 'undefined' ?
+          this.props.assets.find(asset => asset.id === this.props.layer.asset) : null,
       moveX: null,
       moveY: null,
       moving: false,
@@ -249,10 +253,10 @@ const ViewportLayer = React.createClass({
         break;
       case 'image':
         content = (
-          <img height={this.props.layer.height * this.props.viewportScale * layerScale}
-              src={this.props.layer.src}
+          <img height={this.state.asset.height * this.props.viewportScale * layerScale}
+              src={this.state.asset.data}
               style={{opacity: this.props.layer.opacity}}
-              width={this.props.layer.width * this.props.viewportScale * layerScale}/>
+              width={this.state.asset.width * this.props.viewportScale * layerScale}/>
         );
         break;
       default:
@@ -269,12 +273,12 @@ const ViewportLayer = React.createClass({
     }
 
     const layerClassName = classNames('sv-viewport-layer', {
+      'sv-hidden': this.props.hidden,
       'sv-selected': this.props.selected
     });
 
     return (
       <div className={layerClassName}
-          key={this.props.layer.id}
           onClick={this._onClick}
           onMouseDown={this._onMouseDown}
           style={style}
@@ -299,7 +303,13 @@ const ViewportLayer = React.createClass({
   }
 });
 
-module.exports = connect(null, function(dispatch, props) {
+function mapStateToProps(state) {
+  return {
+    assets: state.assets.present
+  };
+}
+
+function mapDispatchToProps(dispatch, props) {
   return {
     dispatch,
     getInterpolatedValue: function(value) {
@@ -309,4 +319,6 @@ module.exports = connect(null, function(dispatch, props) {
       dispatch(setLayerProperties(props.layer.id, properties));
     }
   };
-})(ViewportLayer);
+}
+
+module.exports = connect(mapStateToProps, mapDispatchToProps)(ViewportLayer);

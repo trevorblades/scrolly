@@ -28,11 +28,7 @@ module.exports = function(state, action) {
           layer.fontColor = properties.fontColor.default;
           break;
         case 'image':
-          layer.src = action.src;
-          layer.width = action.width;
-          layer.height = action.height;
-          layer.aspectRatio = layer.width / layer.height;
-          layer.constrainProportions = true;
+          layer.asset = action.asset;
           break;
         default:
       }
