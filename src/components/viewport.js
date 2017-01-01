@@ -104,9 +104,36 @@ let Viewport = React.createClass({
     }
   },
 
+  _renderLayer: function(layer) {
+    if (layer.in > this.props.percentPlayed ||
+        layer.out < this.props.percentPlayed) {
+      return null;
+    }
+
+    return (
+      <ViewportLayer key={layer.id}
+          layer={layer}
+          layers={this.props.layers}
+          parent={layer.parent &&
+              this.props.layers.find(l => l.id === layer.parent.id)}
+          percentPlayed={this.props.percentPlayed}
+          selected={layer.id === this.props.selectedLayer}
+          viewportHeight={this.state.height}
+          viewportOffsetLeft={this.state.offsetLeft}
+          viewportOffsetTop={this.state.offsetTop}
+          viewportScale={this.state.width / this.props.compositionWidth}
+          viewportWidth={this.state.width}/>
+    );
+  },
+
   render: function() {
     const layers = this.props.layers.slice();
     layers.reverse();
+
+    let selectedLayer;
+    if (this.props.selectedLayer !== null) {
+      selectedLayer = layers.find(layer => layer.id === this.props.selectedLayer);
+    }
 
     const viewportClassName = classNames('sv-viewport', {
       'sv-dragging': this.state.dragging
@@ -123,27 +150,10 @@ let Viewport = React.createClass({
             width: this.state.width,
             height: this.state.height
           }}>
-        {layers.map(layer => {
-          if (layer.in > this.props.percentPlayed ||
-              layer.out < this.props.percentPlayed) {
-            return null;
-          }
-
-          return (
-            <ViewportLayer key={layer.id}
-                layer={layer}
-                layers={this.props.layers}
-                parent={layer.parent &&
-                    this.props.layers.find(l => l.id === layer.parent.id)}
-                percentPlayed={this.props.percentPlayed}
-                selected={layer.id === this.props.selectedLayer}
-                viewportHeight={this.state.height}
-                viewportOffsetLeft={this.state.offsetLeft}
-                viewportOffsetTop={this.state.offsetTop}
-                viewportScale={this.state.width / this.props.compositionWidth}
-                viewportWidth={this.state.width}/>
-          );
-        })}
+        {selectedLayer && this._renderLayer(selectedLayer)}
+        <div className="sv-viewport-layers">
+          {layers.map(this._renderLayer)}
+        </div>
       </div>
     );
   }

@@ -228,14 +228,14 @@ const ViewportLayer = React.createClass({
       transform: `translate(${this.props.layer.anchorX * -100}%, ${this.props.layer.anchorY * -100}%)`
     };
 
-    let children;
+    let content;
     switch (this.props.layer.type) {
       case 'dummy':
         style.width = DUMMY_LAYER_SIZE * layerScale;
         style.height = DUMMY_LAYER_SIZE * layerScale;
         break;
       case 'text':
-        children = (
+        content = (
           <TextField onChange={this._onTextChange}
               style={{
                 fontSize: `${this.props.layer.fontSize * layerScale}px`,
@@ -248,7 +248,7 @@ const ViewportLayer = React.createClass({
         );
         break;
       case 'image':
-        children = (
+        content = (
           <img height={this.props.layer.height * this.props.viewportScale * layerScale}
               src={this.props.layer.src}
               style={{opacity: this.props.layer.opacity}}
@@ -279,7 +279,9 @@ const ViewportLayer = React.createClass({
           onMouseDown={this._onMouseDown}
           style={style}
           type={this.props.layer.type}>
-        {children}
+        <div className="sv-viewport-layer-content">
+          {content}
+        </div>
         <div className="sv-viewport-layer-borders">
           {handles.map(function(handle, index) {
             return <div className="sv-viewport-layer-border" key={index}/>;
