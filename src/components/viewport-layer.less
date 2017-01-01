@@ -17,31 +17,38 @@
     &:not(:hover)&:not(.sv-selected) .sv-viewport-layer-borders {
       opacity: 0.25;
     }
+
+    .sv-viewport-layer-anchor {
+      border-color: @dummy-layer-color;
+      &:before, &:after {
+        background-color: @dummy-layer-color;
+      }
+    }
+    .sv-viewport-layer-borders .sv-viewport-layer-border,
+    .sv-viewport-layer-handles .sv-viewport-layer-handle {
+      background-color: @dummy-layer-color;
+    }
   }
   &[type="text"] {
-    .sv-viewport-layer-borders .sv-viewport-layer-border {
-      background-color: @text-layer-color;
-    }
     .sv-viewport-layer-anchor {
       border-color: @text-layer-color;
       &:before, &:after {
         background-color: @text-layer-color;
       }
     }
+    .sv-viewport-layer-borders .sv-viewport-layer-border,
     .sv-viewport-layer-handles .sv-viewport-layer-handle {
       background-color: @text-layer-color;
     }
   }
   &[type="image"] {
-    .sv-viewport-layer-borders .sv-viewport-layer-border {
-      background-color: @image-layer-color;
-    }
     .sv-viewport-layer-anchor {
       border-color: @image-layer-color;
       &:before, &:after {
         background-color: @image-layer-color;
       }
     }
+    .sv-viewport-layer-borders .sv-viewport-layer-border,
     .sv-viewport-layer-handles .sv-viewport-layer-handle {
       background-color: @image-layer-color;
     }

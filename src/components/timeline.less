@@ -147,7 +147,7 @@
     width: @library-width;
     height: 100%;
     color: @gray-lightest;
-    background-color: @shadow-dark;
+    background-color: @gray-darker;
     position: absolute;
     top: 0;
     left: 0;
@@ -163,11 +163,11 @@
       font-size: @font-size-small;
       cursor: pointer;
       &:first-child {
-        border-right: 1px solid black;
+        border-right: 1px solid @shadow-dark;
       }
       &:hover {
         color: white;
-        background-color: @shadow-dark;
+        background-color: @shadow;
         .sv-icon {
           fill: white;
         }

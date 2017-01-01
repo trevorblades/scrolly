@@ -20,6 +20,9 @@
     }
     .sv-timeline-layer-top-bar {
       background-color: @gray-lightest;
+      &[type="dummy"] {
+        background-color: mix(@dummy-layer-color, @gray-lightest, 75%);
+      }
       &[type="text"] {
         background-color: mix(@text-layer-color, @gray-lightest, 75%);
       }
@@ -121,6 +124,9 @@
       position: absolute;
       top: 0;
       left: 0;
+      &[type="dummy"] {
+        background-color: mix(@gray-light, @dummy-layer-color, 75%);
+      }
       &[type="text"] {
         background-color: mix(@gray-light, @text-layer-color, 75%);
       }
