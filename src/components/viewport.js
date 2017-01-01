@@ -9,7 +9,7 @@ const {ASSET_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const layerPropType = require('../util/layer-prop-type');
 
-function getViewportDimensions(props) {
+function propsToDimensions(props) {
   const compositionAspectRatio = props.compositionWidth / props.compositionHeight;
   const outerAspectRatio = props.wrapperWidth / props.wrapperHeight;
 
@@ -48,7 +48,9 @@ let Viewport = React.createClass({
   },
 
   getInitialState: function() {
-    return getViewportDimensions(this.props);
+    const initialState = propsToDimensions(this.props);
+    initialState.selectedLayer = null;
+    return initialState;
   },
 
   componentWillMount: function() {
@@ -62,7 +64,14 @@ let Viewport = React.createClass({
         nextProps.wrapperOffsetLeft !== this.props.wrapperOffsetLeft ||
         nextProps.wrapperOffsetTop !== this.props.wrapperOffsetTop ||
         nextProps.wrapperWidth !== this.props.wrapperWidth) {
-      this.setState(getViewportDimensions(nextProps));
+      this.setState(propsToDimensions(nextProps));
+    } else if (nextProps.layers !== this.props.layers ||
+        nextProps.selectedLayer !== this.props.selectedLayer) {
+      let selectedLayer;
+      if (nextProps.selectedLayer !== null) {
+        selectedLayer = nextProps.layers.find(layer => layer.id === nextProps.selectedLayer);
+      }
+      this.setState({selectedLayer: selectedLayer || null});
     }
   },
 
@@ -127,11 +136,6 @@ let Viewport = React.createClass({
     const layers = this.props.layers.slice();
     layers.reverse();
 
-    let selectedLayer;
-    if (this.props.selectedLayer !== null) {
-      selectedLayer = layers.find(layer => layer.id === this.props.selectedLayer);
-    }
-
     const viewportClassName = classNames('sv-viewport', {
       'sv-dragging': this.state.dragging
     });
@@ -147,7 +151,7 @@ let Viewport = React.createClass({
             width: this.state.width,
             height: this.state.height
           }}>
-        {selectedLayer && this._renderLayer(selectedLayer)}
+        {this.state.selectedLayer && this._renderLayer(this.state.selectedLayer)}
         <div className="sv-viewport-layers">
           {layers.map(this._renderLayer)}
         </div>
