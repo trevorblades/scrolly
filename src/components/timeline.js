@@ -37,7 +37,6 @@ let Timeline = React.createClass({
     getInterpolatedValue: React.PropTypes.func.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     maxHeight: React.PropTypes.number.isRequired,
-    onAddClick: React.PropTypes.func.isRequired,
     onResize: React.PropTypes.func.isRequired,
     onStepChange: React.PropTypes.func.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
