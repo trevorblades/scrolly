@@ -1,6 +1,7 @@
 const React = require('react');
 const {connect} = require('react-redux');
 const classNames = require('classnames');
+const upperCaseFirst = require('upper-case-first');
 
 const Button = require('./button');
 const Control = require('./control');
@@ -21,7 +22,7 @@ const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
 const shouldSnap = require('../util/should-snap');
 
-const MIN_HEIGHT = 100;
+const MIN_HEIGHT = 200;
 
 let numTicks = 17;
 const ticks = [];
@@ -48,6 +49,7 @@ let Timeline = React.createClass({
 
   getInitialState: function() {
     return {
+      adding: false,
       dragging: false,
       height: 200,
       linkingLayerId: null,
@@ -297,6 +299,15 @@ let Timeline = React.createClass({
     this.setState({snapToKeyframes: !this.state.snapToKeyframes});
   },
 
+  _onAddToggle: function() {
+    this.setState({adding: !this.state.adding});
+  },
+
+  _onAddLayerClick: function(type) {
+    this.props.dispatch(addLayer(type));
+    this.setState({adding: false});
+  },
+
   _deselectLayer: function() {
     this.props.selectLayer(null);
   },
@@ -318,10 +329,10 @@ let Timeline = React.createClass({
       'sv-scrolling': this.state.scrolling
     });
 
-    const indicatorActions = [
+    const menuActions = [
       {
         content: (
-          <div className="sv-timeline-header-indicator-step">
+          <div className="sv-timeline-header-menu-step">
             <TextField onChange={this.props.onStepChange}
                 type="number"
                 value={this.props.step}/>
@@ -337,16 +348,21 @@ let Timeline = React.createClass({
       }
     ];
 
+    const addClassName = classNames('sv-timeline-header-menu-add', {
+      'pl-active': this.state.adding
+    });
+
     return (
       <div className="sv-timeline" style={{height: this.state.height}}>
         <div className="sv-timeline-header">
-          <div className="sv-timeline-header-indicator">
-            <Control actions={indicatorActions}>
+          <div className="sv-timeline-header-menu">
+            <Control actions={menuActions}>
               {`${percentPlayed.toFixed(2)}%`}
             </Control>
-            <Button className="sv-timeline-header-indicator-add"
-                onClick={this.props.onAddClick}>
-              <Icon name="addLayer"/>
+            <Button className={addClassName}
+                onClick={this._onAddToggle}
+                title="Add a layer">
+              <Icon name={this.state.adding ? 'close' : 'add'}/>
             </Button>
           </div>
           <div className="sv-timeline-header-track"
@@ -391,6 +407,20 @@ let Timeline = React.createClass({
               );
             })}
           </div>
+          {this.state.adding && <div className="sv-timeline-layer-options">
+            {['dummy', 'text'].map((type, index) => {
+              const title = `Add ${type} layer`;
+              return (
+                <div className="sv-timeline-layer-option"
+                    key={index}
+                    onClick={this._onAddLayerClick.bind(null, type)}
+                    title={title}>
+                  <Icon name={`add${upperCaseFirst(type)}Layer`}/>
+                  <span>{title}</span>
+                </div>
+              );
+            })}
+          </div>}
           <div className="sv-timeline-track" ref="track">{marker}</div>
         </div>
         <div className="sv-timeline-handle"
@@ -414,9 +444,6 @@ function mapDispatchToProps(dispatch, props) {
     dispatch,
     getInterpolatedValue: function(value) {
       return getInterpolatedValue(value, props.percentPlayed);
-    },
-    onAddClick: function() {
-      dispatch(addLayer('text'));
     },
     onStepChange: function(value) {
       if (value < 1) {

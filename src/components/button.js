@@ -8,6 +8,7 @@ const Button = React.createClass({
     className: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     onClick: React.PropTypes.func,
+    title: React.PropTypes.string,
     type: React.PropTypes.string
   },
 
@@ -28,6 +29,7 @@ const Button = React.createClass({
           disabled={this.props.disabled}
           onClick={this.props.onClick}
           onMouseDown={this._onMouseDown}
+          title={this.props.title}
           type={this.props.type}>
         {this.props.children}
       </button>

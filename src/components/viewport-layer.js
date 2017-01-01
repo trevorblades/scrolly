@@ -9,6 +9,8 @@ const {setLayerProperties, selectLayer} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const layerPropType = require('../util/layer-prop-type');
 
+const DUMMY_LAYER_SIZE = 16;
+
 function getLinkedPosition(child, parent, parentOffset, parentScale) {
   return parent + (child - parentOffset) * parentScale;
 }
@@ -228,6 +230,10 @@ const ViewportLayer = React.createClass({
 
     let children;
     switch (this.props.layer.type) {
+      case 'dummy':
+        style.width = DUMMY_LAYER_SIZE * layerScale;
+        style.height = DUMMY_LAYER_SIZE * layerScale;
+        break;
       case 'text':
         children = (
           <TextField onChange={this._onTextChange}

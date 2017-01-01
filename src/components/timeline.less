@@ -17,13 +17,13 @@
     display: flex;
     flex-shrink: 0;
     border-bottom: 1px solid black;
-    .sv-timeline-header-indicator {
+    .sv-timeline-header-menu {
       display: flex;
+      flex-wrap: wrap;
       flex-shrink: 0;
       width: @library-width;
       padding: @padding-smaller;
       border-right: 1px solid @shadow-dark;
-      font-family: @font-family-monospace;
       .sv-control {
         align-items: center;
         flex-grow: 1;
@@ -34,16 +34,20 @@
         font-family: @font-family-monospace;
         background: @brand-warning;
       }
-      .sv-timeline-header-indicator-step {
+      .sv-timeline-header-menu-step {
         font-size: @font-size-small;
         .sv-icon, .sv-text-field {
           display: inline-block;
           vertical-align: middle;
         }
       }
-      .sv-timeline-header-indicator-add {
+      .sv-timeline-header-menu-add {
         flex-shrink: 0;
         position: relative;
+        &.pl-active .sv-icon {
+          transform: translate(-50%, -50%) rotate(90deg);
+        }
+
         .sv-icon {
           width: @padding-large;
           height: @padding-large;
@@ -51,6 +55,7 @@
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
+          transition: transform @transition-duration-fast ease-in;
         }
       }
     }
@@ -134,6 +139,46 @@
     &.sv-scrolling .sv-timeline-layer {
       &.sv-sticky, &.sv-stuck {
         pointer-events: none;
+      }
+    }
+  }
+  .sv-timeline-layer-options {
+    display: flex;
+    width: @library-width;
+    height: 100%;
+    color: @gray-lightest;
+    background-color: @shadow-dark;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    .sv-timeline-layer-option {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 50%;
+      height: 100%;
+      padding: @padding-base;
+      font-size: @font-size-small;
+      cursor: pointer;
+      &:first-child {
+        border-right: 1px solid black;
+      }
+      &:hover {
+        color: white;
+        background-color: @shadow-dark;
+        .sv-icon {
+          fill: white;
+        }
+      }
+
+      .sv-icon {
+        width: @padding-large;
+        height: @padding-large;
+        margin-top: @padding-large / -2;
+        margin-bottom: @padding-smallest;
+        fill: @gray-lightest;
       }
     }
   }
