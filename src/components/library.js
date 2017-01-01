@@ -10,6 +10,13 @@ const {ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 
 const ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/gif'];
+const allowedFiletypesString = ALLOWED_FILETYPES.map(function(filetype, index, array) {
+  let string = filetype.slice(filetype.indexOf('/') + 1);
+  if (index === array.length - 1) {
+    string = `and ${string}`;
+  }
+  return string;
+}).join(', ');
 
 const Library = React.createClass({
 
@@ -124,25 +131,34 @@ const Library = React.createClass({
             onDragLeave={this._onDragLeave}
             onDragOver={this._onDragOver}
             onDrop={this._onDrop}>
-          {this.props.assets.map((asset, index) => {
-            const assetClassName = classNames('sv-library-asset', {
-              'sv-selected': asset.id === this.state.selectedAssetId
-            });
-            return (
-              <div className={assetClassName}
-                  draggable
-                  key={index}
-                  onClick={this._onAssetClick.bind(null, asset.id)}
-                  onDragStart={this._onAssetDragStart.bind(null, asset.id)}>
-                <span title={asset.name}>{asset.name}</span>
-                <span>{bytes(asset.size)}</span>
-                <span onClick={this.props.onRemoveClick.bind(null, asset.id)}
-                    title="Remove asset">
-                  <Icon name="trash"/>
-                </span>
+          {!this.props.assets.length ?
+            <div className="sv-library-assets-empty">
+              <div style={{width: '25%'}}>
+                <Icon name="upload"/>
               </div>
-            );
-          })}
+              <h5>Upload images</h5>
+              <p>Drag and drop images from your computer into this panel to use them in your composition.</p>
+              <p>{`Accepted file types include ${allowedFiletypesString}.`}</p>
+            </div> :
+            this.props.assets.map((asset, index) => {
+              const assetClassName = classNames('sv-library-asset', {
+                'sv-selected': asset.id === this.state.selectedAssetId
+              });
+              return (
+                <div className={assetClassName}
+                    draggable
+                    key={index}
+                    onClick={this._onAssetClick.bind(null, asset.id)}
+                    onDragStart={this._onAssetDragStart.bind(null, asset.id)}>
+                  <span title={asset.name}>{asset.name}</span>
+                  <span>{bytes(asset.size)}</span>
+                  <span onClick={this.props.onRemoveClick.bind(null, asset.id)}
+                      title="Remove asset">
+                    <Icon name="trash"/>
+                  </span>
+                </div>
+              );
+            })}
         </div>
       </div>
     );

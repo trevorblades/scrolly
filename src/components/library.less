@@ -108,5 +108,34 @@
         }
       }
     }
+    .sv-library-assets-empty {
+      padding: @padding-large;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      h5, p {
+        position: relative;
+      }
+      h5 {
+        color: white;
+      }
+      p {
+        font-size: @font-size-small;
+        &:last-child {
+          font-size: @font-size-smaller;
+          color: @gray-lighter;
+        }
+      }
+      .sv-icon {
+        width: 50%;
+        height: auto;
+        fill: @gray-dark;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateX(-25%);
+      }
+    }
   }
 }
