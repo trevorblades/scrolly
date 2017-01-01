@@ -41,14 +41,19 @@ const ViewportLayer = React.createClass({
 
   getInitialState: function() {
     return {
-      asset: typeof this.props.layer.asset !== 'undefined' ?
-          this.props.assets.find(asset => asset.id === this.props.layer.asset) : null,
+      asset: this._getAsset(this.props.layer.asset),
       moveX: null,
       moveY: null,
       moving: false,
       resizeScale: null,
       resizing: false
     };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.layer.asset !== this.props.layer.asset) {
+      this.setState({asset: this._getAsset(nextProps.layer.asset)});
+    }
   },
 
   _onClick: function(event) {
@@ -201,6 +206,14 @@ const ViewportLayer = React.createClass({
   _onTextChange: function(value) {
     this.props.onPropertiesChange({value: value});
     this.props.dispatch(selectLayer(null));
+  },
+
+  _getAsset: function(id) {
+    if (typeof id === 'undefined') {
+      return null;
+    }
+    return this.props.assets.find(asset => asset.id === id) || null;
+
   },
 
   _getParentScale: function() {
