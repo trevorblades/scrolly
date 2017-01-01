@@ -10,8 +10,11 @@
     box-shadow: 0 0 0 3px @brand-primary, @box-shadow-large;
   }
 
-  > .sv-viewport-layer .sv-viewport-layer-content {
-    visibility: hidden;
+  > .sv-viewport-layer {
+    pointer-events: none;
+    .sv-viewport-layer-content {
+      visibility: hidden;
+    }
   }
   .sv-viewport-layers {
     width: 100%;
