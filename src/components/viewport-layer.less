@@ -1,43 +1,43 @@
-.pl-viewport-layer {
+.sv-viewport-layer {
   position: absolute;
   top: 0;
   left: 0;
-  &:hover .pl-viewport-layer-borders {
+  &:hover .sv-viewport-layer-borders {
     opacity: 0.5;
   }
-  &.pl-selected {
-    .pl-viewport-layer-borders {
+  &.sv-selected {
+    .sv-viewport-layer-borders {
       opacity: 1;
     }
-    .pl-viewport-layer-anchor, .pl-viewport-layer-handles {
+    .sv-viewport-layer-anchor, .sv-viewport-layer-handles {
       display: block;
     }
   }
   &[type="text"] {
-    .pl-viewport-layer-borders .pl-viewport-layer-border {
+    .sv-viewport-layer-borders .sv-viewport-layer-border {
       background-color: @text-layer-color;
     }
-    .pl-viewport-layer-anchor {
+    .sv-viewport-layer-anchor {
       border-color: @text-layer-color;
       &:before, &:after {
         background-color: @text-layer-color;
       }
     }
-    .pl-viewport-layer-handles .pl-viewport-layer-handle {
+    .sv-viewport-layer-handles .sv-viewport-layer-handle {
       background-color: @text-layer-color;
     }
   }
   &[type="image"] {
-    .pl-viewport-layer-borders .pl-viewport-layer-border {
+    .sv-viewport-layer-borders .sv-viewport-layer-border {
       background-color: @image-layer-color;
     }
-    .pl-viewport-layer-anchor {
+    .sv-viewport-layer-anchor {
       border-color: @image-layer-color;
       &:before, &:after {
         background-color: @image-layer-color;
       }
     }
-    .pl-viewport-layer-handles .pl-viewport-layer-handle {
+    .sv-viewport-layer-handles .sv-viewport-layer-handle {
       background-color: @image-layer-color;
     }
   }
@@ -46,10 +46,10 @@
     display: block;
     pointer-events: none;
   }
-  .pl-viewport-layer-borders {
+  .sv-viewport-layer-borders {
     pointer-events: none;
     opacity: 0;
-    .pl-viewport-layer-border {
+    .sv-viewport-layer-border {
       position: absolute;
       top: 0;
       left: 0;
@@ -71,10 +71,10 @@
       }
     }
   }
-  .pl-viewport-layer-anchor, .pl-viewport-layer-handles {
+  .sv-viewport-layer-anchor, .sv-viewport-layer-handles {
     display: none;
   }
-  .pl-viewport-layer-anchor {
+  .sv-viewport-layer-anchor {
     width: @padding-small;
     height: @padding-small;
     border: 1px solid black;
@@ -97,7 +97,7 @@
       transform: translate(-50%, -50%) rotate(90deg);
     }
   }
-  .pl-viewport-layer-handles .pl-viewport-layer-handle {
+  .sv-viewport-layer-handles .sv-viewport-layer-handle {
     width: 4px;
     height: 4px;
     background-color: black;

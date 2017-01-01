@@ -24,7 +24,7 @@ const Button = React.createClass({
 
   render: function() {
     return (
-      <button className={classNames('pl-button', this.props.className)}
+      <button className={classNames('sv-button', this.props.className)}
           disabled={this.props.disabled}
           onClick={this.props.onClick}
           onMouseDown={this._onMouseDown}

@@ -49,7 +49,7 @@ const Icon = React.createClass({
     }
 
     return (
-      <svg className={classNames('pl-icon', this.props.className)}
+      <svg className={classNames('sv-icon', this.props.className)}
           viewBox={icon.attributes.viewBox.value}
           xmlns="http://www.w3.org/2000/svg">
         {shapes.map(function(shape, index) {

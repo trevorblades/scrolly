@@ -108,8 +108,8 @@ let Viewport = React.createClass({
     const layers = this.props.layers.slice();
     layers.reverse();
 
-    const viewportClassName = classNames('pl-viewport', {
-      'pl-dragging': this.state.dragging
+    const viewportClassName = classNames('sv-viewport', {
+      'sv-dragging': this.state.dragging
     });
 
     return (

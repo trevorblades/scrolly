@@ -4,7 +4,7 @@
 @timeline-playhead-handle-size: 18px;
 @timeline-playhead-arrow-size: @timeline-playhead-handle-size / 2;
 
-.pl-timeline {
+.sv-timeline {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -13,18 +13,18 @@
   background-color: @gray-dark;
   position: relative;
   z-index: 0;
-  .pl-timeline-header {
+  .sv-timeline-header {
     display: flex;
     flex-shrink: 0;
     border-bottom: 1px solid black;
-    .pl-timeline-header-indicator {
+    .sv-timeline-header-indicator {
       display: flex;
       flex-shrink: 0;
       width: @library-width;
       padding: @padding-smaller;
       border-right: 1px solid @shadow-dark;
       font-family: @font-family-monospace;
-      .pl-control {
+      .sv-control {
         align-items: center;
         flex-grow: 1;
         height: @padding-larger;
@@ -34,17 +34,17 @@
         font-family: @font-family-monospace;
         background: @brand-warning;
       }
-      .pl-timeline-header-indicator-step {
+      .sv-timeline-header-indicator-step {
         font-size: @font-size-small;
-        .pl-icon, .pl-text-field {
+        .sv-icon, .sv-text-field {
           display: inline-block;
           vertical-align: middle;
         }
       }
-      .pl-timeline-header-indicator-add {
+      .sv-timeline-header-indicator-add {
         flex-shrink: 0;
         position: relative;
-        .pl-icon {
+        .sv-icon {
           width: @padding-large;
           height: @padding-large;
           position: absolute;
@@ -54,7 +54,7 @@
         }
       }
     }
-    .pl-timeline-header-track {
+    .sv-timeline-header-track {
       flex-grow: 1;
       margin: 0 @padding-small;
       cursor: pointer;
@@ -70,7 +70,7 @@
         right: @padding-small * -1;
       }
 
-      .pl-timeline-header-track-ticks {
+      .sv-timeline-header-track-ticks {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
@@ -79,7 +79,7 @@
         position: absolute;
         bottom: 50%;
         left: 0;
-        .pl-timeline-header-track-tick {
+        .sv-timeline-header-track-tick {
           width: 1px;
           height: 100%;
           background-color: @gray-lightest;
@@ -97,7 +97,7 @@
           }
         }
       }
-      .pl-timeline-header-track-playhead {
+      .sv-timeline-header-track-playhead {
         width: @timeline-playhead-handle-size + 1;
         height: 50%;
         cursor: ew-resize;
@@ -118,26 +118,26 @@
       }
     }
   }
-  .pl-timeline-content {
+  .sv-timeline-content {
     display: flex;
     flex-grow: 1;
     background-color: @gray-darker;
     position: relative;
   }
-  .pl-timeline-layers {
+  .sv-timeline-layers {
     flex-grow: 1;
     padding-top: @padding-small;
     overflow: auto;
-    &.pl-locked {
+    &.sv-locked {
       overflow: hidden;
     }
-    &.pl-scrolling .pl-timeline-layer {
-      &.pl-sticky, &.pl-stuck {
+    &.sv-scrolling .sv-timeline-layer {
+      &.sv-sticky, &.sv-stuck {
         pointer-events: none;
       }
     }
   }
-  .pl-timeline-track {
+  .sv-timeline-track {
     pointer-events: none;
     position: absolute;
     top: 0;
@@ -156,17 +156,17 @@
       left: @padding-small * -1;
     }
   }
-  .pl-timeline-marker, .pl-timeline-handle {
+  .sv-timeline-marker, .sv-timeline-handle {
     position: absolute;
     top: 0;
     left: 0;
   }
-  .pl-timeline-marker {
+  .sv-timeline-marker {
     width: 1px;
     height: 100%;
     background-color: @brand-warning;
   }
-  .pl-timeline-handle {
+  .sv-timeline-handle {
     width: 100%;
     height: @padding-small;
     cursor: row-resize;

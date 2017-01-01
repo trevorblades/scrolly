@@ -102,7 +102,7 @@ const TextField = React.createClass({
 
   render: function() {
     return (
-      <div className="pl-text-field"
+      <div className="sv-text-field"
           contentEditable={this.state.editing}
           dangerouslySetInnerHTML={{__html: this.state.value}}
           onBlur={this._onBlur}

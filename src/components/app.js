@@ -102,18 +102,18 @@ const App = React.createClass({
 
   render: function() {
     return (
-      <div className="pl-app"
+      <div className="sv-app"
           onDragEnter={this._onDragEnter}
           onDragLeave={this._onDragLeave}
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
         <Header ref="header"/>
-        <div className="pl-app-content">
+        <div className="sv-app-content">
           <Library assets={this.state.assets}
               dragging={this.state.dragging}
               onDragEnter={this._onDragEnter}
               onDrop={this._onLibraryDrop}/>
-          <div className="pl-app-viewport-wrapper"
+          <div className="sv-app-viewport-wrapper"
               onClick={this._deselectLayer}
               ref="viewportWrapper">
             <Viewport compositionHeight={this.state.compositionHeight}

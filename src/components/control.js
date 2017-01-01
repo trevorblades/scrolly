@@ -20,18 +20,18 @@ const Control = React.createClass({
 
   render: function() {
     return (
-      <div className={classNames('pl-control', this.props.className)}
+      <div className={classNames('sv-control', this.props.className)}
           draggable={this.props.draggable}
           onClick={this.props.onClick}
           onDragEnd={this.props.onDragEnd}
           onDragStart={this.props.onDragStart}>
         {this.props.children}
-        <div className="pl-control-actions">
+        <div className="sv-control-actions">
           {this.props.actions.map(function(action, index) {
             const actionClassName = classNames(
-              'pl-control-action',
+              'sv-control-action',
               action.className,
-              {'pl-clickable': action.onClick}
+              {'sv-clickable': action.onClick}
             );
             return (
               <div className={actionClassName}

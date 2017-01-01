@@ -304,7 +304,7 @@ let Timeline = React.createClass({
   render: function() {
     const percentPlayed = this.props.percentPlayed * 100;
     const marker = (
-      <div className="pl-timeline-marker"
+      <div className="sv-timeline-marker"
           style={{left: `${percentPlayed}%`}}/>
     );
 
@@ -313,15 +313,15 @@ let Timeline = React.createClass({
           return this.props.layers.find(layer => layer.id === id);
         }) : this.props.layers;
 
-    const layersClassName = classNames('pl-timeline-layers', {
-      'pl-locked': this.state.dragging,
-      'pl-scrolling': this.state.scrolling
+    const layersClassName = classNames('sv-timeline-layers', {
+      'sv-locked': this.state.dragging,
+      'sv-scrolling': this.state.scrolling
     });
 
     const indicatorActions = [
       {
         content: (
-          <div className="pl-timeline-header-indicator-step">
+          <div className="sv-timeline-header-indicator-step">
             <TextField onChange={this.props.onStepChange}
                 type="number"
                 value={this.props.step}/>
@@ -338,32 +338,32 @@ let Timeline = React.createClass({
     ];
 
     return (
-      <div className="pl-timeline" style={{height: this.state.height}}>
-        <div className="pl-timeline-header">
-          <div className="pl-timeline-header-indicator">
+      <div className="sv-timeline" style={{height: this.state.height}}>
+        <div className="sv-timeline-header">
+          <div className="sv-timeline-header-indicator">
             <Control actions={indicatorActions}>
               {`${percentPlayed.toFixed(2)}%`}
             </Control>
-            <Button className="pl-timeline-header-indicator-add"
+            <Button className="sv-timeline-header-indicator-add"
                 onClick={this.props.onAddClick}>
               <Icon name="addLayer"/>
             </Button>
           </div>
-          <div className="pl-timeline-header-track"
+          <div className="sv-timeline-header-track"
               onMouseDown={this._onHeaderTrackMouseDown}
               onWheel={this._onHeaderTrackWheel}>
-            <div className="pl-timeline-header-track-ticks">
+            <div className="sv-timeline-header-track-ticks">
               {ticks.map(function(tick, index) {
-                return <div className="pl-timeline-header-track-tick" key={index}/>;
+                return <div className="sv-timeline-header-track-tick" key={index}/>;
               })}
             </div>
             {marker}
-            <div className="pl-timeline-header-track-playhead"
+            <div className="sv-timeline-header-track-playhead"
                 onMouseDown={this._onPlayheadMouseDown}
                 style={{left: `${percentPlayed}%`}}/>
           </div>
         </div>
-        <div className="pl-timeline-content"
+        <div className="sv-timeline-content"
             onMouseDown={this._deselectLayer}>
           <div className={layersClassName}
               onScroll={this._onLayersScroll}
@@ -391,9 +391,9 @@ let Timeline = React.createClass({
               );
             })}
           </div>
-          <div className="pl-timeline-track" ref="track">{marker}</div>
+          <div className="sv-timeline-track" ref="track">{marker}</div>
         </div>
-        <div className="pl-timeline-handle"
+        <div className="sv-timeline-handle"
             onMouseDown={this._onHandleMouseDown}/>
       </div>
     );

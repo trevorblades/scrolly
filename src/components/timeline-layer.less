@@ -1,24 +1,24 @@
 @import (reference) './library';
 
-.pl-timeline-layer {
+.sv-timeline-layer {
   display: flex;
   flex-wrap: wrap;
   margin-top: @padding-small * -1;
-  &:not(:last-child) .pl-timeline-layer-properties {
+  &:not(:last-child) .sv-timeline-layer-properties {
     margin-bottom: @padding-small;
   }
-  &.pl-hidden .pl-timeline-layer-top .pl-control .pl-text-field {
+  &.sv-hidden .sv-timeline-layer-top .sv-control .sv-text-field {
     text-decoration: line-through;
     opacity: 0.5;
   }
-  &:not(.pl-linkable) .pl-timeline-layer-top .pl-timeline-layer-top-link .pl-icon {
+  &:not(.sv-linkable) .sv-timeline-layer-top .sv-timeline-layer-top-link .sv-icon {
     transform: rotate(-45deg);
   }
-  &.pl-selected:not(.pl-hidden) .pl-timeline-layer-top {
-    .pl-control {
+  &.sv-selected:not(.sv-hidden) .sv-timeline-layer-top {
+    .sv-control {
       color: white;
     }
-    .pl-timeline-layer-top-bar {
+    .sv-timeline-layer-top-bar {
       background-color: @gray-lightest;
       &[type="text"] {
         background-color: mix(@text-layer-color, @gray-lightest, 75%);
@@ -28,9 +28,9 @@
       }
     }
   }
-  &.pl-sticky, &.pl-stuck {
+  &.sv-sticky, &.sv-stuck {
     padding-top: @padding-base + @padding-small * 2;
-    .pl-timeline-layer-top {
+    .sv-timeline-layer-top {
       width: 100%;
       background-color: @gray-darker;
       position: absolute;
@@ -39,56 +39,56 @@
       z-index: 1;
     }
   }
-  &.pl-stuck {
+  &.sv-stuck {
     position: relative;
-    .pl-timeline-layer-top {
+    .sv-timeline-layer-top {
       top: auto;
       bottom: 0;
     }
   }
 
-  .pl-control {
+  .sv-control {
     width: @library-width;
     padding: 0 @padding-small;
     line-height: @padding-base;
     color: @gray-lightest;
-    .pl-text-field {
+    .sv-text-field {
       box-shadow: 0 1px @gray-light;
       &:before {
         background-color: @brand-primary;
       }
     }
-    .pl-control-actions .pl-control-action {
-      &.pl-clickable {
-        &:hover .pl-icon {
+    .sv-control-actions .sv-control-action {
+      &.sv-clickable {
+        &:hover .sv-icon {
           fill: white;
         }
 
-        .pl-icon {
+        .sv-icon {
           fill: @gray-lightest;
-          &.pl-active {
+          &.sv-active {
             fill: @brand-primary;
           }
         }
       }
 
-      .pl-icon {
+      .sv-icon {
         fill: @gray-light;
       }
     }
   }
-  .pl-timeline-layer-track {
+  .sv-timeline-layer-track {
     flex-grow: 1;
     margin: 0 @padding-small;
     position: relative;
   }
-  .pl-timeline-layer-top {
+  .sv-timeline-layer-top {
     display: flex;
     flex-grow: 1;
     padding: @padding-small 0;
-    .pl-control {
+    .sv-control {
       font-size: @font-size-small;
-      .pl-text-field {
+      .sv-text-field {
         overflow: hidden;
         white-space: nowrap;
         &:not([contenteditable="true"]) {
@@ -96,23 +96,23 @@
         }
       }
     }
-    .pl-timeline-layer-top-link {
-      span, .pl-icon {
+    .sv-timeline-layer-top-link {
+      span, .sv-icon {
         display: inline-block;
         vertical-align: top;
       }
       span {
-        .pl-ellipsized;
+        .sv-ellipsized;
         max-width: @padding-larger;
         margin-right: @padding-smallest;
         font-size: @font-size-smaller;
         color: @brand-primary;
       }
-      .pl-icon {
+      .sv-icon {
         transition: transform @transition-duration-fast ease-in;
       }
     }
-    .pl-timeline-layer-top-bar {
+    .sv-timeline-layer-top-bar {
       height: @padding-base;
       border-radius: @border-radius-small;
       box-shadow: 0 1px 1px @shadow-dark;
@@ -128,7 +128,7 @@
         background-color: mix(@gray-light, @image-layer-color, 75%);
       }
 
-      .pl-timeline-layer-bar-handle {
+      .sv-timeline-layer-bar-handle {
         width: 5px;
         height: 100%;
         cursor: ew-resize;
@@ -142,23 +142,23 @@
       }
     }
   }
-  .pl-timeline-layer-properties {
+  .sv-timeline-layer-properties {
     width: 100%;
     padding: @padding-small 0;
     background-color: @gray-dark;
-    .pl-timeline-layer-property {
+    .sv-timeline-layer-property {
       display: flex;
       &:not(:last-child) {
         margin-bottom: @padding-smaller;
       }
 
-      .pl-control {
+      .sv-control {
         font-size: @font-size-smaller;
         span {
           color: @gray-light;
         }
       }
-      .pl-timeline-layer-property-keyframe {
+      .sv-timeline-layer-property-keyframe {
         width: @font-size-smaller / 1.5;
         height: @font-size-smaller / 1.5;
         box-shadow: @box-shadow-small;

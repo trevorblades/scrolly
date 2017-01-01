@@ -99,18 +99,18 @@ const Library = React.createClass({
 
   render: function() {
     const selectedAsset = this.props.assets.find(asset => asset.id === this.state.selectedAssetId);
-    const assetsClassName = classNames('pl-library-assets', {
-      'pl-highlighted': this.props.dragging,
-      'pl-dragging': this.state.dragging
+    const assetsClassName = classNames('sv-library-assets', {
+      'sv-highlighted': this.props.dragging,
+      'sv-dragging': this.state.dragging
     });
     return (
-      <div className="pl-library">
-        <div className="pl-library-preview">
-          <div className="pl-library-preview-thumb">
+      <div className="sv-library">
+        <div className="sv-library-preview">
+          <div className="sv-library-preview-thumb">
             {selectedAsset ?
               <img src={selectedAsset.data}/> : <Icon name="image"/>}
           </div>
-          <div className="pl-library-preview-info">
+          <div className="sv-library-preview-info">
             {selectedAsset && <div>
               <h5 title={selectedAsset.name}>{selectedAsset.name}</h5>
               <h6>{selectedAsset.filetype}</h6>
@@ -125,8 +125,8 @@ const Library = React.createClass({
             onDragOver={this._onDragOver}
             onDrop={this._onDrop}>
           {this.props.assets.map((asset, index) => {
-            const assetClassName = classNames('pl-library-asset', {
-              'pl-selected': asset.id === this.state.selectedAssetId
+            const assetClassName = classNames('sv-library-asset', {
+              'sv-selected': asset.id === this.state.selectedAssetId
             });
             return (
               <div className={assetClassName}

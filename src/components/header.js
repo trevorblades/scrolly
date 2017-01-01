@@ -4,8 +4,8 @@ const Header = React.createClass({
 
   render: function() {
     return (
-      <div className="pl-header">
-        <div className="pl-header-account"/>
+      <div className="sv-header">
+        <div className="sv-header-account"/>
       </div>
     );
   }

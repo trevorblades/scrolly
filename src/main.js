@@ -10,4 +10,4 @@ render(
   <Provider store={createStore(reducer)}>
     <App/>
   </Provider>,
-  document.getElementById('pl-root'));
+  document.getElementById('sv-root'));

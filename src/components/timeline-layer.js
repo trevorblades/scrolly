@@ -265,18 +265,18 @@ const TimelineLayer = React.createClass({
   },
 
   render: function() {
-    const layerClassName = classNames('pl-timeline-layer', {
-      'pl-hidden': !this.props.layer.visible,
-      'pl-linkable': this.props.linkable,
-      'pl-selected': this.props.selected,
-      'pl-sticky': this.state.expanded && this.props.sticky,
-      'pl-stuck': this.state.expanded && this.props.stuck
+    const layerClassName = classNames('sv-timeline-layer', {
+      'sv-hidden': !this.props.layer.visible,
+      'sv-linkable': this.props.linkable,
+      'sv-selected': this.props.selected,
+      'sv-sticky': this.state.expanded && this.props.sticky,
+      'sv-stuck': this.state.expanded && this.props.stuck
     });
 
     const handles = [];
     for (var i = 0; i < 2; i++) {
       handles.push(
-        <div className="pl-timeline-layer-bar-handle"
+        <div className="sv-timeline-layer-bar-handle"
             key={i}
             onMouseDown={this._onBarHandleMouseDown.bind(null, i)}/>
       );
@@ -290,7 +290,7 @@ const TimelineLayer = React.createClass({
     }
 
     const linkAction = {
-      className: 'pl-timeline-layer-top-link'
+      className: 'sv-timeline-layer-top-link'
     };
     if (this.props.linkable) {
       linkAction.content = <Icon name="target"/>;
@@ -307,7 +307,7 @@ const TimelineLayer = React.createClass({
         linkAction.content = (
           <div>
             <span>{this.props.parent.name}</span>
-            <Icon className="pl-active" name="link"/>
+            <Icon className="sv-active" name="link"/>
           </div>
         );
         linkAction.onClick = this.props.onUnlinkClick;
@@ -319,7 +319,7 @@ const TimelineLayer = React.createClass({
       linkAction,
       {
         content: (
-          <Icon className={this.state.expanded ? 'pl-active' : null}
+          <Icon className={this.state.expanded ? 'sv-active' : null}
               name="more"/>
         ),
         onClick: this._onMoreClick,
@@ -342,7 +342,7 @@ const TimelineLayer = React.createClass({
           onDragOver={this.props.onDragOver}
           onMouseDown={this.props.onMouseDown}
           onMouseUp={this.props.onMouseUp}>
-        <div className="pl-timeline-layer-top">
+        <div className="sv-timeline-layer-top">
           <Control actions={topActions}
               draggable
               onClick={this.props.selectLayer}
@@ -351,10 +351,10 @@ const TimelineLayer = React.createClass({
             <TextField onChange={this._onNameChange}
                 value={this.props.layer.name}/>
           </Control>
-          <div className="pl-timeline-layer-track"
+          <div className="sv-timeline-layer-track"
               key={this.props.layer.id}
               ref="track">
-            <div className="pl-timeline-layer-top-bar"
+            <div className="sv-timeline-layer-top-bar"
                 onMouseDown={this._onBarMouseDown}
                 style={{
                   left: `${layerIn * 100}%`,
@@ -366,7 +366,7 @@ const TimelineLayer = React.createClass({
           </div>
         </div>
         {this.state.expanded &&
-          <div className="pl-timeline-layer-properties">
+          <div className="sv-timeline-layer-properties">
             {this._keys.map(key => {
               const property = properties[key];
 
@@ -383,7 +383,7 @@ const TimelineLayer = React.createClass({
                 propertyActions.push(
                   {
                     content: (
-                      <Icon className={animating ? 'pl-active' : null}
+                      <Icon className={animating ? 'sv-active' : null}
                           name="timer"/>
                     ),
                     onClick: animating ?
@@ -392,7 +392,7 @@ const TimelineLayer = React.createClass({
                   },
                   {
                     content: (
-                      <Icon className={highlighted ? 'pl-active' : null}
+                      <Icon className={highlighted ? 'sv-active' : null}
                           name={highlighted ? 'remove' : 'add'}/>
                     ),
                     onClick: highlighted ?
@@ -403,14 +403,14 @@ const TimelineLayer = React.createClass({
 
                 const keyframes = animating ? Object.keys(this.props.layer[key]) : [];
                 propertyTrack = (
-                  <div className="pl-timeline-layer-track">
+                  <div className="sv-timeline-layer-track">
                     {keyframes.map((keyframe, index) => {
                       const dragging = key === this.state.keyframeDragProperty &&
                           keyframe === this.state.keyframeDragKey;
                       const position = dragging ?
                           this.state.keyframeDragPosition : keyframe;
                       return (
-                        <div className="pl-timeline-layer-property-keyframe"
+                        <div className="sv-timeline-layer-property-keyframe"
                             key={index}
                             onMouseDown={this._onKeyframeMouseDown.bind(null, key, keyframe)}
                             style={{left: `${position * 100}%`}}/>
@@ -443,7 +443,7 @@ const TimelineLayer = React.createClass({
               });
 
               return (
-                <div className="pl-timeline-layer-property"
+                <div className="sv-timeline-layer-property"
                     key={key}>
                   <Control actions={propertyActions}>{sentenceCase(key)}</Control>
                   {propertyTrack}
