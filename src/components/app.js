@@ -3,8 +3,10 @@ const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
 
+const Button = require('./button');
 const Header = require('./header');
 const Library = require('./library');
+const PublishDialog = require('./publish-dialog');
 const Timeline = require('./timeline');
 const Viewport = require('./viewport');
 
@@ -27,6 +29,7 @@ const App = React.createClass({
       compositionHeight: 1080,
       compositionWidth: 1920,
       dragging: false,
+      publishing: false,
       viewportWrapperHeight: 0,
       viewportWrapperOffsetLeft: 0,
       viewportWrapperOffsetTop: 0,
@@ -96,6 +99,14 @@ const App = React.createClass({
     event.preventDefault();
   },
 
+  _onPublishClick: function() {
+    this.setState({publishing: true});
+  },
+
+  _onPublishDialogClose: function() {
+    this.setState({publishing: false});
+  },
+
   _deselectLayer: function() {
     this.props.dispatch(selectLayer(null));
   },
@@ -107,7 +118,9 @@ const App = React.createClass({
           onDragLeave={this._onDragLeave}
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
-        <Header ref="header"/>
+        <Header ref="header">
+          <Button onClick={this._onPublishClick}>Publish</Button>
+        </Header>
         <div className="sv-app-content">
           <Library assets={this.state.assets}
               dragging={this.state.dragging}
@@ -126,6 +139,8 @@ const App = React.createClass({
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}/>
+        {this.state.publishing &&
+          <PublishDialog onClose={this._onPublishDialogClose}/>}
       </div>
     );
   }
