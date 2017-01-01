@@ -11,6 +11,7 @@ const {removeLayer, setLayerProperties, toggleLayerVisibility} = require('../act
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const layerPropType = require('../util/layer-prop-type');
 const properties = require('../util/properties');
+const shouldSnap = require('../util/should-snap');
 
 function clamp(key, value) {
   const property = properties[key];
@@ -87,15 +88,22 @@ const TimelineLayer = React.createClass({
 
   _onBarMouseMove: function(offsetX, event) {
     const barSize = this.state.dragOut - this.state.dragIn;
-    let dragIn = ((event.clientX - offsetX) - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
+    let dragIn = this._getTrackPosition(event.clientX - offsetX, event.shiftKey);
     let dragOut = dragIn + barSize;
-    if (dragIn < 0) {
-      dragIn = 0;
-      dragOut = barSize;
+
+    let changed = false;
+    if (event.shiftKey && shouldSnap(dragOut, this.props.percentPlayed)) {
+      dragOut = this.props.percentPlayed;
+      changed = true;
     } else if (dragOut > 1) {
       dragOut = 1;
+      changed = true;
+    }
+
+    if (changed) {
       dragIn = dragOut - barSize;
     }
+
     this.setState({
       dragIn: dragIn,
       dragOut: dragOut
@@ -128,7 +136,7 @@ const TimelineLayer = React.createClass({
   },
 
   _onBarHandleMouseMove: function(index, event) {
-    const position = this._getTrackPosition(event.clientX);
+    const position = this._getTrackPosition(event.clientX, event.shiftKey);
     this.setState({[`drag${index ? 'Out' : 'In'}`]: position});
   },
 
@@ -156,7 +164,7 @@ const TimelineLayer = React.createClass({
   },
 
   _onKeyframeMouseMove: function(event) {
-    const position = this._getTrackPosition(event.clientX);
+    const position = this._getTrackPosition(event.clientX, event.shiftKey);
     this.setState({keyframeDragPosition: position});
   },
 
@@ -235,14 +243,19 @@ const TimelineLayer = React.createClass({
     });
   },
 
-  _getTrackPosition: function(position) {
-    let trackPosition = (position - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
-    if (trackPosition < 0) {
-      trackPosition = 0;
-    } else if (trackPosition > 1) {
-      trackPosition = 1;
+  _getTrackPosition: function(pos, snap) {
+    let position = (pos - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
+    if (position < 0) {
+      position = 0;
+    } else if (position > 1) {
+      position = 1;
     }
-    return trackPosition;
+
+    if (snap && shouldSnap(position, this.props.percentPlayed)) {
+      position = this.props.percentPlayed;
+    }
+
+    return position;
   },
 
   render: function() {

@@ -12,18 +12,14 @@ const {addLayer, linkLayers, orderLayers, changeStep} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
+const shouldSnap = require('../util/should-snap');
 
 const MIN_HEIGHT = 100;
-const SNAP_TOLERANCE = 0.01;
 
 let numTicks = 17;
 const ticks = [];
 for (var i = 0; i < numTicks; i++) {
   ticks.push({});
-}
-
-function shouldSnap(keyframe, percentPlayed) {
-  return Math.abs(keyframe - percentPlayed) <= SNAP_TOLERANCE;
 }
 
 let Timeline = React.createClass({
