@@ -70,9 +70,16 @@ function removeAsset(id) {
   };
 }
 
-function changeStep(value) {
+function setStep(value) {
   return {
-    type: 'CHANGE_STEP',
+    type: 'SET_STEP',
+    value
+  };
+}
+
+function setPercentPlayed(value) {
+  return {
+    type: 'SET_PERCENT_PLAYED',
     value
   };
 }
@@ -87,5 +94,6 @@ module.exports = {
   linkLayers,
   addAsset,
   removeAsset,
-  changeStep
+  setStep,
+  setPercentPlayed
 };

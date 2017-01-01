@@ -8,7 +8,7 @@ const Icon = require('./icon');
 const TextField = require('./text-field');
 const TimelineLayer = require('./timeline-layer');
 
-const {addLayer, linkLayers, orderLayers, changeStep} = require('../actions');
+const {addLayer, linkLayers, orderLayers, setStep, setPercentPlayed} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
@@ -26,6 +26,7 @@ let Timeline = React.createClass({
 
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
+    getInterpolatedValue: React.PropTypes.func.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     maxHeight: React.PropTypes.number.isRequired,
     onAddClick: React.PropTypes.func.isRequired,
@@ -74,6 +75,11 @@ let Timeline = React.createClass({
   _onKeyDown: function(event) {
     if (event.keyCode === 75 && !isInput(event.target)) { // k key pressed
       this.setState({snapToKeyframes: !this.state.snapToKeyframes});
+    } else if ((event.keyCode === 188 || event.keyCode === 190) && !isInput(event.target)) { // < or > key pressed
+      event.preventDefault();
+      let movement = event.keyCode === 188 ? -1 : 1;
+      movement /= event.shiftKey ? 10 : 100;
+      this.props.setPercentPlayed(this.props.percentPlayed + movement);
     }
   },
 
@@ -174,9 +180,9 @@ let Timeline = React.createClass({
     const parent = this.props.layers.find(layer => layer.id === id);
     this.props.dispatch(linkLayers(this.state.linkingLayerId, {
       id: parent.id,
-      offsetX: getInterpolatedValue(parent.x, this.props.percentPlayed),
-      offsetY: getInterpolatedValue(parent.y, this.props.percentPlayed),
-      offsetScale: getInterpolatedValue(parent.scale, this.props.percentPlayed)
+      offsetX: this.props.getInterpolatedValue(parent.x),
+      offsetY: this.props.getInterpolatedValue(parent.y),
+      offsetScale: this.props.getInterpolatedValue(parent.scale)
     }));
     this.setState({linkingLayerId: null});
   },
@@ -387,18 +393,33 @@ let Timeline = React.createClass({
 function mapStateToProps(state) {
   return {
     layers: state.layers.present,
+    percentPlayed: state.percentPlayed,
     step: state.step.present
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, props) {
   return {
     dispatch,
+    getInterpolatedValue: function(value) {
+      return getInterpolatedValue(value, props.percentPlayed);
+    },
     onAddClick: function() {
       dispatch(addLayer('text'));
     },
     onStepChange: function(value) {
-      dispatch(changeStep(value));
+      if (value < 1) {
+        value = 1;
+      }
+      dispatch(setStep(value));
+    },
+    setPercentPlayed: function(value) {
+      if (value < 0) {
+        value = 0;
+      } else if (value > 1) {
+        value = 1;
+      }
+      dispatch(setPercentPlayed(value));
     }
   };
 }

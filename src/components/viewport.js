@@ -154,6 +154,7 @@ let Viewport = React.createClass({
 module.exports = connect(function(state) {
   return {
     assets: state.assets.present,
-    layers: state.layers.present.filter(layer => layer.visible)
+    layers: state.layers.present.filter(layer => layer.visible),
+    percentPlayed: state.percentPlayed
   };
 })(Viewport);

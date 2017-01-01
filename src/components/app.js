@@ -29,7 +29,6 @@ const App = React.createClass({
       viewportWrapperOffsetLeft: 0,
       viewportWrapperOffsetTop: 0,
       viewportWrapperWidth: 0,
-      percentPlayed: 0,
       selectedLayerId: null,
       timelineMaxHeight: 0
     };
@@ -61,11 +60,6 @@ const App = React.createClass({
         return event.target.blur();
       }
       this._selectLayer(null);
-    } else if ((event.keyCode === 188 || event.keyCode === 190) && !isInput(event.target)) { // < or > key pressed
-      event.preventDefault();
-      let movement = event.keyCode === 188 ? -1 : 1;
-      movement /= event.shiftKey ? 10 : 100;
-      this._setPercentPlayed(this.state.percentPlayed + movement);
     }
   },
 
@@ -108,15 +102,6 @@ const App = React.createClass({
     this._selectLayer(null);
   },
 
-  _setPercentPlayed: function(value) {
-    if (value < 0) {
-      value = 0;
-    } else if (value > 1) {
-      value = 1;
-    }
-    this.setState({percentPlayed: value});
-  },
-
   _selectLayer: function(id) {
     this.setState({selectedLayerId: id});
   },
@@ -139,7 +124,6 @@ const App = React.createClass({
               ref="viewportWrapper">
             <Viewport compositionHeight={this.state.compositionHeight}
                 compositionWidth={this.state.compositionWidth}
-                percentPlayed={this.state.percentPlayed}
                 selectLayer={this._selectLayer}
                 selectedLayerId={this.state.selectedLayerId}
                 wrapperHeight={this.state.viewportWrapperHeight}
@@ -150,10 +134,8 @@ const App = React.createClass({
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}
-            percentPlayed={this.state.percentPlayed}
             selectLayer={this._selectLayer}
-            selectedLayerId={this.state.selectedLayerId}
-            setPercentPlayed={this._setPercentPlayed}/>
+            selectedLayerId={this.state.selectedLayerId}/>
       </div>
     );
   }

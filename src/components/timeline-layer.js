@@ -26,6 +26,7 @@ function clamp(key, value) {
 const TimelineLayer = React.createClass({
 
   propTypes: {
+    getInterpolatedValue: React.PropTypes.func.isRequired,
     layer: layerPropType.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     linkable: React.PropTypes.bool.isRequired,
@@ -212,7 +213,7 @@ const TimelineLayer = React.createClass({
     let nextValue;
     const value = this.props.layer[property];
     if (typeof value === 'object') {
-      const interpolatedValue = getInterpolatedValue(value, this.props.percentPlayed);
+      const interpolatedValue = this.props.getInterpolatedValue(value);
       nextValue = Object.assign({}, value, {
         [this.props.percentPlayed]: interpolatedValue
       });
@@ -239,7 +240,7 @@ const TimelineLayer = React.createClass({
   _removeKeyframes: function(property) {
     const value = this.props.layer[property];
     this.props.onPropertiesChange({
-      [property]: getInterpolatedValue(value, this.props.percentPlayed)
+      [property]: this.props.getInterpolatedValue(value)
     });
   },
 
@@ -371,7 +372,7 @@ const TimelineLayer = React.createClass({
               if (property.animatable) {
                 const animating = typeof value === 'object';
                 const highlighted = animating && this.props.percentPlayed in value;
-                value = getInterpolatedValue(value, this.props.percentPlayed);
+                value = this.props.getInterpolatedValue(value);
 
                 const addKeyframe = this._addKeyframe.bind(null, key);
                 propertyActions.push(
@@ -452,7 +453,9 @@ const TimelineLayer = React.createClass({
 
 module.exports = connect(null, function(dispatch, props) {
   return {
-    dispatch,
+    getInterpolatedValue: function(value) {
+      return getInterpolatedValue(value, props.percentPlayed);
+    },
     onRemoveClick: function(event) {
       event.stopPropagation();
       dispatch(removeLayer(props.layer.id));
