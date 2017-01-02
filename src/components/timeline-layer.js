@@ -11,6 +11,7 @@ const {
   removeLayer,
   setLayerProperties,
   toggleLayerVisibility,
+  linkLayers,
   selectLayer
 } = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
@@ -31,6 +32,7 @@ function clamp(key, value) {
 const TimelineLayer = React.createClass({
 
   propTypes: {
+    dispatch: React.PropTypes.func.isRequired,
     getInterpolatedValue: React.PropTypes.func.isRequired,
     layer: layerPropType.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
@@ -44,7 +46,6 @@ const TimelineLayer = React.createClass({
     onMouseUp: React.PropTypes.func.isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
     onRemoveClick: React.PropTypes.func.isRequired,
-    onUnlinkClick: React.PropTypes.func.isRequired,
     onVisiblityToggle: React.PropTypes.func.isRequired,
     parent: React.PropTypes.object,
     percentPlayed: React.PropTypes.number.isRequired,
@@ -214,6 +215,11 @@ const TimelineLayer = React.createClass({
     this.props.onPropertiesChange({[key]: nextValue});
   },
 
+  _onUnlinkClick: function(event) {
+    event.stopPropagation();
+    this.props.dispatch(linkLayers(this.props.layer.id, null));
+  },
+
   _addKeyframe: function(property) {
     let nextValue;
     const value = this.props.layer[property];
@@ -310,7 +316,7 @@ const TimelineLayer = React.createClass({
             <Icon className="sv-active" name="link"/>
           </div>
         );
-        linkAction.onClick = this.props.onUnlinkClick;
+        linkAction.onClick = this._onUnlinkClick;
         linkAction.title = `Linked to ${this.props.parent.name}`;
       }
     }
@@ -458,6 +464,7 @@ const TimelineLayer = React.createClass({
 
 module.exports = connect(null, function(dispatch, props) {
   return {
+    dispatch,
     getInterpolatedValue: function(value) {
       return getInterpolatedValue(value, props.percentPlayed);
     },
