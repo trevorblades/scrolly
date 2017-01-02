@@ -11,9 +11,6 @@
     text-decoration: line-through;
     opacity: 0.5;
   }
-  &:not(.sv-linkable) .sv-timeline-layer-top .sv-timeline-layer-top-link .sv-icon {
-    transform: rotate(-45deg);
-  }
   &.sv-selected:not(.sv-hidden) .sv-timeline-layer-top {
     .sv-control {
       color: white;
@@ -100,6 +97,18 @@
       }
     }
     .sv-timeline-layer-top-link {
+      &:not(.sv-enabled) .sv-icon {
+        transform: rotate(-45deg);
+      }
+      &.sv-disabled {
+        span {
+          color: @gray;
+        }
+        .sv-icon {
+          fill: @gray !important;
+        }
+      }
+
       span, .sv-icon {
         display: inline-block;
         vertical-align: top;

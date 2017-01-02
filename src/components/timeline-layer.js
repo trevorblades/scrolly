@@ -52,7 +52,8 @@ const TimelineLayer = React.createClass({
     selectLayer: React.PropTypes.func.isRequired,
     selected: React.PropTypes.bool.isRequired,
     sticky: React.PropTypes.bool.isRequired,
-    stuck: React.PropTypes.bool.isRequired
+    stuck: React.PropTypes.bool.isRequired,
+    unlinkable: React.PropTypes.bool
   },
 
   getInitialState: function() {
@@ -273,7 +274,6 @@ const TimelineLayer = React.createClass({
   render: function() {
     const layerClassName = classNames('sv-timeline-layer', {
       'sv-hidden': !this.props.layer.visible,
-      'sv-linkable': this.props.linkable,
       'sv-selected': this.props.selected,
       'sv-sticky': this.state.expanded && this.props.sticky,
       'sv-stuck': this.state.expanded && this.props.stuck
@@ -295,10 +295,14 @@ const TimelineLayer = React.createClass({
       layerOut = this.state.dragOut;
     }
 
+    const linkable = this.props.linkable && !this.props.unlinkable;
     const linkAction = {
-      className: 'sv-timeline-layer-top-link'
+      className: classNames('sv-timeline-layer-top-link', {
+        'sv-disabled': this.props.unlinkable,
+        'sv-enabled': linkable
+      })
     };
-    if (this.props.linkable) {
+    if (linkable) {
       linkAction.content = <Icon name="target"/>;
       linkAction.onClick = this.props.onLinkTargetClick;
       linkAction.title = 'Link to this layer';
@@ -316,8 +320,10 @@ const TimelineLayer = React.createClass({
             <Icon className="sv-active" name="link"/>
           </div>
         );
-        linkAction.onClick = this._onUnlinkClick;
-        linkAction.title = `Linked to ${this.props.parent.name}`;
+        if (!this.props.unlinkable) {
+          linkAction.onClick = this._onUnlinkClick;
+          linkAction.title = `Linked to ${this.props.parent.name}`;
+        }
       }
     }
 

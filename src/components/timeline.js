@@ -18,6 +18,7 @@ const {
   selectLayer
 } = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
+const getParents = require('../util/get-parents');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
 const shouldSnap = require('../util/should-snap');
@@ -379,6 +380,8 @@ let Timeline = React.createClass({
               onScroll={this._onLayersScroll}
               onWheel={this._onLayersWheel}>
             {layers.map(layer => {
+              const parents = getParents(layer, this.props.layers);
+              const parentIds = parents.map(parent => parent.id);
               return (
                 <TimelineLayer key={layer.id}
                     layer={layer}
@@ -392,11 +395,13 @@ let Timeline = React.createClass({
                     onLinkTargetClick={this._onLayerLinkTargetClick.bind(null, layer.id)}
                     onMouseDown={this._onLayerMouseDown}
                     onMouseUp={this._onLayerMouseUp}
-                    parent={layer.parent && this.props.layers.find(l => l.id === layer.parent.id)}
+                    parent={layer.parent &&
+                        this.props.layers.find(l => l.id === layer.parent.id)}
                     percentPlayed={this.props.percentPlayed}
                     selected={layer.id === this.props.selectedLayer}
                     sticky={layer.id === this.state.stickyLayerId}
-                    stuck={layer.id === this.state.stuckLayerId}/>
+                    stuck={layer.id === this.state.stuckLayerId}
+                    unlinkable={parentIds.indexOf(this.state.linkingLayerId) !== -1}/>
               );
             })}
           </div>

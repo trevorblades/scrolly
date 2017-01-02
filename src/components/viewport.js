@@ -6,6 +6,7 @@ const ViewportLayer = require('./viewport-layer');
 
 const {addImageLayer, selectLayer} = require('../actions');
 const {ASSET_DRAG_TYPE} = require('../constants');
+const getParents = require('../util/get-parents');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const layerPropType = require('../util/layer-prop-type');
 
@@ -116,13 +117,6 @@ let Viewport = React.createClass({
     const hidden = layer.in > this.props.percentPlayed ||
         layer.out < this.props.percentPlayed;
 
-    let current = layer;
-    const parents = [];
-    while (current.parent) {
-      current = this.props.layers.find(l => l.id === current.parent.id);
-      parents.push(current);
-    }
-
     return (
       <ViewportLayer hidden={hidden}
           key={layer.id}
@@ -130,7 +124,7 @@ let Viewport = React.createClass({
           layers={this.props.layers}
           parent={layer.parent &&
               this.props.layers.find(l => l.id === layer.parent.id)}
-          parents={parents}
+          parents={getParents(layer, this.props.layers)}
           percentPlayed={this.props.percentPlayed}
           selected={layer.id === this.props.selectedLayer}
           viewportHeight={this.state.height}
