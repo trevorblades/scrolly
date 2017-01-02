@@ -111,27 +111,21 @@ const ViewportLayer = React.createClass({
   _onMouseUp: function() {
     let layerX = this.state.moveX;
     let layerY = this.state.moveY;
-    const properties = {};
     if (this.props.layer.parent !== null) {
-      const parentScale = this._getParentScale();
-      let current = this.props.layer;
-      this.props.parents.forEach(parent => {
-        const parentX = this.props.getInterpolatedValue(parent.x);
-        const parentY = this.props.getInterpolatedValue(parent.y);
-        layerX = getUnlinkedPosition(layerX, parentX, current.parent.offsetX, parentScale);
-        layerY = getUnlinkedPosition(layerY, parentY, current.parent.offsetY, parentScale);
-        current = parent;
-      });
+      const {parentX, parentY, parentScale} = this._getParentPosition();
+      layerX = getUnlinkedPosition(layerX, parentX, this.props.layer.parent.offsetX, parentScale);
+      layerY = getUnlinkedPosition(layerY, parentY, this.props.layer.parent.offsetY, parentScale);
     }
-    properties.x = typeof this.props.layer.x === 'object' ?
-        Object.assign({}, this.props.layer.x, {
-          [this.props.percentPlayed]: layerX
-        }) : layerX;
-    properties.y = typeof this.props.layer.y === 'object' ?
-        Object.assign({}, this.props.layer.y, {
-          [this.props.percentPlayed]: layerY
-        }) : layerY;
-    this.props.onPropertiesChange(properties);
+    this.props.onPropertiesChange({
+      x: typeof this.props.layer.x === 'object' ?
+          Object.assign({}, this.props.layer.x, {
+            [this.props.percentPlayed]: layerX
+          }) : layerX,
+      y: typeof this.props.layer.y === 'object' ?
+          Object.assign({}, this.props.layer.y, {
+            [this.props.percentPlayed]: layerY
+          }) : layerY
+    });
 
     document.removeEventListener('mousemove', this._boundMouseMove);
     document.removeEventListener('mouseup', this._onMouseUp);
@@ -218,12 +212,26 @@ const ViewportLayer = React.createClass({
       return null;
     }
     return this.props.assets.find(asset => asset.id === id) || null;
-
   },
 
-  _getParentScale: function() {
-    return this.props.getInterpolatedValue(this.props.parent.scale) /
-        this.props.layer.parent.offsetScale;
+  _getParentPosition: function() {
+    let parentX = 0;
+    let parentY = 0;
+    let parentScale = 1;
+
+    let current = this.props.layer;
+    this.props.parents.forEach(parent => {
+      parentX += this.props.getInterpolatedValue(parent.x);
+      parentY += this.props.getInterpolatedValue(parent.y);
+      parentScale *= this.props.getInterpolatedValue(parent.scale) / current.parent.offsetScale;
+      current = parent;
+    });
+
+    return {
+      parentX,
+      parentY,
+      parentScale
+    };
   },
 
   render: function() {
@@ -234,17 +242,11 @@ const ViewportLayer = React.createClass({
     let layerScale = this.state.resizing ? this.state.resizeScale :
         this.props.getInterpolatedValue(this.props.layer.scale);
     if (this.props.parents.length) {
-      const parentScale = this._getParentScale();
+      const {parentX, parentY, parentScale} = this._getParentPosition();
       layerScale *= parentScale;
       if (!this.state.moving) {
-        let current = this.props.layer;
-        this.props.parents.forEach(parent => {
-          const parentX = this.props.getInterpolatedValue(parent.x);
-          const parentY = this.props.getInterpolatedValue(parent.y);
-          layerX = getLinkedPosition(layerX, parentX, current.parent.offsetX, parentScale);
-          layerY = getLinkedPosition(layerY, parentY, current.parent.offsetY, parentScale);
-          current = parent;
-        });
+        layerX = getLinkedPosition(layerX, parentX, this.props.layer.parent.offsetX, parentScale);
+        layerY = getLinkedPosition(layerY, parentY, this.props.layer.parent.offsetY, parentScale);
       }
     }
 

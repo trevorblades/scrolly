@@ -179,14 +179,21 @@ let Timeline = React.createClass({
     this.setState({linkingLayerId: this.state.linkingLayerId === null ? id : null});
   },
 
-  _onLayerLinkTargetClick: function(id, event) {
+  _onLayerLinkTargetClick: function(layer, event) {
     event.stopPropagation();
-    const parent = this.props.layers.find(layer => layer.id === id);
+    let parentX = this.props.getInterpolatedValue(layer.x);
+    let parentY = this.props.getInterpolatedValue(layer.y);
+    let parentScale = this.props.getInterpolatedValue(layer.scale);
+    if (layer.parent) {
+      parentX += layer.parent.offsetX;
+      parentY += layer.parent.offsetY;
+    }
+
     this.props.dispatch(linkLayers(this.state.linkingLayerId, {
-      id: parent.id,
-      offsetX: this.props.getInterpolatedValue(parent.x),
-      offsetY: this.props.getInterpolatedValue(parent.y),
-      offsetScale: this.props.getInterpolatedValue(parent.scale)
+      id: layer.id,
+      offsetX: parentX,
+      offsetY: parentY,
+      offsetScale: parentScale
     }));
     this.setState({linkingLayerId: null});
   },
@@ -392,7 +399,7 @@ let Timeline = React.createClass({
                     onDragOver={this._onLayerDragOver}
                     onDragStart={this._onLayerDragStart.bind(null, layer.id)}
                     onLinkClick={this._onLayerLinkClick.bind(null, layer.id)}
-                    onLinkTargetClick={this._onLayerLinkTargetClick.bind(null, layer.id)}
+                    onLinkTargetClick={this._onLayerLinkTargetClick.bind(null, layer)}
                     onMouseDown={this._onLayerMouseDown}
                     onMouseUp={this._onLayerMouseUp}
                     parent={layer.parent &&
