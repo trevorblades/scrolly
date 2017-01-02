@@ -431,6 +431,9 @@ let Timeline = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    getInterpolatedValue: function(value) {
+      return getInterpolatedValue(value, state.percentPlayed);
+    },
     layers: state.layers.present,
     percentPlayed: state.percentPlayed,
     selectedLayer: state.selectedLayer,
@@ -438,12 +441,9 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch, props) {
+function mapDispatchToProps(dispatch) {
   return {
     dispatch,
-    getInterpolatedValue: function(value) {
-      return getInterpolatedValue(value, props.percentPlayed);
-    },
     onStepChange: function(value) {
       if (value < 1) {
         value = 1;

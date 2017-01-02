@@ -30,6 +30,7 @@ const ViewportLayer = React.createClass({
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
     parent: React.PropTypes.object,
+    parents: React.PropTypes.array.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
     selected: React.PropTypes.bool.isRequired,
     viewportHeight: React.PropTypes.number.isRequired,
@@ -228,14 +229,18 @@ const ViewportLayer = React.createClass({
         this.props.getInterpolatedValue(this.props.layer.y);
     let layerScale = this.state.resizing ? this.state.resizeScale :
         this.props.getInterpolatedValue(this.props.layer.scale);
-    if (this.props.layer.parent !== null) {
+    if (this.props.parents.length) {
       const parentScale = this._getParentScale();
       layerScale *= parentScale;
       if (!this.state.moving) {
-        const parentX = this.props.getInterpolatedValue(this.props.parent.x);
-        const parentY = this.props.getInterpolatedValue(this.props.parent.y);
-        layerX = getLinkedPosition(layerX, parentX, this.props.layer.parent.offsetX, parentScale);
-        layerY = getLinkedPosition(layerY, parentY, this.props.layer.parent.offsetY, parentScale);
+        let current = this.props.layer;
+        this.props.parents.forEach(parent => {
+          const parentX = this.props.getInterpolatedValue(parent.x);
+          const parentY = this.props.getInterpolatedValue(parent.y);
+          layerX = getLinkedPosition(layerX, parentX, current.parent.offsetX, parentScale);
+          layerY = getLinkedPosition(layerY, parentY, current.parent.offsetY, parentScale);
+          current = parent;
+        });
       }
     }
 
