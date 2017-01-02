@@ -311,7 +311,7 @@ const TimelineLayer = React.createClass({
           </div>
         );
         linkAction.onClick = this.props.onUnlinkClick;
-        linkAction.title = `Linked to ${parent.name}`;
+        linkAction.title = `Linked to ${this.props.parent.name}`;
       }
     }
 
