@@ -113,11 +113,15 @@ const ViewportLayer = React.createClass({
     let layerY = this.state.moveY;
     const properties = {};
     if (this.props.layer.parent !== null) {
-      const parentX = this.props.getInterpolatedValue(this.props.parent.x);
-      const parentY = this.props.getInterpolatedValue(this.props.parent.y);
       const parentScale = this._getParentScale();
-      layerX = getUnlinkedPosition(layerX, parentX, this.props.layer.parent.offsetX, parentScale);
-      layerY = getUnlinkedPosition(layerY, parentY, this.props.layer.parent.offsetY, parentScale);
+      let current = this.props.layer;
+      this.props.parents.forEach(parent => {
+        const parentX = this.props.getInterpolatedValue(parent.x);
+        const parentY = this.props.getInterpolatedValue(parent.y);
+        layerX = getUnlinkedPosition(layerX, parentX, current.parent.offsetX, parentScale);
+        layerY = getUnlinkedPosition(layerY, parentY, current.parent.offsetY, parentScale);
+        current = parent;
+      });
     }
     properties.x = typeof this.props.layer.x === 'object' ?
         Object.assign({}, this.props.layer.x, {
