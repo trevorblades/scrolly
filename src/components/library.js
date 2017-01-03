@@ -22,9 +22,9 @@ const Library = React.createClass({
 
   propTypes: {
     assets: React.PropTypes.array.isRequired,
-    dispatch: React.PropTypes.func,
+    dispatch: React.PropTypes.func.isRequired,
     dragging: React.PropTypes.bool,
-    onRemoveClick: React.PropTypes.func
+    onRemoveClick: React.PropTypes.func.isRequired
   },
 
   getInitialState: function() {

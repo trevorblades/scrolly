@@ -2,6 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
+const request = require('request-promise');
 
 const Button = require('./button');
 const Header = require('./header');
@@ -19,9 +20,11 @@ const layerPropType = require('../util/layer-prop-type');
 const App = React.createClass({
 
   propTypes: {
+    assets: React.PropTypes.array.isRequired,
     dispatch: React.PropTypes.func.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
-    selectedLayer: React.PropTypes.number
+    selectedLayer: React.PropTypes.number,
+    step: React.PropTypes.number.isRequired
   },
 
   getInitialState: function() {
@@ -99,6 +102,25 @@ const App = React.createClass({
     event.preventDefault();
   },
 
+  _onSaveClick: function() {
+    const options = {
+      url: 'http://localhost:8000/projects',
+      body: {
+        assets: this.props.assets,
+        layers: this.props.layers,
+        step: this.props.step
+      },
+      json: true
+    };
+    request.post(options)
+      .then(function(res) {
+        // it worked!
+      })
+      .catch(function(err) {
+        // something went wrong
+      });
+  },
+
   _onPublishClick: function() {
     this.setState({publishing: true});
   },
@@ -119,6 +141,7 @@ const App = React.createClass({
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
         <Header ref="header">
+          <Button onClick={this._onSaveClick}>Save</Button>
           <Button onClick={this._onPublishClick}>Publish</Button>
         </Header>
         <div className="sv-app-content">
@@ -148,7 +171,9 @@ const App = React.createClass({
 
 module.exports = connect(function(state) {
   return {
+    assets: state.assets.present,
     layers: state.layers.present,
-    selectedLayer: state.selectedLayer
+    selectedLayer: state.selectedLayer,
+    step: state.step.present
   };
 })(App);
