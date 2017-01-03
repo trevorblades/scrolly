@@ -216,12 +216,16 @@ const ViewportLayer = React.createClass({
   _getParentPosition: function() {
     let parentX = 0;
     let parentY = 0;
+    let parentOffsetX = 0;
+    let parentOffsetY = 0;
     let parentScale = 1;
 
     let current = this.props.layer;
     this.props.parents.forEach(parent => {
-      parentX += this.props.getInterpolatedValue(parent.x) + current.parent.offsetX;
-      parentY += this.props.getInterpolatedValue(parent.y) + current.parent.offsetY;
+      parentX += this.props.getInterpolatedValue(parent.x);
+      parentY += this.props.getInterpolatedValue(parent.y);
+      parentOffsetX += current.parent.offsetX;
+      parentOffsetY += current.parent.offsetY;
       parentScale *= this.props.getInterpolatedValue(parent.scale) / current.parent.offsetScale;
       current = parent;
     });
@@ -229,6 +233,8 @@ const ViewportLayer = React.createClass({
     return {
       parentX,
       parentY,
+      parentOffsetX,
+      parentOffsetY,
       parentScale
     };
   },
@@ -241,11 +247,17 @@ const ViewportLayer = React.createClass({
     let layerScale = this.state.resizing ? this.state.resizeScale :
         this.props.getInterpolatedValue(this.props.layer.scale);
     if (this.props.parents.length) {
-      const {parentX, parentY, parentScale} = this._getParentPosition();
+      const {
+        parentX,
+        parentY,
+        parentOffsetX,
+        parentOffsetY,
+        parentScale
+      } = this._getParentPosition();
       layerScale *= parentScale;
       if (!this.state.moving) {
-        layerX = getLinkedPosition(layerX, parentX, this.props.layer.parent.offsetX, parentScale);
-        layerY = getLinkedPosition(layerY, parentY, this.props.layer.parent.offsetY, parentScale);
+        layerX = getLinkedPosition(layerX, parentX, parentOffsetX, parentScale);
+        layerY = getLinkedPosition(layerY, parentY, parentOffsetY, parentScale);
       }
     }
 
