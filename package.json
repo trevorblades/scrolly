@@ -1,6 +1,7 @@
 {
   "name": "scrolly-viewer",
   "version": "0.0.0",
+  "description": "Scrolly Viewer",
   "author": {
     "name": "Trevor Blades",
     "email": "tdblades@gmail.com"
