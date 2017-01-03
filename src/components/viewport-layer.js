@@ -246,6 +246,7 @@ const ViewportLayer = React.createClass({
         this.props.getInterpolatedValue(this.props.layer.y);
     let layerScale = this.state.resizing ? this.state.resizeScale :
         this.props.getInterpolatedValue(this.props.layer.scale);
+    const layerOpacity = this.props.getInterpolatedValue(this.props.layer.opacity);
     if (this.props.parents.length) {
       const {
         parentX,
@@ -281,7 +282,7 @@ const ViewportLayer = React.createClass({
                 fontWeight: this.props.layer.fontWeight,
                 fontStyle: this.props.layer.fontStyle,
                 color: this.props.layer.fontColor,
-                opacity: this.props.layer.opacity
+                opacity: layerOpacity
               }}
               value={this.props.layer.value}/>
         );
@@ -290,7 +291,7 @@ const ViewportLayer = React.createClass({
         content = (
           <img height={this.state.asset.height * this.props.viewportScale * layerScale}
               src={this.state.asset.data}
-              style={{opacity: this.props.layer.opacity}}
+              style={{opacity: layerOpacity}}
               width={this.state.asset.width * this.props.viewportScale * layerScale}/>
         );
         break;
