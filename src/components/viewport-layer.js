@@ -29,7 +29,6 @@ const ViewportLayer = React.createClass({
     layer: layerPropType.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
-    parent: React.PropTypes.object,
     parents: React.PropTypes.array.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
     selected: React.PropTypes.bool.isRequired,
@@ -221,8 +220,8 @@ const ViewportLayer = React.createClass({
 
     let current = this.props.layer;
     this.props.parents.forEach(parent => {
-      parentX += this.props.getInterpolatedValue(parent.x);
-      parentY += this.props.getInterpolatedValue(parent.y);
+      parentX += this.props.getInterpolatedValue(parent.x) + current.parent.offsetX;
+      parentY += this.props.getInterpolatedValue(parent.y) + current.parent.offsetY;
       parentScale *= this.props.getInterpolatedValue(parent.scale) / current.parent.offsetScale;
       current = parent;
     });

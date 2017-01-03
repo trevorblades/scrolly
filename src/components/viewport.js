@@ -114,7 +114,8 @@ let Viewport = React.createClass({
   },
 
   _renderLayer: function(layer) {
-    const hidden = layer.in > this.props.percentPlayed ||
+    const hidden = !layer.visible ||
+        layer.in > this.props.percentPlayed ||
         layer.out < this.props.percentPlayed;
 
     return (
@@ -122,8 +123,6 @@ let Viewport = React.createClass({
           key={layer.id}
           layer={layer}
           layers={this.props.layers}
-          parent={layer.parent &&
-              this.props.layers.find(l => l.id === layer.parent.id)}
           parents={getParents(layer, this.props.layers)}
           percentPlayed={this.props.percentPlayed}
           selected={layer.id === this.props.selectedLayer}
@@ -166,7 +165,7 @@ let Viewport = React.createClass({
 module.exports = connect(function(state) {
   return {
     assets: state.assets.present,
-    layers: state.layers.present.filter(layer => layer.visible),
+    layers: state.layers.present,
     percentPlayed: state.percentPlayed,
     selectedLayer: state.selectedLayer
   };

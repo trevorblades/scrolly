@@ -7,11 +7,7 @@
   &:not(:last-child) .sv-timeline-layer-properties {
     margin-bottom: @padding-small;
   }
-  &.sv-hidden .sv-timeline-layer-top .sv-control .sv-text-field {
-    text-decoration: line-through;
-    opacity: 0.5;
-  }
-  &.sv-selected:not(.sv-hidden) .sv-timeline-layer-top {
+  &.sv-selected .sv-timeline-layer-top {
     .sv-control {
       color: white;
     }
@@ -26,6 +22,12 @@
       &[type="image"] {
         background-color: mix(@image-layer-color, @gray-lightest, 75%);
       }
+    }
+  }
+  &.sv-hidden .sv-timeline-layer-top .sv-control {
+    color: @gray-light;
+    .sv-text-field {
+      text-decoration: line-through;
     }
   }
   &.sv-sticky, &.sv-stuck {

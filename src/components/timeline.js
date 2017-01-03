@@ -181,19 +181,11 @@ let Timeline = React.createClass({
 
   _onLayerLinkTargetClick: function(layer, event) {
     event.stopPropagation();
-    let parentX = this.props.getInterpolatedValue(layer.x);
-    let parentY = this.props.getInterpolatedValue(layer.y);
-    let parentScale = this.props.getInterpolatedValue(layer.scale);
-    if (layer.parent) {
-      parentX += layer.parent.offsetX;
-      parentY += layer.parent.offsetY;
-    }
-
     this.props.dispatch(linkLayers(this.state.linkingLayerId, {
       id: layer.id,
-      offsetX: parentX,
-      offsetY: parentY,
-      offsetScale: parentScale
+      offsetX: this.props.getInterpolatedValue(layer.x),
+      offsetY: this.props.getInterpolatedValue(layer.y),
+      offsetScale: this.props.getInterpolatedValue(layer.scale)
     }));
     this.setState({linkingLayerId: null});
   },
