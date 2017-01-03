@@ -12,7 +12,7 @@ const Timeline = require('./timeline');
 const Viewport = require('./viewport');
 
 const {selectLayer} = require('../actions');
-const {FILE_DRAG_TYPE} = require('../constants');
+const {API_URL, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
@@ -104,7 +104,7 @@ const App = React.createClass({
 
   _onSaveClick: function() {
     const options = {
-      url: 'http://localhost:8000/projects',
+      url: `${API_URL}/projects`,
       body: {
         assets: this.props.assets,
         layers: this.props.layers,
