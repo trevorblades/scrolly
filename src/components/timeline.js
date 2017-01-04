@@ -183,19 +183,21 @@ let Timeline = React.createClass({
     event.stopPropagation();
     let offsetX = this.props.getInterpolatedValue(layer.x);
     let offsetY = this.props.getInterpolatedValue(layer.y);
+    let offsetScale  = this.props.getInterpolatedValue(layer.scale);
     if (layer.parent) {
       const parent = this.props.layers.find(l => l.id === layer.parent.id);
       const parentX = this.props.getInterpolatedValue(parent.x);
       const parentY = this.props.getInterpolatedValue(parent.y);
       offsetX = parentX + (offsetX - layer.parent.offsetX);
       offsetY = parentY + (offsetY - layer.parent.offsetY);
+      offsetScale *= this.props.getInterpolatedValue(parent.scale) / layer.parent.offsetScale;
     }
 
     this.props.dispatch(linkLayers(this.state.linkingLayerId, {
       id: layer.id,
       offsetX: offsetX,
       offsetY: offsetY,
-      offsetScale: this.props.getInterpolatedValue(layer.scale)
+      offsetScale: offsetScale
     }));
     this.setState({linkingLayerId: null});
   },

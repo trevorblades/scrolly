@@ -217,14 +217,16 @@ const ViewportLayer = React.createClass({
       const parent = this.props.parents[0];
       layerX = this.props.getInterpolatedValue(parent.x);
       layerY = this.props.getInterpolatedValue(parent.y);
-      layerScale = this.props.getInterpolatedValue(parent.scale);
+      layerScale = 1;
+      let parentScale = this.props.getInterpolatedValue(parent.scale);
 
       const layers = this.props.parents.slice(1).concat([this.props.layer]);
       layers.forEach(layer => {
-        const parentScale = layerScale / layer.parent.offsetScale;
+        parentScale = parentScale / layer.parent.offsetScale;
         layerX += (this.props.getInterpolatedValue(layer.x) - layer.parent.offsetX) * parentScale;
         layerY += (this.props.getInterpolatedValue(layer.y) - layer.parent.offsetY) * parentScale;
-        layerScale = this.props.getInterpolatedValue(layer.scale);
+        layerScale = this.props.getInterpolatedValue(layer.scale) * parentScale;
+        parentScale = layerScale;
       });
     }
 
