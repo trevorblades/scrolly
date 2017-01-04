@@ -11,10 +11,6 @@ const layerPropType = require('../util/layer-prop-type');
 
 const DUMMY_LAYER_SIZE = 16;
 
-function getLinkedPosition(child, parent, parentOffset, parentScale) {
-  return parent + (child - parentOffset) * parentScale;
-}
-
 function getUnlinkedPosition(layer, parent, parentOffset, parentScale) {
   return (layer - parent) / parentScale + parentOffset;
 }
@@ -110,11 +106,6 @@ const ViewportLayer = React.createClass({
   _onMouseUp: function() {
     let layerX = this.state.moveX;
     let layerY = this.state.moveY;
-    if (this.props.layer.parent !== null) {
-      const {parentX, parentY, parentScale} = this._getParentPosition();
-      layerX = getUnlinkedPosition(layerX, parentX, this.props.layer.parent.offsetX, parentScale);
-      layerY = getUnlinkedPosition(layerY, parentY, this.props.layer.parent.offsetY, parentScale);
-    }
     this.props.onPropertiesChange({
       x: typeof this.props.layer.x === 'object' ?
           Object.assign({}, this.props.layer.x, {
@@ -214,32 +205,6 @@ const ViewportLayer = React.createClass({
     return this.props.assets.find(asset => asset.id === id) || null;
   },
 
-  _getParentPosition: function() {
-    let parentX = 0;
-    let parentY = 0;
-    let parentOffsetX = 0;
-    let parentOffsetY = 0;
-    let parentScale = 1;
-
-    let current = this.props.layer;
-    this.props.parents.forEach(parent => {
-      parentX += this.props.getInterpolatedValue(parent.x);
-      parentY += this.props.getInterpolatedValue(parent.y);
-      parentOffsetX += current.parent.offsetX;
-      parentOffsetY += current.parent.offsetY;
-      parentScale *= this.props.getInterpolatedValue(parent.scale) / current.parent.offsetScale;
-      current = parent;
-    });
-
-    return {
-      parentX,
-      parentY,
-      parentOffsetX,
-      parentOffsetY,
-      parentScale
-    };
-  },
-
   render: function() {
     let layerX = this.state.moving ? this.state.moveX :
         this.props.getInterpolatedValue(this.props.layer.x);
@@ -248,19 +213,19 @@ const ViewportLayer = React.createClass({
     let layerScale = this.state.resizing ? this.state.resizeScale :
         this.props.getInterpolatedValue(this.props.layer.scale);
     const layerOpacity = this.props.getInterpolatedValue(this.props.layer.opacity);
-    if (this.props.parents.length) {
-      const {
-        parentX,
-        parentY,
-        parentOffsetX,
-        parentOffsetY,
-        parentScale
-      } = this._getParentPosition();
-      layerScale *= parentScale;
-      if (!this.state.moving) {
-        layerX = getLinkedPosition(layerX, parentX, parentOffsetX, parentScale);
-        layerY = getLinkedPosition(layerY, parentY, parentOffsetY, parentScale);
-      }
+    if (this.props.parents.length && !this.state.moving) {
+      const parent = this.props.parents[0];
+      layerX = this.props.getInterpolatedValue(parent.x);
+      layerY = this.props.getInterpolatedValue(parent.y);
+      layerScale = this.props.getInterpolatedValue(parent.scale);
+
+      const layers = this.props.parents.slice(1).concat([this.props.layer]);
+      layers.forEach(layer => {
+        const parentScale = layerScale / layer.parent.offsetScale;
+        layerX += (this.props.getInterpolatedValue(layer.x) - layer.parent.offsetX) * parentScale;
+        layerY += (this.props.getInterpolatedValue(layer.y) - layer.parent.offsetY) * parentScale;
+        layerScale = this.props.getInterpolatedValue(layer.scale);
+      });
     }
 
     const style = {
