@@ -143,8 +143,9 @@ const ViewportLayer = React.createClass({
       event.stopPropagation();
 
       const node = ReactDOM.findDOMNode(this);
-      const width = node.offsetWidth / this.props.layer.scale;
-      const height = node.offsetHeight / this.props.layer.scale;
+      const scale = this.props.getInterpolatedValue(this.props.layer.scale);
+      const width = node.offsetWidth / scale;
+      const height = node.offsetHeight / scale;
       const handleX = Number(index === 1 || index === 2);
       const handleY = Number(index > 1);
       const originX = this.props.viewportOffsetLeft + node.offsetLeft -
@@ -166,7 +167,7 @@ const ViewportLayer = React.createClass({
       document.addEventListener('mouseup', this._onHandleMouseUp);
 
       this.setState({
-        resizeScale: this.props.layer.scale,
+        resizeScale: scale,
         resizing: true
       });
     }
