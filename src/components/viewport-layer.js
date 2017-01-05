@@ -210,17 +210,24 @@ const ViewportLayer = React.createClass({
         this.props.getInterpolatedValue(this.props.layer.scale);
     const layerOpacity = this.props.getInterpolatedValue(this.props.layer.opacity);
     if (this.props.parents.length) {
-      let parentScale = 1;
       let current = this.props.layer;
+      let parentScale = this.props.getInterpolatedValue(this.props.parents[0].scale) / current.parent.offsetScale;
       this.props.parents.forEach(parent => {
-        parentScale = this.props.getInterpolatedValue(parent.scale) / current.parent.offsetScale;
         layerScale *= parentScale;
+        if (this.props.parents.length > 1) {
+          console.log(current.parent.offsetScale);
+          console.log('parts: ', layerX, this.props.getInterpolatedValue(parent.x), current.parent.offsetX, parentScale);
+        }
         if (!this.state.moving) {
           layerX = this.props.getInterpolatedValue(parent.x) + (layerX - current.parent.offsetX) * parentScale;
           layerY = this.props.getInterpolatedValue(parent.y) + (layerY - current.parent.offsetY) * parentScale;
         }
         current = parent;
       });
+    }
+
+    if (this.props.parents.length > 1) {
+      console.log('final: ', layerX);
     }
 
     const style = {
