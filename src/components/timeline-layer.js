@@ -307,7 +307,7 @@ const TimelineLayer = React.createClass({
       linkAction.onClick = this.props.onLinkTargetClick;
       linkAction.title = 'Link to this layer';
     } else {
-      if (this.props.layer.parent === null) {
+      if (!this.props.layer.parent) {
         linkAction.content = <Icon name="link"/>;
         if (this.props.layers.length > 1) {
           linkAction.onClick = this.props.onLinkClick;

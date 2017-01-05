@@ -153,7 +153,7 @@ let Viewport = React.createClass({
             width: this.state.width,
             height: this.state.height
           }}>
-        {this.state.selectedLayer && this._renderLayer(this.state.selectedLayer)}
+        {/* {this.state.selectedLayer && this._renderLayer(this.state.selectedLayer)} */}
         <div className="sv-viewport-layers">
           {layers.map(this._renderLayer)}
         </div>

@@ -11,10 +11,6 @@ const layerPropType = require('../util/layer-prop-type');
 
 const DUMMY_LAYER_SIZE = 16;
 
-function getUnlinkedPosition(layer, parent, parentOffset, parentScale) {
-  return (layer - parent) / parentScale + parentOffset;
-}
-
 const ViewportLayer = React.createClass({
 
   propTypes: {
@@ -214,20 +210,28 @@ const ViewportLayer = React.createClass({
         this.props.getInterpolatedValue(this.props.layer.scale);
     const layerOpacity = this.props.getInterpolatedValue(this.props.layer.opacity);
     if (this.props.parents.length && !this.state.moving) {
-      const parent = this.props.parents[0];
-      layerX = this.props.getInterpolatedValue(parent.x);
-      layerY = this.props.getInterpolatedValue(parent.y);
-      layerScale = 1;
-      let parentScale = this.props.getInterpolatedValue(parent.scale);
-
-      const layers = this.props.parents.slice(1).concat([this.props.layer]);
-      layers.forEach(layer => {
-        parentScale = parentScale / layer.parent.offsetScale;
-        layerX += (this.props.getInterpolatedValue(layer.x) - layer.parent.offsetX) * parentScale;
-        layerY += (this.props.getInterpolatedValue(layer.y) - layer.parent.offsetY) * parentScale;
-        layerScale = this.props.getInterpolatedValue(layer.scale) * parentScale;
-        parentScale = layerScale;
+      let parentScale = 1;
+      let current = this.props.layer;
+      this.props.parents.forEach(parent => {
+        if (this.props.layer.id === 14) {
+          console.log(
+            this.props.layer.name,
+            layerScale,
+            parentScale,
+            this.props.getInterpolatedValue(parent.scale),
+            current.parent.offsetScale
+          );
+        }
+        parentScale *= this.props.getInterpolatedValue(parent.scale) / current.parent.offsetScale;
+        layerX = this.props.getInterpolatedValue(parent.x) + (layerX - current.parent.offsetX) * parentScale;
+        layerY = this.props.getInterpolatedValue(parent.y) + (layerY - current.parent.offsetY) * parentScale;
+        layerScale *= parentScale;
+        current = parent;
       });
+
+      if (this.props.layer.id === 14) {
+        console.log(this.props.layer.name, layerScale);
+      }
     }
 
     const style = {
