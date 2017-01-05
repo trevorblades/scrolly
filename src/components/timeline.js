@@ -190,7 +190,6 @@ let Timeline = React.createClass({
       offsetY += this.props.getInterpolatedValue(parent.y) - layer.parent.offsetY;
       offsetScale *= this.props.getInterpolatedValue(parent.scale) / layer.parent.offsetScale;
     }
-    console.log(offsetScale);
     this.props.dispatch(linkLayers(this.state.linkingLayerId, {
       id: layer.id,
       offsetX: offsetX,
