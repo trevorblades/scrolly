@@ -3,7 +3,7 @@ module.exports = function(layer, layers) {
   let current = layer;
   while (current.parent) {
     current = layers.find(l => l.id === current.parent.id);
-    parents.push(current);
+    parents.unshift(current);
   }
   return parents;
 };

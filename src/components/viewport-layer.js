@@ -208,26 +208,31 @@ const ViewportLayer = React.createClass({
         this.props.getInterpolatedValue(this.props.layer.y);
     let layerScale = this.state.resizing ? this.state.resizeScale :
         this.props.getInterpolatedValue(this.props.layer.scale);
-    const layerOpacity = this.props.getInterpolatedValue(this.props.layer.opacity);
-    if (this.props.parents.length) {
-      let current = this.props.layer;
-      let parentScale = this.props.getInterpolatedValue(this.props.parents[0].scale) / current.parent.offsetScale;
-      this.props.parents.forEach(parent => {
-        layerScale *= parentScale;
-        if (this.props.parents.length > 1) {
-          console.log(current.parent.offsetScale);
-          console.log('parts: ', layerX, this.props.getInterpolatedValue(parent.x), current.parent.offsetX, parentScale);
-        }
-        if (!this.state.moving) {
-          layerX = this.props.getInterpolatedValue(parent.x) + (layerX - current.parent.offsetX) * parentScale;
-          layerY = this.props.getInterpolatedValue(parent.y) + (layerY - current.parent.offsetY) * parentScale;
-        }
-        current = parent;
-      });
-    }
+    let layerOpacity = this.props.getInterpolatedValue(this.props.layer.opacity);
 
-    if (this.props.parents.length > 1) {
-      console.log('final: ', layerX);
+    if (this.props.parents.length) {
+      let parent = this.props.parents[0];
+      layerX = this.props.getInterpolatedValue(parent.x);
+      layerY = this.props.getInterpolatedValue(parent.y);
+      layerScale = this.props.getInterpolatedValue(parent.scale);
+
+      if (this.props.parents.length > 1) {
+        console.log(layerX);
+      }
+      const layers = this.props.parents.slice(1).concat([this.props.layer]);
+      layers.forEach(layer => {
+        const parentScale = layerScale / layer.parent.offsetScale;
+        if (!this.state.moving) {
+          layerX = layerX + (this.props.getInterpolatedValue(layer.x) - layer.parent.offsetX) * parentScale;
+          layerY = layerY + (this.props.getInterpolatedValue(layer.y) - layer.parent.offsetY) * parentScale;
+        }
+        if (this.props.parents.length > 1) {
+          console.log(layerX, this.props.getInterpolatedValue(layer.x), layer.parent.offsetX);
+        }
+        layerScale *= this.props.getInterpolatedValue(layer.scale);
+        layerOpacity *= this.props.getInterpolatedValue(layer.opacity);
+        parent = layer;
+      });
     }
 
     const style = {
