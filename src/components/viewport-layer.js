@@ -102,10 +102,12 @@ const ViewportLayer = React.createClass({
   _onMouseUp: function() {
     let layerX = this.state.moveX;
     let layerY = this.state.moveY;
+    let current = this.props.layer;
     this.props.parents.forEach(parent => {
-      const parentScale = this.props.getInterpolatedValue(parent.scale) / this.props.layer.parent.offsetScale;
-      layerX = (layerX - this.props.getInterpolatedValue(parent.x)) / parentScale + this.props.layer.parent.offsetX;
-      layerY = (layerY - this.props.getInterpolatedValue(parent.y)) / parentScale + this.props.layer.parent.offsetY;
+      const parentScale = this.props.getInterpolatedValue(parent.scale) / current.parent.offsetScale;
+      layerX = (layerX - this.props.getInterpolatedValue(parent.x)) / parentScale + current.parent.offsetX;
+      layerY = (layerY - this.props.getInterpolatedValue(parent.y)) / parentScale + current.parent.offsetY;
+      current = parent;
     });
 
     this.props.onPropertiesChange({
