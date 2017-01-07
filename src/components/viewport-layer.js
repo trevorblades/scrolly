@@ -228,8 +228,8 @@ const ViewportLayer = React.createClass({
       layers.forEach(layer => {
         if (!this.state.moving) {
           const parentScale = layerScale / layer.parent.offsetScale;
-          layerX = layerX + (this.props.getInterpolatedValue(layer.x) - layer.parent.offsetX) * parentScale;
-          layerY = layerY + (this.props.getInterpolatedValue(layer.y) - layer.parent.offsetY) * parentScale;
+          layerX += (this.props.getInterpolatedValue(layer.x) - layer.parent.offsetX) * parentScale;
+          layerY += (this.props.getInterpolatedValue(layer.y) - layer.parent.offsetY) * parentScale;
         }
         const scale = this.state.resizing && this.props.layer.id === layer.id ?
             this.state.resizeScale :
