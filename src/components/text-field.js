@@ -84,7 +84,6 @@ const TextField = React.createClass({
 
     const allowedKeys = [8, 37, 39, 46, 110, 190]; // backspace, left, right, numpad period, delete, or period
     if (typeof this.props.min === 'undefined' || this.props.min < 0) {
-      console.log(this.props.min);
       allowedKeys.push(189);
     }
     const disallowed = allowedKeys.indexOf(event.keyCode) === -1 && // isn't an allowed character
