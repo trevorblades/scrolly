@@ -18,6 +18,7 @@ const {
   selectLayer
 } = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
+const getLinkedProperties = require('../util/get-linked-properties');
 const getParents = require('../util/get-parents');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
@@ -181,16 +182,22 @@ let Timeline = React.createClass({
 
   _onLayerLinkTargetClick: function(layer, event) {
     event.stopPropagation();
-    let offsetX = this.props.getInterpolatedValue(layer.x);
-    let offsetY = this.props.getInterpolatedValue(layer.y);
-    let offsetScale = this.props.getInterpolatedValue(layer.scale);
+
+    let offsetX;
+    let offsetY;
+    let offsetScale;
     if (layer.parent) {
-      const parent = this.props.layers.find(l => l.id === layer.parent.id);
-      const parentScale = this.props.getInterpolatedValue(parent.scale) / layer.parent.offsetScale;
-      offsetX = this.props.getInterpolatedValue(parent.x) + (offsetX - layer.parent.offsetX) * parentScale;
-      offsetY = this.props.getInterpolatedValue(parent.y) + (offsetY - layer.parent.offsetY) * parentScale;
-      offsetScale *= parentScale;
+      const parents = getParents(layer, this.props.layers);
+      const linked = getLinkedProperties(layer, parents, this.props.percentPlayed);
+      offsetX = linked.x;
+      offsetY = linked.y;
+      offsetScale = linked.scale;
+    } else {
+      offsetX = this.props.getInterpolatedValue(layer.x);
+      offsetY = this.props.getInterpolatedValue(layer.y);
+      offsetScale = this.props.getInterpolatedValue(layer.scale);
     }
+
     this.props.dispatch(linkLayers(this.state.linkingLayerId, {
       id: layer.id,
       offsetX: offsetX,

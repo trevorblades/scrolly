@@ -7,6 +7,7 @@ const TextField = require('./text-field');
 
 const {setLayerProperties, selectLayer} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
+const getLinkedProperties = require('../util/get-linked-properties');
 const layerPropType = require('../util/layer-prop-type');
 
 const DUMMY_LAYER_SIZE = 16;
@@ -219,26 +220,15 @@ const ViewportLayer = React.createClass({
     let layerOpacity = this.props.getInterpolatedValue(this.props.layer.opacity);
 
     if (this.props.parents.length) {
-      const parent = this.props.parents[0];
+      const layer = !this.state.resizing ? this.props.layer :
+          Object.assign({}, this.props.layer, {scale: this.state.resizeScale});
+      const linked = getLinkedProperties(layer, this.props.parents, this.props.percentPlayed);
       if (!this.state.moving) {
-        layerX = this.props.getInterpolatedValue(parent.x);
-        layerY = this.props.getInterpolatedValue(parent.y);
+        layerX = linked.x;
+        layerY = linked.y;
       }
-      layerScale = this.props.getInterpolatedValue(parent.scale);
-
-      const layers = this.props.parents.slice(1).concat([this.props.layer]);
-      layers.forEach(layer => {
-        if (!this.state.moving) {
-          const parentScale = layerScale / layer.parent.offsetScale;
-          layerX += (this.props.getInterpolatedValue(layer.x) - layer.parent.offsetX) * parentScale;
-          layerY += (this.props.getInterpolatedValue(layer.y) - layer.parent.offsetY) * parentScale;
-        }
-        const scale = this.state.resizing && this.props.layer.id === layer.id ?
-            this.state.resizeScale :
-            this.props.getInterpolatedValue(layer.scale);
-        layerScale *= scale / layer.parent.offsetScale;
-        layerOpacity *= this.props.getInterpolatedValue(layer.opacity);
-      });
+      layerScale = linked.scale;
+      layerOpacity = linked.opacity;
     }
 
     const style = {
