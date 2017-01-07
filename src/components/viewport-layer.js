@@ -217,7 +217,7 @@ const ViewportLayer = React.createClass({
     let layerOpacity = this.props.getInterpolatedValue(this.props.layer.opacity);
 
     if (this.props.parents.length) {
-      let parent = this.props.parents[0];
+      const parent = this.props.parents[0];
       if (!this.state.moving) {
         layerX = this.props.getInterpolatedValue(parent.x);
         layerY = this.props.getInterpolatedValue(parent.y);
@@ -236,7 +236,6 @@ const ViewportLayer = React.createClass({
             this.props.getInterpolatedValue(layer.scale);
         layerScale *= scale / layer.parent.offsetScale;
         layerOpacity *= this.props.getInterpolatedValue(layer.opacity);
-        parent = layer;
       });
     }
 
