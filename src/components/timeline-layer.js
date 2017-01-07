@@ -444,7 +444,9 @@ const TimelineLayer = React.createClass({
                 propertyField = <span>{value}</span>;
               } else {
                 propertyField = (
-                  <TextField onChange={this._onPropertyChange.bind(null, key)}
+                  <TextField max={property.max}
+                      min={property.min}
+                      onChange={this._onPropertyChange.bind(null, key)}
                       step={property.step}
                       type={property.type}
                       value={value}/>

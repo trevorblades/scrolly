@@ -13,6 +13,8 @@ const resetCaret = function(node) {
 const TextField = React.createClass({
 
   propTypes: {
+    max: React.PropTypes.number,
+    min: React.PropTypes.number,
     onChange: React.PropTypes.func.isRequired,
     step: React.PropTypes.number,
     style: React.PropTypes.object,
@@ -80,12 +82,17 @@ const TextField = React.createClass({
       return event.target.blur();
     }
 
-    const isUpOrDown = event.keyCode === 38 || event.keyCode === 40;
-    const isDisallowed = [8, 37, 39, 46, 110, 189, 190].indexOf(event.keyCode) === -1 && // isn't backspace, left, right, numpad period, delete, or period
+    const allowedKeys = [8, 37, 39, 46, 110, 190]; // backspace, left, right, numpad period, delete, or period
+    if (typeof this.props.min === 'undefined' || this.props.min < 0) {
+      console.log(this.props.min);
+      allowedKeys.push(189);
+    }
+    const disallowed = allowedKeys.indexOf(event.keyCode) === -1 && // isn't an allowed character
         (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && // isn't a top row number
         (event.keyCode < 96 || event.keyCode > 105) && // isn't a numpad number
         !event.metaKey && !event.ctrlKey;
-    if (this.props.type === 'number' && (isUpOrDown || isDisallowed)) {
+    const isUpOrDown = event.keyCode === 38 || event.keyCode === 40;
+    if (this.props.type === 'number' && (isUpOrDown || disallowed)) {
       event.preventDefault();
       if (isUpOrDown) {
         let direction = event.keyCode === 38 ? 1 : -1;
