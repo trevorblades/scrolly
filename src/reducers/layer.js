@@ -14,6 +14,7 @@ module.exports = function(state, action) {
         x: properties.x.default,
         y: properties.y.default,
         scale: properties.scale.default,
+        rotation: properties.rotation.default,
         opacity: properties.opacity.default,
         visible: true,
         parent: null

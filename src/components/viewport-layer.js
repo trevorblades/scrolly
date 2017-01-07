@@ -7,7 +7,6 @@ const TextField = require('./text-field');
 
 const {setLayerProperties, selectLayer} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
-const getLinkedProperties = require('../util/get-linked-properties');
 const getParentProperties = require('../util/get-parent-properties');
 const layerPropType = require('../util/layer-prop-type');
 
@@ -217,6 +216,7 @@ const ViewportLayer = React.createClass({
         this.props.getInterpolatedValue(this.props.layer.y);
     let layerScale = this.state.resizing ? this.state.resizeScale :
         this.props.getInterpolatedValue(this.props.layer.scale);
+    let layerRotation = this.props.getInterpolatedValue(this.props.layer.rotation);
     let layerOpacity = this.props.getInterpolatedValue(this.props.layer.opacity);
     if (this.props.parents.length) {
       const parent = getParentProperties(this.props.parents, this.props.percentPlayed);
@@ -232,7 +232,9 @@ const ViewportLayer = React.createClass({
     const style = {
       top: layerY * this.props.viewportScale,
       left: layerX * this.props.viewportScale,
-      transform: `translate(${this.props.layer.anchorX * -100}%, ${this.props.layer.anchorY * -100}%)`
+      transform: `translate(${this.props.layer.anchorX * -100}%, ${this.props.layer.anchorY * -100}%)
+          rotate(${layerRotation}deg)`,
+      transformOrigin: `${this.props.layer.anchorX * 100}% ${this.props.layer.anchorY * 100}%`
     };
 
     let content;

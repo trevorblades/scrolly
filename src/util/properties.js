@@ -50,6 +50,12 @@ module.exports = {
     mutable: true,
     animatable: true
   },
+  rotation: {
+    type: 'number',
+    default: 0,
+    mutable: true,
+    animatable: true
+  },
   opacity: {
     type: 'number',
     step: 0.01,
