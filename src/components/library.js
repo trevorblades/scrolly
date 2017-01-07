@@ -120,7 +120,7 @@ const Library = React.createClass({
           <div className="sv-library-preview-info">
             {selectedAsset && <div>
               <h5 title={selectedAsset.name}>{selectedAsset.name}</h5>
-              <h6>{selectedAsset.filetype}</h6>
+              <h6>{`${selectedAsset.width} x ${selectedAsset.height}`}</h6>
               <h6>{bytes(selectedAsset.size)}</h6>
             </div>}
           </div>
