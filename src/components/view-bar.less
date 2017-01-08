@@ -13,6 +13,19 @@
   .sv-view-bar-align {
     display: flex;
     flex-shrink: 0;
+    &:not(.pl-disabled) .sv-view-bar-align-options .sv-view-bar-align-option {
+      cursor: pointer;
+      &:hover {
+        background-color: @shadow;
+        .sv-icon {
+          fill: white;
+        }
+      }
+
+      .sv-icon {
+        fill: @gray-lightest;
+      }
+    }
     .sv-view-bar-align-options {
       display: flex;
       &:not(:last-child) {
@@ -24,21 +37,14 @@
       .sv-view-bar-align-option {
         padding: @padding-smallest;
         border-radius: @border-radius-small;
-        cursor: pointer;
         &:not(:last-child) {
           margin-right: @padding-smallest;
-        }
-        &:hover {
-          background-color: @shadow;
-          .sv-icon {
-            fill: white;
-          }
         }
 
         .sv-icon {
           width: @padding-base;
           height: @padding-base;
-          fill: @gray-lightest;
+          fill: @gray-light;
         }
       }
     }
