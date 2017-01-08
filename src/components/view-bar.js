@@ -8,6 +8,7 @@ const Icon = require('./icon');
 const {setLayerProperties} = require('../actions');
 const getParentProperties = require('../util/get-parent-properties');
 const getParents = require('../util/get-parents');
+const getUnlinkedPosition = require('../util/get-unlinked-position');
 const layerPropType = require('../util/layer-prop-type');
 
 const alignOptions = {
@@ -38,7 +39,12 @@ const ViewBar = React.createClass({
       const parents = getParents(this.props.layer, this.props.layers);
       const parent = getParentProperties(parents, this.props.percentPlayed);
       const parentScale = parent.scale / this.props.layer.parent.offsetScale;
-      value = (value - parent[property]) / parentScale + this.props.layer.parent[`offset${property.toUpperCase()}`];
+      value = getUnlinkedPosition(
+        value,
+        parent[property],
+        parentScale,
+        this.props.layer.parent[`offset${property.toUpperCase()}`]
+      );
     }
 
     this.props.dispatch(setLayerProperties(this.props.layer.id, {

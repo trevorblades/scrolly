@@ -8,6 +8,7 @@ const TextField = require('./text-field');
 const {setLayerProperties, selectLayer} = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const getParentProperties = require('../util/get-parent-properties');
+const getUnlinkedPosition = require('../util/get-unlinked-position');
 const layerPropType = require('../util/layer-prop-type');
 
 const DUMMY_LAYER_SIZE = 16;
@@ -106,8 +107,8 @@ const ViewportLayer = React.createClass({
     if (this.props.parents.length) {
       const parent = getParentProperties(this.props.parents, this.props.percentPlayed);
       const parentScale = parent.scale / this.props.layer.parent.offsetScale;
-      layerX = (layerX - parent.x) / parentScale + this.props.layer.parent.offsetX;
-      layerY = (layerY - parent.y) / parentScale + this.props.layer.parent.offsetY;
+      layerX = getUnlinkedPosition(layerX, parent.x, parentScale, this.props.layer.parent.offsetX);
+      layerY = getUnlinkedPosition(layerY, parent.y, parentScale, this.props.layer.parent.offsetY);
     }
 
     this.props.onPropertiesChange({
