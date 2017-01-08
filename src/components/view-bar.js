@@ -25,7 +25,8 @@ const ViewBar = React.createClass({
     getLayerDimensions: React.PropTypes.func.isRequired,
     layer: layerPropType,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
-    percentPlayed: React.PropTypes.number.isRequired
+    percentPlayed: React.PropTypes.number.isRequired,
+    viewportScale: React.PropTypes.number.isRequired
   },
 
   _onAlignOptionClick: function(properties) {
@@ -62,7 +63,7 @@ const ViewBar = React.createClass({
     return (
       <div className="sv-view-bar">
         <div className="sv-view-bar-zoom">
-          100%
+          {`Scale: ${Math.round(this.props.viewportScale * 1000) / 10}%`}
         </div>
         <div className={alignClassName}>
           {Object.keys(alignOptions).map(axis => {

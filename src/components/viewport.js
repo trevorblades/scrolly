@@ -131,7 +131,7 @@ let Viewport = React.createClass({
           viewportHeight={this.state.height}
           viewportOffsetLeft={this.state.offsetLeft}
           viewportOffsetTop={this.state.offsetTop}
-          viewportScale={this.state.width / this.props.compositionWidth}
+          viewportScale={this.getScale()}
           viewportWidth={this.state.width}/>
     );
   },
@@ -163,9 +163,13 @@ let Viewport = React.createClass({
     );
   },
 
+  getScale: function() {
+    return this.state.width / this.props.compositionWidth;
+  },
+
   getLayerDimensions: function(id) {
     const layer = ReactDOM.findDOMNode(this.refs[`layer${id}`]);
-    const scale = this.state.width / this.props.compositionWidth;
+    const scale = this.getScale();
     return {
       width: layer.offsetWidth / scale,
       height: layer.offsetHeight / scale

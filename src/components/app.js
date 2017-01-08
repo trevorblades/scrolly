@@ -34,6 +34,7 @@ const App = React.createClass({
       compositionWidth: 1920,
       dragging: false,
       publishing: false,
+      viewportScale: 1,
       viewportWrapperHeight: 0,
       viewportWrapperOffsetLeft: 0,
       viewportWrapperOffsetTop: 0,
@@ -78,6 +79,9 @@ const App = React.createClass({
       viewportWrapperOffsetLeft: this.refs.viewportWrapper.offsetLeft + viewportWrapperPadding,
       viewportWrapperOffsetTop: this.refs.viewportWrapper.offsetTop + viewportWrapperPadding,
       viewportWrapperWidth: parseFloat(viewportWrapperStyle.width)
+    }, function() {
+      const viewport = this.refs.viewport.getWrappedInstance();
+      this.setState({viewportScale: viewport.getScale()});
     });
   },
 
@@ -168,7 +172,8 @@ const App = React.createClass({
             </div>
             <ViewBar compositionHeight={this.state.compositionHeight}
                 compositionWidth={this.state.compositionWidth}
-                getLayerDimensions={this._getLayerDimensions}/>
+                getLayerDimensions={this._getLayerDimensions}
+                viewportScale={this.state.viewportScale}/>
           </div>
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}
