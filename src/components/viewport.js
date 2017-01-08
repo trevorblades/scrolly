@@ -1,4 +1,5 @@
 const React = require('react');
+const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const classNames = require('classnames');
 
@@ -125,6 +126,7 @@ let Viewport = React.createClass({
           layers={this.props.layers}
           parents={getParents(layer, this.props.layers)}
           percentPlayed={this.props.percentPlayed}
+          ref={`layer${layer.id}`}
           selected={layer.id === this.props.selectedLayer}
           viewportHeight={this.state.height}
           viewportOffsetLeft={this.state.offsetLeft}
@@ -153,12 +155,21 @@ let Viewport = React.createClass({
             width: this.state.width,
             height: this.state.height
           }}>
-        {/* {this.state.selectedLayer && this._renderLayer(this.state.selectedLayer)} */}
+        {this.state.selectedLayer && this._renderLayer(this.state.selectedLayer)}
         <div className="sv-viewport-layers">
           {layers.map(this._renderLayer)}
         </div>
       </div>
     );
+  },
+
+  getLayerDimensions: function(id) {
+    const layer = ReactDOM.findDOMNode(this.refs[`layer${id}`]);
+    const scale = this.state.width / this.props.compositionWidth;
+    return {
+      width: layer.offsetWidth / scale,
+      height: layer.offsetHeight / scale
+    };
   }
 });
 
@@ -169,4 +180,4 @@ module.exports = connect(function(state) {
     percentPlayed: state.percentPlayed,
     selectedLayer: state.selectedLayer
   };
-})(Viewport);
+}, null, null, {withRef: true})(Viewport);

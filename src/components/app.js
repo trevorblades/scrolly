@@ -134,6 +134,10 @@ const App = React.createClass({
     this.props.dispatch(selectLayer(null));
   },
 
+  _getLayerDimensions: function(id) {
+    return this.refs.viewport.getWrappedInstance().getLayerDimensions(id);
+  },
+
   render: function() {
     return (
       <div className="sv-app"
@@ -156,13 +160,15 @@ const App = React.createClass({
                 ref="viewportWrapper">
               <Viewport compositionHeight={this.state.compositionHeight}
                   compositionWidth={this.state.compositionWidth}
+                  ref="viewport"
                   wrapperHeight={this.state.viewportWrapperHeight}
                   wrapperOffsetLeft={this.state.viewportWrapperOffsetLeft}
                   wrapperOffsetTop={this.state.viewportWrapperOffsetTop}
                   wrapperWidth={this.state.viewportWrapperWidth}/>
             </div>
             <ViewBar compositionHeight={this.state.compositionHeight}
-                compositionWidth={this.state.compositionWidth}/>
+                compositionWidth={this.state.compositionWidth}
+                getLayerDimensions={this._getLayerDimensions}/>
           </div>
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}

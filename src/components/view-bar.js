@@ -17,14 +17,17 @@ const ViewBar = React.createClass({
     compositionHeight: React.PropTypes.number.isRequired,
     compositionWidth: React.PropTypes.number.isRequired,
     dispatch: React.PropTypes.func.isRequired,
+    getLayerDimensions: React.PropTypes.func.isRequired,
     layer: React.PropTypes.object,
     percentPlayed: React.PropTypes.number.isRequired
   },
 
   _onAlignOptionClick: function(properties) {
     const property = Object.keys(properties)[0];
+    const dimensions = this.props.getLayerDimensions(this.props.layer.id);
     const size = property === 'x' ?
-        this.props.compositionWidth : this.props.compositionHeight;
+        this.props.compositionWidth - dimensions.width :
+        this.props.compositionHeight - dimensions.height;
     let value = properties[property] * size;
     if (typeof this.props.layer[property] === 'object') {
       value = Object.assign({}, this.props.layer[property], {
