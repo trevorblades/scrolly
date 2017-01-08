@@ -2,6 +2,7 @@
 @import './library';
 @import './publish-dialog';
 @import './timeline';
+@import './view-bar';
 @import './viewport';
 
 .sv-app {
@@ -18,13 +19,18 @@
     flex-grow: 1;
     border-bottom: 1px solid black;
     background-color: @gray-dark;
-  }
-  .sv-app-viewport-wrapper {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    box-sizing: content-box;
-    padding: @padding-largest;
-    overflow: hidden;
+    .sv-app-content-viewport {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      .sv-app-content-viewport-wrapper {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        box-sizing: content-box;
+        padding: @padding-largest;
+        overflow: hidden;
+      }
+    }
   }
 }

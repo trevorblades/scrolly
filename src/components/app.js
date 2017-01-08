@@ -9,6 +9,7 @@ const Header = require('./header');
 const Library = require('./library');
 const PublishDialog = require('./publish-dialog');
 const Timeline = require('./timeline');
+const ViewBar = require('./view-bar');
 const Viewport = require('./viewport');
 
 const {selectLayer} = require('../actions');
@@ -149,15 +150,19 @@ const App = React.createClass({
               dragging={this.state.dragging}
               onDragEnter={this._onDragEnter}
               onDrop={this._onLibraryDrop}/>
-          <div className="sv-app-viewport-wrapper"
-              onClick={this._deselectLayer}
-              ref="viewportWrapper">
-            <Viewport compositionHeight={this.state.compositionHeight}
-                compositionWidth={this.state.compositionWidth}
-                wrapperHeight={this.state.viewportWrapperHeight}
-                wrapperOffsetLeft={this.state.viewportWrapperOffsetLeft}
-                wrapperOffsetTop={this.state.viewportWrapperOffsetTop}
-                wrapperWidth={this.state.viewportWrapperWidth}/>
+          <div className="sv-app-content-viewport">
+            <div className="sv-app-content-viewport-wrapper"
+                onClick={this._deselectLayer}
+                ref="viewportWrapper">
+              <Viewport compositionHeight={this.state.compositionHeight}
+                  compositionWidth={this.state.compositionWidth}
+                  wrapperHeight={this.state.viewportWrapperHeight}
+                  wrapperOffsetLeft={this.state.viewportWrapperOffsetLeft}
+                  wrapperOffsetTop={this.state.viewportWrapperOffsetTop}
+                  wrapperWidth={this.state.viewportWrapperWidth}/>
+            </div>
+            <ViewBar compositionHeight={this.state.compositionHeight}
+                compositionWidth={this.state.compositionWidth}/>
           </div>
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}
