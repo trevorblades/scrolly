@@ -34,7 +34,8 @@
   .sv-header-content {
     display: flex;
     .sv-button {
-      color: white;
+      font-weight: 600;
+      color: @gray-darker;
       background-color: @brand-primary;
       &:not(:last-child) {
         margin-right: @padding-smaller;
@@ -61,7 +62,7 @@
       &:not(:first-child) {
         margin-left: @padding-smallest;
         font-size: @font-size-smaller;
-        opacity: 0.5;
+        color: mix(@gray, @brand-primary);
       }
     }
   }
