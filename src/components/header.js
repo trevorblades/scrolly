@@ -4,16 +4,33 @@ const classNames = require('classnames');
 const moment = require('moment');
 
 const Button = require('./button');
+const TextField = require('./text-field');
 
 const Header = React.createClass({
 
   propTypes: {
     changedAt: React.PropTypes.string,
+    dispatch: React.PropTypes.func.isRequired,
     name: React.PropTypes.string.isRequired,
     onPublishClick: React.PropTypes.func.isRequired,
     onSaveClick: React.PropTypes.func.isRequired,
     saving: React.PropTypes.bool.isRequired,
     updatedAt: React.PropTypes.string
+  },
+
+  _onNameChange: function(value) {
+    this.props.dispatch({
+      type: 'SET_NAME',
+      value
+    });
+  },
+
+  _onNewClick: function() {
+
+  },
+
+  _onOpenClick: function() {
+
   },
 
   render: function() {
@@ -35,7 +52,12 @@ const Header = React.createClass({
     return (
       <div className="sv-header">
         <img className="sv-header-logo" src="/assets/logo.svg"/>
-        <div className="sv-header-name">{this.props.name}</div>
+        <div className="sv-header-name">
+          <TextField onChange={this._onNameChange}
+              value={this.props.name}/>
+          <Button onClick={this._onNewClick}>New</Button>
+          <Button onClick={this._onOpenClick}>Open</Button>
+        </div>
         <div className="sv-header-content">
           <div className={statusClassName}>
             <span>{savedStatus}</span>

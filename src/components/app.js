@@ -41,6 +41,7 @@ const App = React.createClass({
       compositionWidth: 1920,
       dragging: false,
       publishing: false,
+      saving: false,
       timelineMaxHeight: 0,
       viewportScale: 1,
       viewportWrapperHeight: 0,

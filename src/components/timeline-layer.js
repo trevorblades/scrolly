@@ -119,10 +119,13 @@ const TimelineLayer = React.createClass({
   },
 
   _onBarMouseUp: function() {
-    this.props.onPropertiesChange({
-      in: this.state.dragIn,
-      out: this.state.dragOut
-    });
+    if (this.props.layer.in !== this.state.dragIn ||
+        this.props.layer.out !== this.state.dragOut) {
+      this.props.onPropertiesChange({
+        in: this.state.dragIn,
+        out: this.state.dragOut
+      });
+    }
     this.setState({dragging: false});
     document.removeEventListener('mousemove', this._boundBarMouseMove);
     document.removeEventListener('mouseup', this._onBarMouseUp);
@@ -149,10 +152,13 @@ const TimelineLayer = React.createClass({
   },
 
   _onBarHandleMouseUp: function() {
-    this.props.onPropertiesChange({
-      in: this.state.dragIn,
-      out: this.state.dragOut
-    });
+    if (this.props.layer.in !== this.state.dragIn ||
+        this.props.layer.out !== this.state.dragOut) {
+      this.props.onPropertiesChange({
+        in: this.state.dragIn,
+        out: this.state.dragOut
+      });
+    }
     this.setState({dragging: false});
     document.removeEventListener('mousemove', this._boundBarHandleMouseMove);
     document.removeEventListener('mouseup', this._onBarHandleMouseUp);
