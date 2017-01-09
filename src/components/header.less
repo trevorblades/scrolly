@@ -1,20 +1,39 @@
 .sv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-shrink: 0;
   padding: @padding-base;
   border-bottom: 1px solid @brand-primary;
   box-shadow: 0 1px @shadow-dark;
   background-color: @gray-dark;
   position: relative;
+  .sv-header-logo {
+    height: @font-size-small * 2;
+  }
   .sv-header-content {
     display: flex;
     .sv-button {
-      margin-left: @padding-smaller;
       color: white;
       background-color: @brand-primary;
+      &:not(:last-child) {
+        margin-right: @padding-smaller;
+      }
     }
     .sv-header-content-status {
+      margin-right: @padding-small;
       font-size: @font-size-smaller;
       text-align: right;
+      &.sv-not-saved span:first-child {
+        color: @gray-lighter;
+      }
+      &.sv-unsaved-changes span:first-child {
+        color: @brand-primary;
+      }
+
+      span {
+        display: block;
+      }
     }
   }
 }

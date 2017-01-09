@@ -1,5 +1,6 @@
 const React = require('react');
 const {connect} = require('react-redux');
+const classNames = require('classnames');
 const moment = require('moment');
 
 const Button = require('./button');
@@ -14,22 +15,26 @@ const Header = React.createClass({
   },
 
   render: function() {
-    let status;
+    let lastSaved = 'Save your project to publish it';
+    let savedStatus = 'Not saved';
     if (this.props.updatedAt) {
-      status = (
-        <div className="sv-header-content-status">
-          {this.props.changedAt && <div>
-            {this.props.updatedAt.getTime() === this.props.changedAt.getTime() ?
-                'Saved' : 'Unsaved changes'}
-          </div>}
-          <div>{`Last saved at ${moment().calendar(this.props.updatedAt)}`}</div>
-        </div>
-      );
+      lastSaved = `Last saved at ${moment().calendar(this.props.updatedAt)}`;
+      if (this.props.changedAt) {
+        const saved = this.props.updatedAt.getTime() === this.props.changedAt.getTime();
+        savedStatus = saved ? 'Saved' : 'Unsaved changes';
+      }
     }
+
+    const statusClassName = classNames('sv-header-content-status',
+        `sv-${savedStatus.split(' ').join('-').toLowerCase()}`);
     return (
       <div className="sv-header">
+        <img className="sv-header-logo" src="assets/logo.svg"/>
         <div className="sv-header-content">
-          {status}
+          <div className={statusClassName}>
+            <span>{savedStatus}</span>
+            <span>{lastSaved}</span>
+          </div>
           <Button onClick={this.props.onSaveClick}>Save</Button>
           <Button onClick={this.props.onPublishClick}>Publish</Button>
         </div>
