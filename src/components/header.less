@@ -1,4 +1,5 @@
 @header-logo-height: @padding-larger;
+@header-name-width: 40rem;
 @header-name-height: @padding-largest;
 
 .sv-header {
@@ -15,9 +16,8 @@
   }
   .sv-header-name {
     display: flex;
-    flex-grow: 1;
-    flex-shrink: 0;
-    max-width: 30rem;
+    width: @header-name-width;
+    min-width: @header-name-width / 2;
     margin: 0 @padding-largest;
     border-radius: @border-radius-small;
     box-shadow: inset 0 0 0 1px @shadow;
