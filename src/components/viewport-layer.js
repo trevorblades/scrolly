@@ -1,12 +1,10 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
-const {connect} = require('react-redux');
 const classNames = require('classnames');
 
 const TextField = require('./text-field');
 
-const {setLayerProperties, selectLayer} = require('../actions');
-const getInterpolatedValue = require('../util/get-interpolated-value');
+const {selectLayer} = require('../actions');
 const getParentProperties = require('../util/get-parent-properties');
 const getUnlinkedPosition = require('../util/get-unlinked-position');
 const layerPropType = require('../util/layer-prop-type');
@@ -17,7 +15,7 @@ const ViewportLayer = React.createClass({
 
   propTypes: {
     assets: React.PropTypes.array.isRequired,
-    dispatch: React.PropTypes.func.isRequired,
+    dispatch: React.PropTypes.func,
     getInterpolatedValue: React.PropTypes.func.isRequired,
     hidden: React.PropTypes.bool,
     layer: layerPropType.isRequired,
@@ -310,22 +308,4 @@ const ViewportLayer = React.createClass({
   }
 });
 
-function mapStateToProps(state) {
-  return {
-    assets: state.assets.present
-  };
-}
-
-function mapDispatchToProps(dispatch, props) {
-  return {
-    dispatch,
-    getInterpolatedValue: function(value) {
-      return getInterpolatedValue(value, props.percentPlayed);
-    },
-    onPropertiesChange: function(properties) {
-      dispatch(setLayerProperties(props.layer.id, properties));
-    }
-  };
-}
-
-module.exports = connect(mapStateToProps, mapDispatchToProps)(ViewportLayer);
+module.exports = ViewportLayer;

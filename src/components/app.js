@@ -17,6 +17,15 @@ const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
 
+const ConnectedViewport = connect(function(state) {
+  return {
+    assets: state.assets.present,
+    layers: state.layers.present,
+    percentPlayed: state.percentPlayed,
+    selectedLayer: state.selectedLayer
+  };
+}, null, null, {withRef: true})(Viewport);
+
 function getGCD(a, b) {
   return b === 0 ? a : getGCD(b, a % b);
 }
@@ -192,7 +201,7 @@ const App = React.createClass({
             <div className="sv-app-content-viewport-wrapper"
                 onClick={this._deselectLayer}
                 ref="viewportWrapper">
-              <Viewport compositionHeight={this.state.compositionHeight}
+              <ConnectedViewport compositionHeight={this.state.compositionHeight}
                   compositionWidth={this.state.compositionWidth}
                   ref="viewport"
                   wrapperHeight={this.state.viewportWrapperHeight}

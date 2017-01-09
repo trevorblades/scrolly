@@ -1,6 +1,7 @@
 const React = require('react');
 const {render} = require('react-dom');
 const request = require('request-promise');
+const url = require('url');
 require('core-js/fn/array/find');
 
 const Viewport = require('./components/viewport');
@@ -11,10 +12,10 @@ const Viewer = React.createClass({
 
   getInitialState: function() {
     let loading = false;
-    const slug = window.location.pathname.split('/').filter(Boolean)[0];
-    if (slug) {
+    const parsed = url.parse(window.location.href, true);
+    if (parsed.query.project) {
       loading = true;
-      request.get({url: `${API_URL}/projects/${slug}`, json: true})
+      request.get({url: `${API_URL}/projects/${parsed.query.project}`, json: true})
         .then(project => {
           this.setState({
             assets: project.assets,
@@ -29,23 +30,38 @@ const Viewer = React.createClass({
     }
     return {
       assets: [],
-      compositionHeight: 1920,
-      compositionWidth: 1080,
+      compositionHeight: 1080,
+      compositionWidth: 1920,
       layers: [],
       loading,
-      step: 1
+      percentPlayed: 0,
+      step: 1,
+      windowHeight: 0,
+      windowWidth: 0
     };
   },
 
   componentDidMount: function() {
+    window.addEventListener('wheel', this._onWheel);
     window.addEventListener('resize', this._onResize);
     this._onResize();
   },
 
+  _onWheel: function(event) {
+    const movementY = event.deltaY / this.state.step;
+    let percentPlayed = this.state.percentPlayed + movementY / 100;
+    if (percentPlayed < 0) {
+      percentPlayed = 0;
+    } else if (percentPlayed > 1) {
+      percentPlayed = 1;
+    }
+    this.setState({percentPlayed});
+  },
+
   _onResize: function() {
     this.setState({
-      wrapperHeight: window.innerHeight,
-      wrapperWidth: window.innerWidth
+      windowHeight: window.innerHeight,
+      windowWidth: window.innerWidth
     });
   },
 
@@ -54,10 +70,16 @@ const Viewer = React.createClass({
       return null;
     }
     return (
-      <Viewport compositionHeight={this.state.compositionHeight}
-          compositionWidth={this.state.compositionWidth}
-          wrapperHeight={this.state.windowHeight}
-          wrapperWidth={this.state.windowWidth}/>
+      <div className="sv-viewer">
+        <Viewport assets={this.state.assets}
+            compositionHeight={this.state.compositionHeight}
+            compositionWidth={this.state.compositionWidth}
+            layers={this.state.layers}
+            percentPlayed={this.state.percentPlayed}
+            readOnly
+            wrapperHeight={this.state.windowHeight}
+            wrapperWidth={this.state.windowWidth}/>
+      </div>
     );
   }
 });

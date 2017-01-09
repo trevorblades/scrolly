@@ -10,7 +10,34 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "gulp dev",
+    "dist": "NODE_ENV=production gulp dist",
+    "viewer": "NODE_ENV=viewer gulp viewer",
     "lint": "eslint src gulpfile.js"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ],
+    "env": {
+      "development": {
+        "plugins": [
+          [
+            "react-transform",
+            {
+              "transforms": [
+                {
+                  "transform": "livereactload/babel-transform",
+                  "imports": [
+                    "react"
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    }
   },
   "eslintConfig": {
     "extends": "planet/react"
@@ -29,6 +56,7 @@
     "eslint-plugin-react": "^6.7.1",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-less": "^3.1.0",
+    "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",

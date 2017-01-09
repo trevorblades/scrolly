@@ -12,6 +12,7 @@ const LessPluginAutoPrefix = require('less-plugin-autoprefix');
 const LessPluginCleanCSS = require('less-plugin-clean-css');
 const livereactload = require('livereactload');
 const path = require('path');
+const rename = require('gulp-rename');
 const source = require('vinyl-source-stream');
 const sourcemaps = require('gulp-sourcemaps');
 const uglify = require('gulp-uglify');
@@ -21,6 +22,47 @@ const SRC_DIR = path.join(__dirname, 'src');
 const BUILD_DIR = path.join(__dirname, 'build');
 const DEV_DIR = path.join(BUILD_DIR, 'dev');
 const DIST_DIR = path.join(BUILD_DIR, 'dist');
+const VIEWER_DIR = path.join(process.env.NODE_ENV === 'production' ? DIST_DIR : DEV_DIR, 'viewer');
+
+const browserifyTransforms = [babelify, envify];
+
+// viewer build tasks
+
+gulp.task('viewer-markup', function() {
+  return gulp.src(path.join(SRC_DIR, 'viewer.html'))
+    .pipe(rename('index.html'))
+    .pipe(gulp.dest(VIEWER_DIR));
+});
+
+gulp.task('viewer-scripts', function() {
+  return browserify(path.join(SRC_DIR, 'viewer.js'), {transform: browserifyTransforms})
+    .bundle()
+    .pipe(source('viewer.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(uglify({compress: true}))
+    .pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest(VIEWER_DIR));
+});
+
+gulp.task('viewer-styles', function() {
+  return gulp.src(SRC_DIR + '/viewer.less')
+    .pipe(less({
+      relativeUrls: true,
+      plugins: [new LessPluginAutoPrefix(), new LessPluginCleanCSS()]
+    }))
+    .on('error', function(err) {
+      gutil.log('LESS compilation failed: ' + err.message);
+      process.exit(1);
+    })
+    .pipe(gulp.dest(VIEWER_DIR));
+});
+
+gulp.task('viewer', gulp.parallel([
+  'viewer-markup',
+  'viewer-scripts',
+  'viewer-styles'
+]));
 
 // development build tasks
 
@@ -33,8 +75,9 @@ gulp.task('dev-markup', devMarkup);
 
 const bundlerOptions = Object.assign({}, watchify.args, {
   debug: true,
-  transform: [babelify, envify],
-  plugin: livereactload
+  transform: browserifyTransforms,
+  plugin: ['production', 'viewer'].indexOf(process.env.NODE_ENV) !== -1 ?
+      null : livereactload
 });
 const bundler = watchify(browserify(path.join(SRC_DIR, 'main.js'), bundlerOptions));
 
@@ -93,7 +136,7 @@ gulp.task('dev-browser-sync', function(done) {
   }, done);
 });
 
-gulp.task('dev-serve', gulp.series('dev-build', 'dev-browser-sync'));
+gulp.task('dev-serve', gulp.series('viewer', 'dev-build', 'dev-browser-sync'));
 
 gulp.task('dev-watch', function(done) {
   gulp.watch(path.join(SRC_DIR, 'index.html'), devMarkup);
@@ -116,7 +159,7 @@ gulp.task('dist-markup', function() {
 });
 
 gulp.task('dist-scripts', function() {
-  return browserify(path.join(SRC_DIR, 'main.js'))
+  return browserify(path.join(SRC_DIR, 'main.js'), {transform: browserifyTransforms})
     .bundle()
     .pipe(source('main.js'))
     .pipe(buffer())
@@ -151,4 +194,4 @@ gulp.task('dist-build', gulp.parallel([
   'dist-assets'
 ]));
 
-gulp.task('dist', gulp.series('dist-clean', 'dist-build'));
+gulp.task('dist', gulp.series('dist-clean', 'dist-build', 'viewer'));

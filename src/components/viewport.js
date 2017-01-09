@@ -5,11 +5,18 @@ const classNames = require('classnames');
 
 const ViewportLayer = require('./viewport-layer');
 
-const {addImageLayer, selectLayer} = require('../actions');
+const {addImageLayer, setLayerProperties, selectLayer} = require('../actions');
 const {ASSET_DRAG_TYPE} = require('../constants');
 const getParents = require('../util/get-parents');
+const getInterpolatedValue = require('../util/get-interpolated-value');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const layerPropType = require('../util/layer-prop-type');
+
+const ConnectedViewportLayer = connect(function(state) {
+  return {
+    assets: state.assets.present
+  };
+})(ViewportLayer);
 
 function propsToDimensions(props) {
   const compositionAspectRatio = props.compositionWidth / props.compositionHeight;
@@ -33,15 +40,16 @@ function propsToDimensions(props) {
   };
 }
 
-let Viewport = React.createClass({
+const Viewport = React.createClass({
 
   propTypes: {
     assets: React.PropTypes.array.isRequired,
     compositionHeight: React.PropTypes.number.isRequired,
     compositionWidth: React.PropTypes.number.isRequired,
-    dispatch: React.PropTypes.func.isRequired,
+    dispatch: React.PropTypes.func,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
+    readOnly: React.PropTypes.bool,
     selectedLayer: React.PropTypes.number,
     wrapperHeight: React.PropTypes.number.isRequired,
     wrapperOffsetLeft: React.PropTypes.number.isRequired,
@@ -125,22 +133,30 @@ let Viewport = React.createClass({
     const hidden = !layer.visible ||
         layer.in > this.props.percentPlayed ||
         layer.out < this.props.percentPlayed;
-
-    return (
-      <ViewportLayer hidden={hidden}
-          key={layer.id}
-          layer={layer}
-          layers={this.props.layers}
-          parents={getParents(layer, this.props.layers)}
-          percentPlayed={this.props.percentPlayed}
-          ref={`layer${layer.id}`}
-          selected={layer.id === this.props.selectedLayer}
-          viewportHeight={this.state.height}
-          viewportOffsetLeft={this.state.offsetLeft}
-          viewportOffsetTop={this.state.offsetTop}
-          viewportScale={this.getScale()}
-          viewportWidth={this.state.width}/>
-    );
+    const component = this.props.readOnly ?
+        ViewportLayer : ConnectedViewportLayer;
+    return React.createElement(component, {
+      assets: this.props.assets,
+      getInterpolatedValue: value => {
+        return getInterpolatedValue(value, this.props.percentPlayed);
+      },
+      hidden: hidden,
+      key: layer.id,
+      layer: layer,
+      layers: this.props.layers,
+      onPropertiesChange: properties => {
+        this.props.dispatch(setLayerProperties(layer.id, properties));
+      },
+      parents: getParents(layer, this.props.layers),
+      percentPlayed: this.props.percentPlayed,
+      ref: `layer${layer.id}`,
+      selected: layer.id === this.props.selectedLayer,
+      viewportHeight: this.state.height,
+      viewportOffsetLeft: this.state.offsetLeft,
+      viewportOffsetTop: this.state.offsetTop,
+      viewportScale: this.getScale(),
+      viewportWidth: this.state.width
+    });
   },
 
   render: function() {
@@ -184,11 +200,4 @@ let Viewport = React.createClass({
   }
 });
 
-module.exports = connect(function(state) {
-  return {
-    assets: state.assets.present,
-    layers: state.layers.present,
-    percentPlayed: state.percentPlayed,
-    selectedLayer: state.selectedLayer
-  };
-}, null, null, {withRef: true})(Viewport);
+module.exports = Viewport;
