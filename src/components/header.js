@@ -33,7 +33,7 @@ const Header = React.createClass({
         `sv-${savedStatus.split(' ').join('-').toLowerCase()}`);
     return (
       <div className="sv-header">
-        <img className="sv-header-logo" src="assets/logo.svg"/>
+        <img className="sv-header-logo" src="/assets/logo.svg"/>
         <div className="sv-header-name">{this.props.name}</div>
         <div className="sv-header-content">
           <div className={statusClassName}>
