@@ -1,24 +1,25 @@
-var path = require('path');
-var babelify = require('babelify');
-var browserify = require('browserify');
-var browserSync = require('browser-sync').create();
-var del = require('del');
-var gulp = require('gulp');
-var less = require('gulp-less');
-var sourcemaps = require('gulp-sourcemaps');
-var uglify = require('gulp-uglify');
-var gutil = require('gulp-util');
-var LessPluginAutoPrefix = require('less-plugin-autoprefix');
-var LessPluginCleanCSS = require('less-plugin-clean-css');
-var livereactload = require('livereactload');
-var buffer = require('vinyl-buffer');
-var source = require('vinyl-source-stream');
-var watchify = require('watchify');
+const path = require('path');
+const babelify = require('babelify');
+const browserify = require('browserify');
+const browserSync = require('browser-sync').create();
+const del = require('del');
+const envify = require('envify');
+const gulp = require('gulp');
+const less = require('gulp-less');
+const sourcemaps = require('gulp-sourcemaps');
+const uglify = require('gulp-uglify');
+const gutil = require('gulp-util');
+const LessPluginAutoPrefix = require('less-plugin-autoprefix');
+const LessPluginCleanCSS = require('less-plugin-clean-css');
+const livereactload = require('livereactload');
+const buffer = require('vinyl-buffer');
+const source = require('vinyl-source-stream');
+const watchify = require('watchify');
 
-var SRC_DIR = path.join(__dirname, 'src');
-var BUILD_DIR = path.join(__dirname, 'build');
-var DEV_DIR = path.join(BUILD_DIR, 'dev');
-var DIST_DIR = path.join(BUILD_DIR, 'dist');
+const SRC_DIR = path.join(__dirname, 'src');
+const BUILD_DIR = path.join(__dirname, 'build');
+const DEV_DIR = path.join(BUILD_DIR, 'dev');
+const DIST_DIR = path.join(BUILD_DIR, 'dist');
 
 // development build tasks
 
@@ -29,12 +30,12 @@ function devMarkup() {
 }
 gulp.task('dev-markup', devMarkup);
 
-var bundlerOptions = Object.assign({}, watchify.args, {
+const bundlerOptions = Object.assign({}, watchify.args, {
   debug: true,
-  transform: babelify,
+  transform: [babelify, envify],
   plugin: livereactload
 });
-var bundler = watchify(browserify(path.join(SRC_DIR, 'main.js'), bundlerOptions));
+const bundler = watchify(browserify(path.join(SRC_DIR, 'main.js'), bundlerOptions));
 
 function bundle() {
   return bundler.bundle()
@@ -49,7 +50,7 @@ bundler.on('log', gutil.log);
 gulp.task('dev-scripts', bundle);
 
 function devStyles() {
-  var stream = gulp.src(path.join(SRC_DIR, 'main.less'))
+  const stream = gulp.src(path.join(SRC_DIR, 'main.less'))
     .pipe(sourcemaps.init())
     .pipe(less({
       relativeUrls: true,
