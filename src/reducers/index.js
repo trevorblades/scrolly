@@ -48,7 +48,7 @@ const combinedReducer = combineReducers({
   changedAt: undoable(function(state = null, action) {
     if (action.type === 'UPDATE_PROJECT') {
       return new Date(action.updatedAt).toISOString();
-    } else if (excludedActions.indexOf(action.type) !== -1) {
+    } else if (excludedActions.indexOf(action.type) === -1) {
       return new Date().toISOString();
     }
     return state;
