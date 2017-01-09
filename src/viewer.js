@@ -49,7 +49,7 @@ const Viewer = React.createClass({
 
   _onWheel: function(event) {
     const movementY = event.deltaY / this.state.step;
-    let percentPlayed = this.state.percentPlayed + movementY / 100;
+    let percentPlayed = (this.state.windowWidth * this.state.percentPlayed + movementY) / this.state.windowWidth;
     if (percentPlayed < 0) {
       percentPlayed = 0;
     } else if (percentPlayed > 1) {

@@ -69,7 +69,7 @@ const Header = React.createClass({
           <Button className="sv-header-content-save"
               onClick={this.props.onSaveClick}>
             <span>Save</span>
-            <span>{`(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '⌘' : 'Ctrl'} + S)`}</span>
+            <span dangerouslySetInnerHTML={{__html: `(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '&#8984;' : 'Ctrl'} + S)`}}/>
           </Button>
           <Button onClick={this.props.onPublishClick}>Publish</Button>
         </div>
