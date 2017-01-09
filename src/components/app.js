@@ -40,6 +40,7 @@ const App = React.createClass({
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     name: React.PropTypes.string.isRequired,
     selectedLayer: React.PropTypes.number,
+    slug: React.PropTypes.string,
     step: React.PropTypes.number.isRequired
   },
 
@@ -219,7 +220,8 @@ const App = React.createClass({
         <Timeline maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}/>
         {this.state.publishing &&
-          <PublishDialog onClose={this._onPublishDialogClose}/>}
+          <PublishDialog onClose={this._onPublishDialogClose}
+              slug={this.props.slug}/>}
       </div>
     );
   }
@@ -234,6 +236,7 @@ module.exports = connect(function(state) {
     layers: state.layers.present,
     name: state.name.present,
     selectedLayer: state.selectedLayer,
+    slug: state.slug,
     step: state.step.present
   };
 })(App);
