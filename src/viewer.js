@@ -13,9 +13,10 @@ const Viewer = React.createClass({
   getInitialState: function() {
     let loading = false;
     const parsed = url.parse(window.location.href, true);
-    if (parsed.query.s) {
+    const slug = parsed.query.project || parsed.query.p;
+    if (slug) {
       loading = true;
-      request.get({url: `${API_URL}/projects/${parsed.query.s}`, json: true})
+      request.get({url: `${API_URL}/projects/${slug}`, json: true})
         .then(project => {
           this.setState({
             assets: project.assets,
