@@ -56,6 +56,7 @@ const Header = React.createClass({
         <img className="sv-header-logo" src="/assets/logo.svg"/>
         <div className="sv-header-name">
           <TextField onChange={this._onNameChange}
+              singleClick
               value={this.props.name}/>
           <Button onClick={this._onNewClick}>New</Button>
           <Button onClick={this._onOpenClick}>Open</Button>

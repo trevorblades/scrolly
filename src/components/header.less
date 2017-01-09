@@ -29,6 +29,13 @@
     .sv-text-field {
       flex-grow: 1;
       padding: 0 @padding-base;
+      cursor: text;
+      &:hover {
+        color: mix(@gray-lightest, white);
+      }
+      &:focus {
+        color: white;
+      }
     }
   }
   .sv-header-content {
