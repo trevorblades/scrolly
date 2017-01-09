@@ -5,11 +5,10 @@ const {excludeAction} = require('redux-undo');
 const assetsReducer = require('./assets');
 const layersReducer = require('./layers');
 
-const excludedActions = [
+const undoConfig = {filter: excludeAction([
   'SET_PERCENT_PLAYED',
   'SELECT_LAYER'
-];
-const undoConfig = {filter: excludeAction(excludedActions)};
+])};
 
 function getUpdateReducer(key, defaultState = null) {
   return function(state = defaultState, action) {
