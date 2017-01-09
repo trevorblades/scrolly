@@ -63,6 +63,20 @@ function selectLayer(id) {
   };
 }
 
+function updateProject(project) {
+  return {
+    type: 'UPDATE_PROJECT',
+    id: project.id,
+    slug: project.slug,
+    name: project.name,
+    layers: project.layers,
+    assets: project.assets,
+    step: project.step,
+    createdAt: project.created_at,
+    updatedAt: project.updated_at
+  };
+}
+
 module.exports = {
   addLayer,
   addImageLayer,
@@ -72,5 +86,6 @@ module.exports = {
   toggleLayerVisibility,
   linkLayers,
   setPercentPlayed,
-  selectLayer
+  selectLayer,
+  updateProject
 };

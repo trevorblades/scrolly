@@ -21,7 +21,16 @@ function getUpdateReducer(key, defaultState = null) {
 module.exports = combineReducers({
   id: getUpdateReducer('id'),
   slug: getUpdateReducer('slug'),
-  name: undoable(getUpdateReducer('name', 'Untitled project')),
+  name: undoable(function(state = 'Untitled project', action) {
+    switch (action.type) {
+      case 'SET_NAME':
+        return action.value;
+      case 'UPDATE_PROJECT':
+        return action.name;
+      default:
+        return state;
+    }
+  }),
   assets: undoable(assetsReducer, undoConfig),
   layers: undoable(layersReducer, undoConfig),
   step: undoable(function(state = 1, action) {
