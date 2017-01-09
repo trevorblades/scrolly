@@ -13,7 +13,6 @@ const {
   addLayer,
   linkLayers,
   orderLayers,
-  setStep,
   setPercentPlayed,
   selectLayer
 } = require('../actions');

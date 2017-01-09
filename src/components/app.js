@@ -12,7 +12,7 @@ const Timeline = require('./timeline');
 const ViewBar = require('./view-bar');
 const Viewport = require('./viewport');
 
-const {selectLayer, updateProject} = require('../actions');
+const {selectLayer} = require('../actions');
 const {API_URL, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
