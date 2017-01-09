@@ -18,7 +18,9 @@ const Header = React.createClass({
     let lastSaved = 'Save your project to publish it';
     let savedStatus = 'Not saved';
     if (this.props.updatedAt) {
-      lastSaved = `Last saved at ${moment().calendar(this.props.updatedAt)}`;
+      lastSaved = `Last saved ${moment().calendar(this.props.updatedAt, {
+        sameElse: '[on] MMMM D, YYYY'
+      }).toLowerCase()}`;
       if (this.props.changedAt) {
         const saved = this.props.updatedAt.getTime() === this.props.changedAt.getTime();
         savedStatus = saved ? 'Saved' : 'Unsaved changes';
