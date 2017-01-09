@@ -27,6 +27,7 @@ const App = React.createClass({
     assets: React.PropTypes.array.isRequired,
     changed: React.PropTypes.bool.isRequired,
     dispatch: React.PropTypes.func.isRequired,
+    id: React.PropTypes.number,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     name: React.PropTypes.string.isRequired,
     selectedLayer: React.PropTypes.number,
@@ -129,21 +130,27 @@ const App = React.createClass({
   },
 
   _saveProject: function() {
-    const options = {
-      url: `${API_URL}/projects`,
-      body: {
-        name: this.props.name,
-        assets: this.props.assets,
-        layers: this.props.layers,
-        step: this.props.step
-      },
-      json: true
-    };
-    request.post(options)
-      .then(this._handleSaveResponse)
-      .catch(function(err) {
+    if (this.props.changed) {
+      const options = {
+        url: `${API_URL}/projects`,
+        body: {
+          name: this.props.name,
+          assets: this.props.assets,
+          layers: this.props.layers,
+          step: this.props.step
+        },
+        json: true
+      };
+
+      const client = !this.props.id ?
+          request.post(options) :
+          request.put(Object.assign(options, {
+            url: `${options.url}/${this.props.id}`}
+          ));
+      client.then(this._handleSaveResponse).catch(function(err) {
         throw err;
       });
+    }
   },
 
   _handleSaveResponse: function(project) {
