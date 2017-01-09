@@ -22,10 +22,13 @@ const App = React.createClass({
 
   propTypes: {
     assets: React.PropTypes.array.isRequired,
+    createdAt: React.PropTypes.instanceOf(Date),
     dispatch: React.PropTypes.func.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
+    name: React.PropTypes.string.isRequired,
     selectedLayer: React.PropTypes.number,
-    step: React.PropTypes.number.isRequired
+    step: React.PropTypes.number.isRequired,
+    updatedAt: React.PropTypes.instanceOf(Date)
   },
 
   getInitialState: function() {
@@ -111,6 +114,7 @@ const App = React.createClass({
     const options = {
       url: `${API_URL}/projects`,
       body: {
+        name: this.props.name,
         assets: this.props.assets,
         layers: this.props.layers,
         step: this.props.step
@@ -119,10 +123,20 @@ const App = React.createClass({
     };
     request.post(options)
       .then(res => {
-        this.props.dispatch(Object.assign({type: 'UPDATE_PROJECT'}, res));
+        this.props.dispatch({
+          type: 'UPDATE_PROJECT',
+          id: res.id,
+          slug: res.slug,
+          name: res.name,
+          layers: res.layers,
+          assets: res.assets,
+          step: res.step,
+          createdAt: res.created_at,
+          updatedAt: res.updated_at
+        });
       })
       .catch(function(err) {
-        // something went wrong
+        throw err;
       });
   },
 
@@ -150,6 +164,8 @@ const App = React.createClass({
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
         <Header ref="header">
+          {this.props.updatedAt &&
+            <h6>{`Last saved at ${this.props.updatedAt}`}</h6>}
           <Button onClick={this._onSaveClick}>Save</Button>
           <Button onClick={this._onPublishClick}>Publish</Button>
         </Header>
@@ -188,8 +204,11 @@ const App = React.createClass({
 module.exports = connect(function(state) {
   return {
     assets: state.assets.present,
+    createdAt: state.createdAt,
     layers: state.layers.present,
+    name: state.name.present,
     selectedLayer: state.selectedLayer,
-    step: state.step.present
+    step: state.step.present,
+    updatedAt: state.updatedAt
   };
 })(App);
