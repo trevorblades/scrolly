@@ -74,7 +74,7 @@ module.exports = {
   fontSize: {
     type: 'number',
     min: 1,
-    default: 16,
+    default: 24,
     mutable: true
   },
   fontWeight: {
