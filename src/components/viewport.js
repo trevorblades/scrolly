@@ -49,6 +49,13 @@ let Viewport = React.createClass({
     wrapperWidth: React.PropTypes.number.isRequired
   },
 
+  getDefaultProps: function() {
+    return {
+      wrapperOffsetLeft: 0,
+      wrapperOffsetTop: 0
+    };
+  },
+
   getInitialState: function() {
     const initialState = propsToDimensions(this.props);
     initialState.selectedLayer = null;

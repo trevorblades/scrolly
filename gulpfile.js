@@ -44,7 +44,6 @@ function bundle() {
     .pipe(source('main.js'))
     .pipe(gulp.dest(DEV_DIR));
 }
-
 bundler.on('update', bundle);
 bundler.on('log', gutil.log);
 
