@@ -12,19 +12,16 @@ const undoConfig = {
   ])
 };
 
-function getUpdateReducer(key, formatter, defaultState = null) {
+function getUpdateReducer(key, defaultState = null) {
   return function(state = defaultState, action) {
-    if (action.type === 'UPDATE_PROJECT') {
-      return formatter ? formatter(action[key]) : action[key];
-    }
-    return state;
+    return action.type === 'UPDATE_PROJECT' ? action[key] : state;
   };
 }
 
 module.exports = combineReducers({
   id: getUpdateReducer('id'),
   slug: getUpdateReducer('slug'),
-  name: undoable(getUpdateReducer('name', null, 'Untitled project')),
+  name: undoable(getUpdateReducer('name', 'Untitled project')),
   assets: undoable(assetsReducer, undoConfig),
   layers: undoable(layersReducer, undoConfig),
   step: undoable(function(state = 1, action) {
@@ -37,14 +34,14 @@ module.exports = combineReducers({
         return state;
     }
   }, undoConfig),
-  createdAt: getUpdateReducer('createdAt', date => new Date(date)),
-  updatedAt: getUpdateReducer('updatedAt', date => new Date(date)),
+  createdAt: getUpdateReducer('createdAt'),
+  updatedAt: getUpdateReducer('updatedAt'),
   changedAt: undoable(function(state = null, action) {
     if (action.type === 'UPDATE_PROJECT') {
-      return new Date(action.updatedAt);
+      return new Date(action.updatedAt).toISOString();
     } else if (action.type !== 'SET_PERCENT_PLAYED' &&
         action.type !== 'SELECT_LAYER') {
-      return new Date();
+      return new Date().toISOString();
     }
     return state;
   }),

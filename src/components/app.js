@@ -21,6 +21,7 @@ const App = React.createClass({
 
   propTypes: {
     assets: React.PropTypes.array.isRequired,
+    changed: React.PropTypes.bool.isRequired,
     dispatch: React.PropTypes.func.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     name: React.PropTypes.string.isRequired,
@@ -66,6 +67,10 @@ const App = React.createClass({
         return event.target.blur();
       }
       this._deselectLayer();
+    } else if (this.props.changed &&
+        event.keyCode === 83 && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      this._saveProject();
     }
   },
 
@@ -107,7 +112,19 @@ const App = React.createClass({
     event.preventDefault();
   },
 
-  _onSaveClick: function() {
+  _onPublishClick: function() {
+    this.setState({publishing: true});
+  },
+
+  _onPublishDialogClose: function() {
+    this.setState({publishing: false});
+  },
+
+  _deselectLayer: function() {
+    this.props.dispatch(selectLayer(null));
+  },
+
+  _saveProject: function() {
     const options = {
       url: `${API_URL}/projects`,
       body: {
@@ -140,18 +157,6 @@ const App = React.createClass({
     this.setState({changed: false});
   },
 
-  _onPublishClick: function() {
-    this.setState({publishing: true});
-  },
-
-  _onPublishDialogClose: function() {
-    this.setState({publishing: false});
-  },
-
-  _deselectLayer: function() {
-    this.props.dispatch(selectLayer(null));
-  },
-
   _getLayerDimensions: function(id) {
     return this.refs.viewport.getWrappedInstance().getLayerDimensions(id);
   },
@@ -164,7 +169,7 @@ const App = React.createClass({
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
         <Header onPublishClick={this._onPublishClick}
-            onSaveClick={this._onSaveClick}
+            onSaveClick={this._saveProject}
             ref="header"/>
         <div className="sv-app-content">
           <Library assets={this.state.assets}
@@ -199,9 +204,11 @@ const App = React.createClass({
 });
 
 module.exports = connect(function(state) {
+  const changedAt = new Date(state.changedAt && state.changedAt.present);
   return {
     id: state.id,
     assets: state.assets.present,
+    changed: changedAt.getTime() !== new Date(state.updatedAt).getTime(),
     layers: state.layers.present,
     name: state.name.present,
     selectedLayer: state.selectedLayer,

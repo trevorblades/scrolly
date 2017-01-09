@@ -1,15 +1,26 @@
+@header-logo-height: @padding-larger;
+
 .sv-header {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
-  flex-shrink: 0;
-  padding: @padding-base;
+  padding: @padding-small @padding-base;
   border-bottom: 1px solid @brand-primary;
   box-shadow: 0 1px @shadow-dark;
   background-color: @gray-dark;
   position: relative;
   .sv-header-logo {
-    height: @font-size-small * 2;
+    height: @header-logo-height;
+  }
+  .sv-header-name {
+    flex-grow: 1;
+    max-width: 40rem;
+    margin: 0 @padding-largest;
+    border-radius: @border-radius-small;
+    line-height: @header-logo-height;
+    text-align: center;
+    background-color: @gray-darker;
   }
   .sv-header-content {
     display: flex;

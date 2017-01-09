@@ -8,21 +8,23 @@ const Button = require('./button');
 const Header = React.createClass({
 
   propTypes: {
-    changedAt: React.PropTypes.instanceOf(Date),
+    changedAt: React.PropTypes.string,
+    name: React.PropTypes.string.isRequired,
     onPublishClick: React.PropTypes.func.isRequired,
     onSaveClick: React.PropTypes.func.isRequired,
-    updatedAt: React.PropTypes.instanceOf(Date)
+    updatedAt: React.PropTypes.string
   },
 
   render: function() {
     let lastSaved = 'Save your project to publish it';
     let savedStatus = 'Not saved';
     if (this.props.updatedAt) {
-      lastSaved = `Last saved ${moment().calendar(this.props.updatedAt, {
+      const updatedAt = new Date(this.props.updatedAt);
+      lastSaved = `Last saved ${moment().calendar(updatedAt, {
         sameElse: '[on] MMMM D, YYYY'
       }).toLowerCase()}`;
       if (this.props.changedAt) {
-        const saved = this.props.updatedAt.getTime() === this.props.changedAt.getTime();
+        const saved = updatedAt.getTime() === new Date(this.props.changedAt).getTime();
         savedStatus = saved ? 'Saved' : 'Unsaved changes';
       }
     }
@@ -32,6 +34,7 @@ const Header = React.createClass({
     return (
       <div className="sv-header">
         <img className="sv-header-logo" src="assets/logo.svg"/>
+        <div className="sv-header-name">{this.props.name}</div>
         <div className="sv-header-content">
           <div className={statusClassName}>
             <span>{savedStatus}</span>
@@ -52,6 +55,7 @@ const Header = React.createClass({
 module.exports = connect(function(state) {
   return {
     changedAt: state.changedAt.present,
+    name: state.name.present,
     updatedAt: state.updatedAt
   };
 })(Header);
