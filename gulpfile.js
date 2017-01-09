@@ -1,19 +1,20 @@
-const path = require('path');
 const babelify = require('babelify');
 const browserify = require('browserify');
 const browserSync = require('browser-sync').create();
+const buffer = require('vinyl-buffer');
 const del = require('del');
 const envify = require('envify');
 const gulp = require('gulp');
-const less = require('gulp-less');
-const sourcemaps = require('gulp-sourcemaps');
-const uglify = require('gulp-uglify');
 const gutil = require('gulp-util');
+const historyApiFallback = require('connect-history-api-fallback');
+const less = require('gulp-less');
 const LessPluginAutoPrefix = require('less-plugin-autoprefix');
 const LessPluginCleanCSS = require('less-plugin-clean-css');
 const livereactload = require('livereactload');
-const buffer = require('vinyl-buffer');
+const path = require('path');
 const source = require('vinyl-source-stream');
+const sourcemaps = require('gulp-sourcemaps');
+const uglify = require('gulp-uglify');
 const watchify = require('watchify');
 
 const SRC_DIR = path.join(__dirname, 'src');
@@ -87,6 +88,7 @@ gulp.task('dev-browser-sync', function(done) {
     server: {
       baseDir: DEV_DIR
     },
+    middleware: [historyApiFallback()],
     open: false,
     ghostMode: false
   }, done);
