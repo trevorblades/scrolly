@@ -46,12 +46,23 @@ const combinedReducer = combineReducers({
   createdAt: getUpdateReducer('createdAt'),
   updatedAt: getUpdateReducer('updatedAt'),
   changedAt: undoable(function(state = null, action) {
-    if (action.type === 'UPDATE_PROJECT') {
-      return new Date(action.updatedAt).toISOString();
-    } else if (excludedActions.indexOf(action.type) === -1) {
-      return new Date().toISOString();
+    switch (action.type) {
+      case 'UPDATE_PROJECT':
+        return new Date(action.updatedAt).toISOString();
+      case 'SET_NAME':
+      case 'SET_STEP':
+      case 'SET_LAYER_PROPERTIES':
+      case 'ADD_LAYER':
+      case 'REMOVE_LAYER':
+      case 'ORDER_LAYERS':
+      case 'TOGGLE_LAYER_VISIBILITY':
+      case 'LINK_LAYERS':
+      case 'ADD_ASSET':
+      case 'REMOVE_ASSET':
+        return new Date().toISOString();
+      default:
+        return state;
     }
-    return state;
   }),
   percentPlayed: function(state = 0, action) {
     if (action.type === 'SET_PERCENT_PLAYED') {
