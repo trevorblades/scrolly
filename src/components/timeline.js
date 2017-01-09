@@ -460,7 +460,7 @@ function mapDispatchToProps(dispatch) {
       if (value < 1) {
         value = 1;
       }
-      dispatch(setStep(value));
+      dispatch({type: 'SET_STEP', value});
     },
     setPercentPlayed: function(value) {
       if (value < 0) {

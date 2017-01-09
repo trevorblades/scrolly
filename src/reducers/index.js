@@ -5,16 +5,25 @@ const {excludeAction} = require('redux-undo');
 const assetsReducer = require('./assets');
 const layersReducer = require('./layers');
 
-const undoConfig = {filter: excludeAction(['SET_PERCENT_PLAYED', 'SELECT_LAYER'])};
+const undoConfig = {
+  filter: excludeAction([
+    'SET_PERCENT_PLAYED',
+    'SELECT_LAYER'
+  ])
+};
 
 module.exports = combineReducers({
   assets: undoable(assetsReducer, undoConfig),
   layers: undoable(layersReducer, undoConfig),
   step: undoable(function(state = 1, action) {
-    if (action.type === 'SET_STEP') {
-      return action.value;
+    switch (action.type) {
+      case 'SET_STEP':
+        return action.value;
+      case 'UPDATE_PROJECT':
+        return action.step;
+      default:
+        return state;
     }
-    return state;
   }, undoConfig),
   percentPlayed: function(state = 0, action) {
     if (action.type === 'SET_PERCENT_PLAYED') {

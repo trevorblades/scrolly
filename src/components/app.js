@@ -12,7 +12,7 @@ const Timeline = require('./timeline');
 const ViewBar = require('./view-bar');
 const Viewport = require('./viewport');
 
-const {selectLayer} = require('../actions');
+const {selectLayer, updateProject} = require('../actions');
 const {API_URL, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
@@ -118,8 +118,8 @@ const App = React.createClass({
       json: true
     };
     request.post(options)
-      .then(function(res) {
-        // it worked!
+      .then(res => {
+        this.props.dispatch(Object.assign({type: 'UPDATE_PROJECT'}, res));
       })
       .catch(function(err) {
         // something went wrong

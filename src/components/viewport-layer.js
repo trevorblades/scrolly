@@ -45,7 +45,8 @@ const ViewportLayer = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    if (nextProps.layer.asset !== this.props.layer.asset) {
+    if (nextProps.assets !== this.props.assets ||
+        nextProps.layer.asset !== this.props.layer.asset) {
       this.setState({asset: this._getAsset(nextProps.layer.asset)});
     }
   },
@@ -260,7 +261,7 @@ const ViewportLayer = React.createClass({
       case 'image':
         content = (
           <img height={this.state.asset.height * this.props.viewportScale * layerScale}
-              src={this.state.asset.data}
+              src={this.state.asset.src}
               style={{opacity: layerOpacity}}
               width={this.state.asset.width * this.props.viewportScale * layerScale}/>
         );

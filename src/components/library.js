@@ -2,16 +2,16 @@ const React = require('react');
 const {connect} = require('react-redux');
 const bytes = require('bytes');
 const classNames = require('classnames');
+const mime = require('mime');
 
 const Icon = require('./icon');
 
-const {addAsset, removeAsset} = require('../actions');
 const {ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 
-const ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
-const allowedFiletypesString = ALLOWED_FILETYPES.map(function(filetype, index, array) {
-  let string = (filetype + ' ').slice(filetype.indexOf('/') + 1, filetype.indexOf('+'));
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
+const allowedFiletypesString = ALLOWED_MIME_TYPES.map(function(mimeType, index, array) {
+  let string = mime.extension(mimeType);
   if (index === array.length - 1) {
     string = `and ${string}`;
   }
@@ -23,8 +23,7 @@ const Library = React.createClass({
   propTypes: {
     assets: React.PropTypes.array.isRequired,
     dispatch: React.PropTypes.func.isRequired,
-    dragging: React.PropTypes.bool,
-    onRemoveClick: React.PropTypes.func.isRequired
+    dragging: React.PropTypes.bool
   },
 
   getInitialState: function() {
@@ -61,7 +60,7 @@ const Library = React.createClass({
   },
 
   _onFileUpload: function(file) {
-    if (!file || ALLOWED_FILETYPES.indexOf(file.type) === -1) {
+    if (!file || ALLOWED_MIME_TYPES.indexOf(file.type) === -1) {
       return;
     }
 
@@ -79,15 +78,15 @@ const Library = React.createClass({
   },
 
   _onImageLoad: function(data, file, event) {
-    const args = [
-      file.name,
-      file.type,
-      file.size,
-      data,
-      event.target.width,
-      event.target.height
-    ];
-    this.props.dispatch(addAsset(...args));
+    this.props.dispatch({
+      type: 'ADD_ASSET',
+      name: file.name,
+      mimeType: file.type,
+      size: file.size,
+      src: data,
+      width: event.target.width,
+      height: event.target.height
+    });
     this.setState({uploading: false});
   },
 
@@ -104,6 +103,10 @@ const Library = React.createClass({
     event.dataTransfer.setData(ASSET_DRAG_TYPE, id);
   },
 
+  _onRemoveClick: function(id) {
+    this.props.dispatch({type: 'REMOVE_ASSET', id});
+  },
+
   render: function() {
     const selectedAsset = this.props.assets.find(asset => asset.id === this.state.selectedAssetId);
     const assetsClassName = classNames('sv-library-assets', {
@@ -115,7 +118,7 @@ const Library = React.createClass({
         <div className="sv-library-preview">
           <div className="sv-library-preview-thumb">
             {selectedAsset ?
-              <img src={selectedAsset.data}/> : <Icon name="image"/>}
+              <img src={selectedAsset.src}/> : <Icon name="image"/>}
           </div>
           <div className="sv-library-preview-info">
             {selectedAsset && <div>
@@ -152,7 +155,7 @@ const Library = React.createClass({
                     onDragStart={this._onAssetDragStart.bind(null, asset.id)}>
                   <span title={asset.name}>{asset.name}</span>
                   <span>{bytes(asset.size)}</span>
-                  <span onClick={this.props.onRemoveClick.bind(null, asset.id)}
+                  <span onClick={this._onRemoveClick.bind(null, asset.id)}
                       title="Remove asset">
                     <Icon name="trash"/>
                   </span>
@@ -165,19 +168,8 @@ const Library = React.createClass({
   }
 });
 
-function mapStateToProps(state) {
+module.exports = connect(function(state) {
   return {
     assets: state.assets.present
   };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch,
-    onRemoveClick: function(id) {
-      dispatch(removeAsset(id));
-    }
-  };
-}
-
-module.exports = connect(mapStateToProps, mapDispatchToProps)(Library);
+})(Library);

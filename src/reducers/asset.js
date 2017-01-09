@@ -1,12 +1,13 @@
+let nextId = 0;
 module.exports = function(state, action) {
   switch (action.type) {
     case 'ADD_ASSET':
       return {
-        id: action.id,
+        id: nextId++,
         name: action.name,
-        filetype: action.filetype,
+        mimeType: action.mimeType,
         size: action.size,
-        data: action.data,
+        src: action.src,
         width: action.width,
         height: action.height
       };

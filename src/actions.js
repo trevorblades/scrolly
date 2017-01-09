@@ -1,5 +1,4 @@
 let nextLayerId = 0;
-let nextAssetId = 0;
 
 function addLayer(type) {
   return {
@@ -50,33 +49,6 @@ function linkLayers(child, parent) {
   };
 }
 
-function addAsset(name, filetype, size, data, width, height) {
-  return {
-    type: 'ADD_ASSET',
-    id: nextAssetId++,
-    name,
-    filetype,
-    size,
-    data,
-    width,
-    height
-  };
-}
-
-function removeAsset(id) {
-  return {
-    type: 'REMOVE_ASSET',
-    id
-  };
-}
-
-function setStep(value) {
-  return {
-    type: 'SET_STEP',
-    value
-  };
-}
-
 function setPercentPlayed(value) {
   return {
     type: 'SET_PERCENT_PLAYED',
@@ -99,9 +71,6 @@ module.exports = {
   setLayerProperties,
   toggleLayerVisibility,
   linkLayers,
-  addAsset,
-  removeAsset,
-  setStep,
   setPercentPlayed,
   selectLayer
 };
