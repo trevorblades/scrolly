@@ -26,7 +26,7 @@ const Header = React.createClass({
   },
 
   _onNewClick: function() {
-
+    this.props.dispatch({type: 'RESET'});
   },
 
   _onOpenClick: function() {

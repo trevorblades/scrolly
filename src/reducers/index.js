@@ -18,7 +18,7 @@ function getUpdateReducer(key, defaultState = null) {
   };
 }
 
-module.exports = combineReducers({
+const combinedReducer = combineReducers({
   id: getUpdateReducer('id'),
   slug: getUpdateReducer('slug'),
   name: undoable(function(state = 'Untitled project', action) {
@@ -67,3 +67,10 @@ module.exports = combineReducers({
     return state;
   }
 });
+
+module.exports = function(state, action) {
+  if (action.type === 'RESET') {
+    state = undefined;
+  }
+  return combinedReducer(state, action);
+};
