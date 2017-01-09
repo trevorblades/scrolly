@@ -86,10 +86,11 @@ const App = React.createClass({
         return event.target.blur();
       }
       this._deselectLayer();
-    } else if (this.props.changed &&
-        event.keyCode === 83 && (event.metaKey || event.ctrlKey)) {
+    } else if (event.keyCode === 83 && (event.metaKey || event.ctrlKey)) {
       event.preventDefault();
-      this._saveProject();
+      if (this.props.changed) {
+        this._saveProject();
+      }
     }
   },
 
@@ -155,22 +156,27 @@ const App = React.createClass({
         },
         json: true
       };
-
       const client = !this.props.id ?
           request.post(options) :
           request.put(Object.assign(options, {
             url: `${options.url}/${this.props.id}`}
           ));
-      client.then(this._handleSaveResponse).catch(function(err) {
-        throw err;
-      });
+      client.then(this._handleSaveResponse)
+        .catch(err => {
+          this.setState({saving: false});
+        });
+
+      this.setState({saving: true});
     }
   },
 
   _handleSaveResponse: function(project) {
     history.replaceState(null, null, `/${project.slug}`);
     this.props.updateProject(project);
-    this.setState({changed: false});
+    this.setState({
+      changed: false,
+      saving: false
+    });
   },
 
   _getLayerDimensions: function(id) {
@@ -188,7 +194,8 @@ const App = React.createClass({
           onDrop={this._onDragLeave}>
         <Header onPublishClick={this._onPublishClick}
             onSaveClick={this._saveProject}
-            ref="header"/>
+            ref="header"
+            saving={this.state.saving}/>
         <div className="sv-app-content">
           <Library assets={this.state.assets}
               dragging={this.state.dragging}

@@ -12,18 +12,19 @@ const Header = React.createClass({
     name: React.PropTypes.string.isRequired,
     onPublishClick: React.PropTypes.func.isRequired,
     onSaveClick: React.PropTypes.func.isRequired,
+    saving: React.PropTypes.bool.isRequired,
     updatedAt: React.PropTypes.string
   },
 
   render: function() {
     let lastSaved = 'Save your project to publish it';
-    let savedStatus = 'Not saved';
+    let savedStatus = this.props.saving ? 'Saving project...' : 'Not saved';
     if (this.props.updatedAt) {
       const updatedAt = new Date(this.props.updatedAt);
       lastSaved = `Last saved ${moment().calendar(updatedAt, {
         sameElse: '[on] MMMM D, YYYY'
       }).toLowerCase()}`;
-      if (this.props.changedAt) {
+      if (this.props.changedAt && !this.props.saving) {
         const saved = updatedAt.getTime() === new Date(this.props.changedAt).getTime();
         savedStatus = saved ? 'Saved' : 'Unsaved changes';
       }
