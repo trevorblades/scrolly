@@ -17,6 +17,10 @@ const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
 
+function getGCD(a, b) {
+  return b === 0 ? a : getGCD(b, a % b);
+}
+
 const App = React.createClass({
 
   propTypes: {
@@ -162,6 +166,8 @@ const App = React.createClass({
   },
 
   render: function() {
+    const gcd = getGCD(this.state.compositionWidth, this.state.compositionHeight);
+    const aspectRatio = `${this.state.compositionWidth / gcd}:${this.state.compositionHeight / gcd}`;
     return (
       <div className="sv-app"
           onDragEnter={this._onDragEnter}
@@ -188,7 +194,8 @@ const App = React.createClass({
                   wrapperOffsetTop={this.state.viewportWrapperOffsetTop}
                   wrapperWidth={this.state.viewportWrapperWidth}/>
             </div>
-            <ViewBar compositionHeight={this.state.compositionHeight}
+            <ViewBar aspectRatio={aspectRatio}
+                compositionHeight={this.state.compositionHeight}
                 compositionWidth={this.state.compositionWidth}
                 getLayerDimensions={this._getLayerDimensions}
                 viewportScale={this.state.viewportScale}/>

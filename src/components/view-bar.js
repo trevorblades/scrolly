@@ -19,6 +19,7 @@ const alignOptions = {
 const ViewBar = React.createClass({
 
   propTypes: {
+    aspectRatio: React.PropTypes.string.isRequired,
     compositionHeight: React.PropTypes.number.isRequired,
     compositionWidth: React.PropTypes.number.isRequired,
     dispatch: React.PropTypes.func.isRequired,
@@ -62,8 +63,9 @@ const ViewBar = React.createClass({
     });
     return (
       <div className="sv-view-bar">
-        <div className="sv-view-bar-zoom">
-          {`Scale: ${Math.round(this.props.viewportScale * 1000) / 10}%`}
+        <div className="sv-view-bar-info">
+          <span>{`Aspect ratio: ${this.props.aspectRatio}`}</span>
+          <span>{`Scale: ${Math.round(this.props.viewportScale * 1000) / 10}%`}</span>
         </div>
         <div className={alignClassName}>
           {Object.keys(alignOptions).map(axis => {

@@ -5,9 +5,12 @@
   flex-shrink: 0;
   padding: @padding-smaller @padding-small;
   border-top: 1px solid @shadow-dark;
-  color: @gray-lighter;
-  .sv-view-bar-zoom {
+  .sv-view-bar-info {
     font-size: @font-size-small;
+    color: @gray-lighter;
+    span:not(:last-child) {
+      margin-right: @padding-small;
+    }
   }
   .sv-view-bar-align {
     display: flex;
