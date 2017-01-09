@@ -35,5 +35,14 @@
         display: block;
       }
     }
+    .sv-header-content-save span span {
+      display: inline-block;
+      line-height: 1em;
+      &:not(:first-child) {
+        margin-left: @padding-smallest;
+        font-size: @font-size-smaller;
+        opacity: 0.5;
+      }
+    }
   }
 }

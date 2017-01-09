@@ -37,7 +37,11 @@ const Header = React.createClass({
             <span>{savedStatus}</span>
             <span>{lastSaved}</span>
           </div>
-          <Button onClick={this.props.onSaveClick}>Save</Button>
+          <Button className="sv-header-content-save"
+              onClick={this.props.onSaveClick}>
+            <span>Save</span>
+            <span>{`(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '⌘' : 'Ctrl'} + S)`}</span>
+          </Button>
           <Button onClick={this.props.onPublishClick}>Publish</Button>
         </div>
       </div>
