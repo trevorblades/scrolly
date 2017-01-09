@@ -31,7 +31,8 @@ const App = React.createClass({
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     name: React.PropTypes.string.isRequired,
     selectedLayer: React.PropTypes.number,
-    step: React.PropTypes.number.isRequired
+    step: React.PropTypes.number.isRequired,
+    updateProject: React.PropTypes.func.isRequired
   },
 
   getInitialState: function() {
@@ -51,6 +52,19 @@ const App = React.createClass({
 
   componentWillMount: function() {
     this._dragCounter = 0;
+
+    const slug = window.location.pathname.split('/').filter(Boolean)[0];
+    if (slug) {
+      const options = {
+        url: `${API_URL}/projects/${slug}`,
+        json: true
+      };
+      request.get(options)
+        .then(this.props.updateProject)
+        .catch(function(err) {
+          history.pushState(null, null, window.location.origin);
+        });
+    }
   },
 
   componentDidMount: function() {
@@ -154,17 +168,8 @@ const App = React.createClass({
   },
 
   _handleSaveResponse: function(project) {
-    this.props.dispatch({
-      type: 'UPDATE_PROJECT',
-      id: project.id,
-      slug: project.slug,
-      name: project.name,
-      layers: project.layers,
-      assets: project.assets,
-      step: project.step,
-      createdAt: project.created_at,
-      updatedAt: project.updated_at
-    });
+    history.replaceState(null, null, `/${project.slug}`);
+    this.props.updateProject(project);
     this.setState({changed: false});
   },
 
@@ -217,7 +222,7 @@ const App = React.createClass({
   }
 });
 
-module.exports = connect(function(state) {
+function mapStateToProps(state) {
   const changedAt = new Date(state.changedAt && state.changedAt.present);
   return {
     id: state.id,
@@ -228,4 +233,25 @@ module.exports = connect(function(state) {
     selectedLayer: state.selectedLayer,
     step: state.step.present
   };
-})(App);
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    dispatch,
+    updateProject: function(project) {
+      dispatch({
+        type: 'UPDATE_PROJECT',
+        id: project.id,
+        slug: project.slug,
+        name: project.name,
+        layers: project.layers,
+        assets: project.assets,
+        step: project.step,
+        createdAt: project.created_at,
+        updatedAt: project.updated_at
+      });
+    }
+  };
+}
+
+module.exports = connect(mapStateToProps, mapDispatchToProps)(App);
