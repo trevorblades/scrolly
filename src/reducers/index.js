@@ -7,8 +7,7 @@ const layersReducer = require('./layers');
 
 const excludedActions = [
   'SET_PERCENT_PLAYED',
-  'SELECT_LAYER',
-  'RESET'
+  'SELECT_LAYER'
 ];
 const undoConfig = {filter: excludeAction(excludedActions)};
 
