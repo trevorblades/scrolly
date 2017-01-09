@@ -32,6 +32,7 @@
         padding: 0 @padding-small;
         border-radius: @border-radius-small;
         font-family: @font-family-monospace;
+        color: @gray-darker;
         background: @brand-warning;
       }
       .sv-timeline-header-menu-step {
@@ -43,13 +44,9 @@
       }
       .sv-timeline-header-menu-add {
         flex-shrink: 0;
-        box-shadow: none;
-        position: relative;
-        &:hover {
-          background-color: @shadow;
-          .sv-icon {
-            fill: white;
-          }
+        width: @padding-larger;
+        &:hover .sv-icon {
+          fill: white;
         }
         &.pl-active .sv-icon {
           fill: @brand-primary;
@@ -155,7 +152,6 @@
     display: flex;
     width: @library-width;
     height: 100%;
-    color: @gray-lightest;
     background-color: @gray-darker;
     position: absolute;
     top: 0;

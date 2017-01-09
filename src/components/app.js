@@ -4,7 +4,6 @@ const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
 const request = require('request-promise');
 
-const Button = require('./button');
 const Header = require('./header');
 const Library = require('./library');
 const PublishDialog = require('./publish-dialog');
@@ -22,13 +21,11 @@ const App = React.createClass({
 
   propTypes: {
     assets: React.PropTypes.array.isRequired,
-    createdAt: React.PropTypes.instanceOf(Date),
     dispatch: React.PropTypes.func.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     name: React.PropTypes.string.isRequired,
     selectedLayer: React.PropTypes.number,
-    step: React.PropTypes.number.isRequired,
-    updatedAt: React.PropTypes.instanceOf(Date)
+    step: React.PropTypes.number.isRequired
   },
 
   getInitialState: function() {
@@ -37,12 +34,12 @@ const App = React.createClass({
       compositionWidth: 1920,
       dragging: false,
       publishing: false,
+      timelineMaxHeight: 0,
       viewportScale: 1,
       viewportWrapperHeight: 0,
       viewportWrapperOffsetLeft: 0,
       viewportWrapperOffsetTop: 0,
-      viewportWrapperWidth: 0,
-      timelineMaxHeight: 0
+      viewportWrapperWidth: 0
     };
   },
 
@@ -122,22 +119,25 @@ const App = React.createClass({
       json: true
     };
     request.post(options)
-      .then(res => {
-        this.props.dispatch({
-          type: 'UPDATE_PROJECT',
-          id: res.id,
-          slug: res.slug,
-          name: res.name,
-          layers: res.layers,
-          assets: res.assets,
-          step: res.step,
-          createdAt: res.created_at,
-          updatedAt: res.updated_at
-        });
-      })
+      .then(this._handleSaveResponse)
       .catch(function(err) {
         throw err;
       });
+  },
+
+  _handleSaveResponse: function(project) {
+    this.props.dispatch({
+      type: 'UPDATE_PROJECT',
+      id: project.id,
+      slug: project.slug,
+      name: project.name,
+      layers: project.layers,
+      assets: project.assets,
+      step: project.step,
+      createdAt: project.created_at,
+      updatedAt: project.updated_at
+    });
+    this.setState({changed: false});
   },
 
   _onPublishClick: function() {
@@ -163,12 +163,9 @@ const App = React.createClass({
           onDragLeave={this._onDragLeave}
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
-        <Header ref="header">
-          {this.props.updatedAt &&
-            <h6>{`Last saved at ${this.props.updatedAt}`}</h6>}
-          <Button onClick={this._onSaveClick}>Save</Button>
-          <Button onClick={this._onPublishClick}>Publish</Button>
-        </Header>
+        <Header onPublishClick={this._onPublishClick}
+            onSaveClick={this._onSaveClick}
+            ref="header"/>
         <div className="sv-app-content">
           <Library assets={this.state.assets}
               dragging={this.state.dragging}
@@ -203,12 +200,11 @@ const App = React.createClass({
 
 module.exports = connect(function(state) {
   return {
+    id: state.id,
     assets: state.assets.present,
-    createdAt: state.createdAt,
     layers: state.layers.present,
     name: state.name.present,
     selectedLayer: state.selectedLayer,
-    step: state.step.present,
-    updatedAt: state.updatedAt
+    step: state.step.present
   };
 })(App);

@@ -39,6 +39,15 @@ module.exports = combineReducers({
   }, undoConfig),
   createdAt: getUpdateReducer('createdAt', date => new Date(date)),
   updatedAt: getUpdateReducer('updatedAt', date => new Date(date)),
+  changedAt: undoable(function(state = null, action) {
+    if (action.type === 'UPDATE_PROJECT') {
+      return new Date(action.updatedAt);
+    } else if (action.type !== 'SET_PERCENT_PLAYED' &&
+        action.type !== 'SELECT_LAYER') {
+      return new Date();
+    }
+    return state;
+  }),
   percentPlayed: function(state = 0, action) {
     if (action.type === 'SET_PERCENT_PLAYED') {
       return action.value;

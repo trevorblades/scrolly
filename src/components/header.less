@@ -1,13 +1,20 @@
 .sv-header {
   flex-shrink: 0;
   padding: @padding-base;
-  box-shadow: 0 1px @shadow;
-  background-color: @brand-primary;
+  border-bottom: 1px solid @brand-primary;
+  box-shadow: 0 1px @shadow-dark;
+  background-color: @gray-dark;
   position: relative;
   .sv-header-content {
-    text-align: right;
-    .sv-button:not(:last-child) {
-      margin-right: @padding-small;
+    display: flex;
+    .sv-button {
+      margin-left: @padding-smaller;
+      color: white;
+      background-color: @brand-primary;
+    }
+    .sv-header-content-status {
+      font-size: @font-size-smaller;
+      text-align: right;
     }
   }
 }

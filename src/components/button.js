@@ -31,7 +31,7 @@ const Button = React.createClass({
           onMouseDown={this._onMouseDown}
           title={this.props.title}
           type={this.props.type}>
-        {this.props.children}
+        <span>{this.props.children}</span>
       </button>
     );
   }
