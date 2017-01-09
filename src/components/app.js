@@ -26,6 +26,10 @@ const ConnectedViewport = connect(function(state) {
   };
 }, null, null, {withRef: true})(Viewport);
 
+function setTitle(name) {
+  document.title = `${name} - Scrolly`;
+}
+
 function getGCD(a, b) {
   return b === 0 ? a : getGCD(b, a % b);
 }
@@ -62,12 +66,19 @@ const App = React.createClass({
 
   componentWillMount: function() {
     this._dragCounter = 0;
+    setTitle(this.props.name);
   },
 
   componentDidMount: function() {
     window.addEventListener('keydown', this._onKeyDown);
     window.addEventListener('resize', this._onResize);
     this._onResize();
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.name !== this.props.name) {
+      setTitle(nextProps.name);
+    }
   },
 
   componentWillUnmount: function() {
