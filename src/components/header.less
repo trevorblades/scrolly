@@ -4,7 +4,6 @@
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  justify-content: space-between;
   padding: @padding-small @padding-base;
   border-bottom: 1px solid @brand-primary;
   box-shadow: 0 1px @shadow-dark;
@@ -16,6 +15,7 @@
   .sv-header-name {
     display: flex;
     flex-grow: 1;
+    flex-shrink: 0;
     max-width: 30rem;
     margin: 0 @padding-largest;
     border-radius: @border-radius-small;
@@ -33,6 +33,9 @@
   }
   .sv-header-content {
     display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+    flex-shrink: 0;
     .sv-button {
       font-weight: 600;
       color: @gray-darker;
@@ -45,8 +48,10 @@
       margin-right: @padding-small;
       font-size: @font-size-smaller;
       text-align: right;
-      &.sv-not-saved span:first-child {
-        color: @gray-lighter;
+      &.sv-not-saved, &.sv-nothing-to-save {
+        span:first-child {
+          color: @gray-lighter;
+        }
       }
       &.sv-unsaved-changes span:first-child {
         color: @brand-primary;
@@ -54,6 +59,7 @@
 
       span {
         display: block;
+        white-space: nowrap;
       }
     }
     .sv-header-content-save span span {

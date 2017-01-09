@@ -5,12 +5,12 @@ const {excludeAction} = require('redux-undo');
 const assetsReducer = require('./assets');
 const layersReducer = require('./layers');
 
-const undoConfig = {
-  filter: excludeAction([
-    'SET_PERCENT_PLAYED',
-    'SELECT_LAYER'
-  ])
-};
+const excludedActions = [
+  'SET_PERCENT_PLAYED',
+  'SELECT_LAYER',
+  'RESET'
+];
+const undoConfig = {filter: excludeAction(excludedActions)};
 
 function getUpdateReducer(key, defaultState = null) {
   return function(state = defaultState, action) {
@@ -48,8 +48,7 @@ const combinedReducer = combineReducers({
   changedAt: undoable(function(state = null, action) {
     if (action.type === 'UPDATE_PROJECT') {
       return new Date(action.updatedAt).toISOString();
-    } else if (action.type !== 'SET_PERCENT_PLAYED' &&
-        action.type !== 'SELECT_LAYER') {
+    } else if (excludedActions.indexOf(action.type) !== -1) {
       return new Date().toISOString();
     }
     return state;

@@ -26,6 +26,7 @@ const Header = React.createClass({
   },
 
   _onNewClick: function() {
+    history.replaceState(null, null, '/');
     this.props.dispatch({type: 'RESET'});
   },
 
@@ -35,7 +36,8 @@ const Header = React.createClass({
 
   render: function() {
     let lastSaved = 'Save your project to publish it';
-    let savedStatus = this.props.saving ? 'Saving project...' : 'Not saved';
+    let savedStatus = this.props.saving ? 'Saving project...' :
+        this.props.changedAt === null ? 'Nothing to save' : 'Not saved';
     if (this.props.updatedAt) {
       const updatedAt = new Date(this.props.updatedAt);
       lastSaved = `Last saved ${moment().calendar(updatedAt, {
