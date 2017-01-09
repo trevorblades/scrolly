@@ -149,6 +149,7 @@ const Viewport = React.createClass({
       },
       parents: getParents(layer, this.props.layers),
       percentPlayed: this.props.percentPlayed,
+      readOnly: this.props.readOnly,
       ref: `layer${layer.id}`,
       selected: layer.id === this.props.selectedLayer,
       viewportHeight: this.state.height,

@@ -23,6 +23,7 @@ const ViewportLayer = React.createClass({
     onPropertiesChange: React.PropTypes.func.isRequired,
     parents: React.PropTypes.array.isRequired,
     percentPlayed: React.PropTypes.number.isRequired,
+    readOnly: React.PropTypes.bool,
     selected: React.PropTypes.bool.isRequired,
     viewportHeight: React.PropTypes.number.isRequired,
     viewportOffsetLeft: React.PropTypes.number.isRequired,
@@ -268,12 +269,33 @@ const ViewportLayer = React.createClass({
         break;
     }
 
-    const handles = [];
-    for (let i = 0; i < 4; i++) {
-      handles.push(
-        <div className="sv-viewport-layer-handle"
-            key={i}
-            onMouseDown={this._onHandleMouseDown.bind(null, i)}/>
+    let anchor;
+    let borders;
+    let handles;
+    if (!this.props.readOnly) {
+      anchor = (
+        <div className="sv-viewport-layer-anchor" style={{
+          top: `${this.props.layer.anchorY * 100}%`,
+          left: `${this.props.layer.anchorX * 100}%`
+        }}/>
+      );
+
+      const sides = [0, 1, 2, 3];
+      borders = (
+        <div className="sv-viewport-layer-borders">
+          {sides.map(side => <div className="sv-viewport-layer-border" key={side}/>)}
+        </div>
+      );
+      handles = (
+        <div className="sv-viewport-layer-handles">
+          {sides.map(side => {
+            return (
+              <div className="sv-viewport-layer-handle"
+                  key={side}
+                  onMouseDown={this._onHandleMouseDown.bind(null, side)}/>
+            );
+          })}
+        </div>
       );
     }
 
@@ -291,18 +313,9 @@ const ViewportLayer = React.createClass({
         <div className="sv-viewport-layer-content">
           {content}
         </div>
-        <div className="sv-viewport-layer-borders">
-          {handles.map(function(handle, index) {
-            return <div className="sv-viewport-layer-border" key={index}/>;
-          })}
-        </div>
-        <div className="sv-viewport-layer-anchor" style={{
-          top: `${this.props.layer.anchorY * 100}%`,
-          left: `${this.props.layer.anchorX * 100}%`
-        }}/>
-        <div className="sv-viewport-layer-handles">
-          {handles}
-        </div>
+        {borders}
+        {anchor}
+        {handles}
       </div>
     );
   }
