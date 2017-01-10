@@ -6,7 +6,7 @@ const request = require('request-promise');
 
 const Header = require('./header');
 const Library = require('./library');
-const PublishDialog = require('./publish-dialog');
+const ShareDialog = require('./share-dialog');
 const Timeline = require('./timeline');
 const ViewBar = require('./view-bar');
 const Viewport = require('./viewport');
@@ -140,11 +140,11 @@ const App = React.createClass({
     event.preventDefault();
   },
 
-  _onPublishClick: function() {
+  _onShareClick: function() {
     this.setState({publishing: true});
   },
 
-  _onPublishDialogClose: function() {
+  _onShareDialogClose: function() {
     this.setState({publishing: false});
   },
 
@@ -200,7 +200,7 @@ const App = React.createClass({
           onDragLeave={this._onDragLeave}
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
-        <Header onPublishClick={this._onPublishClick}
+        <Header onShareClick={this._onShareClick}
             onSaveClick={this._saveProject}
             ref="header"
             saving={this.state.saving}/>
@@ -231,7 +231,7 @@ const App = React.createClass({
         <Timeline maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}/>
         {this.state.publishing &&
-          <PublishDialog onClose={this._onPublishDialogClose}
+          <ShareDialog onClose={this._onShareDialogClose}
               slug={this.props.slug}/>}
       </div>
     );

@@ -1,7 +1,7 @@
 const React = require('react');
 const {connect} = require('react-redux');
 
-const PublishDialog = React.createClass({
+const ShareDialog = React.createClass({
 
   propTypes: {
     onClose: React.PropTypes.func.isRequired,
@@ -15,10 +15,10 @@ const PublishDialog = React.createClass({
 
   render: function() {
     return (
-      <div className="sv-publish-dialog">
-        <div className="sv-publish-dialog-overlay"
+      <div className="sv-share-dialog">
+        <div className="sv-share-dialog-overlay"
             onClick={this.props.onClose}/>
-        <div className="sv-publish-dialog-window">
+        <div className="sv-share-dialog-window">
           <textarea onClick={this._onTextareaClick}
               readOnly
               value={`<iframe src="https://scrol.ly/viewer/?project=${this.props.slug}"></iframe>`}/>
@@ -33,4 +33,4 @@ module.exports = connect(function(state) {
     layers: state.layers.present,
     step: state.step.present
   };
-})(PublishDialog);
+})(ShareDialog);

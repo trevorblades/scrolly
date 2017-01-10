@@ -12,8 +12,8 @@ const Header = React.createClass({
     changedAt: React.PropTypes.string,
     dispatch: React.PropTypes.func.isRequired,
     name: React.PropTypes.string.isRequired,
-    onPublishClick: React.PropTypes.func.isRequired,
     onSaveClick: React.PropTypes.func.isRequired,
+    onShareClick: React.PropTypes.func.isRequired,
     saving: React.PropTypes.bool.isRequired,
     updatedAt: React.PropTypes.string
   },
@@ -71,7 +71,7 @@ const Header = React.createClass({
             <span>Save</span>
             <span dangerouslySetInnerHTML={{__html: `(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '&#8984;' : 'Ctrl'} + S)`}}/>
           </Button>
-          <Button onClick={this.props.onPublishClick}>Publish</Button>
+          <Button onClick={this.props.onShareClick}>Share</Button>
         </div>
       </div>
     );
