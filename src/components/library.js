@@ -11,12 +11,9 @@ const {ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
-const allowedFiletypesString = ALLOWED_MIME_TYPES.map(function(mimeType, index, array) {
-  let string = mime.extension(mimeType);
-  if (index === array.length - 1) {
-    string = `and ${string}`;
-  }
-  return string;
+const allowedFiletypes = ALLOWED_MIME_TYPES.map(mime.extension);
+const allowedFiletypesString = allowedFiletypes.map(function(filetype, index, array) {
+  return index === array.length - 1 ? `and ${filetype}` : filetype;
 }).join(', ');
 
 const Library = React.createClass({
@@ -165,7 +162,10 @@ const Library = React.createClass({
             })}
         </div>
         <div className="sv-library-footer">
-          <Button>Upload asset</Button>
+          <Button>
+            <span>Upload asset</span>
+            <input accept={allowedFiletypes.join(',')} type="file"/>
+          </Button>
         </div>
       </div>
     );

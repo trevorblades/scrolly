@@ -49,6 +49,12 @@
       font-weight: 600;
       color: @gray-darker;
       background-color: @brand-primary;
+      &:hover, &:focus {
+        background-color: darken(@brand-primary, 5%);
+      }
+      &:active {
+        background-color: darken(@brand-primary, 10%);
+      }
       &:not(:last-child) {
         margin-right: @padding-smaller;
       }
@@ -71,7 +77,7 @@
         white-space: nowrap;
       }
     }
-    .sv-header-content-save span span {
+    .sv-header-content-save span {
       display: inline-block;
       line-height: 1em;
       &:not(:first-child) {
