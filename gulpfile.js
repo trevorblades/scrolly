@@ -136,7 +136,7 @@ gulp.task('dev-browser-sync', function(done) {
   }, done);
 });
 
-gulp.task('dev-serve', gulp.series('viewer', 'dev-build', 'dev-browser-sync'));
+gulp.task('dev-serve', gulp.series('dev-build', 'dev-browser-sync'));
 
 gulp.task('dev-watch', function(done) {
   gulp.watch(path.join(SRC_DIR, 'index.html'), devMarkup);
