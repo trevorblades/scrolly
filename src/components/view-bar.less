@@ -6,7 +6,9 @@
   padding: @padding-smaller @padding-small;
   border-top: 1px solid @shadow-dark;
   .sv-view-bar-info {
+    padding: @padding-smaller;
     font-size: @font-size-small;
+    line-height: 1rem;
     color: @gray-lighter;
     span:not(:last-child) {
       margin-right: @padding-small;
@@ -15,29 +17,23 @@
   .sv-view-bar-align {
     display: flex;
     flex-shrink: 0;
-    &:not(.pl-disabled) .sv-view-bar-align-options .sv-view-bar-align-option {
-      cursor: pointer;
-      &:hover {
-        background-color: @shadow;
-        .sv-icon {
-          fill: white;
-        }
-      }
-
-      .sv-icon {
-        fill: @gray-lightest;
-      }
-    }
     .sv-view-bar-align-options {
       display: flex;
       &:not(:last-child) {
         margin-right: @padding-smaller;
         padding-right: @padding-smaller;
-        border-right: 1px solid @shadow;
+        border-right: 1px solid @shadow-dark;
       }
 
-      .sv-button:not(:last-child) {
-        margin-right: @padding-smallest;
+      .sv-button {
+        padding: @padding-smaller;
+        &:not(:last-child) {
+          margin-right: @padding-smallest;
+        }
+
+        .sv-icon {
+          transform: scale(1.125);
+        }
       }
     }
   }
