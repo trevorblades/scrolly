@@ -57,6 +57,13 @@ const Library = React.createClass({
     }
   },
 
+  _onUploadChange: function(event) {
+    if (event.target.files.length) {
+      this._onFileUpload(event.target.files[0]);
+      event.target.value = null;
+    }
+  },
+
   _onFileUpload: function(file) {
     if (!file || ALLOWED_MIME_TYPES.indexOf(file.type) === -1) {
       return;
@@ -164,7 +171,9 @@ const Library = React.createClass({
         <div className="sv-library-footer">
           <Button>
             <span>Upload asset</span>
-            <input accept={allowedFiletypes.join(',')} type="file"/>
+            <input accept={allowedFiletypes.join(',')}
+                onChange={this._onUploadChange}
+                type="file"/>
           </Button>
         </div>
       </div>
