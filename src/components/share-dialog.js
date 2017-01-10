@@ -21,7 +21,7 @@ const ShareDialog = React.createClass({
         <div className="sv-share-dialog-window">
           <textarea onClick={this._onTextareaClick}
               readOnly
-              value={`<iframe src="https://scrol.ly/viewer/?project=${this.props.slug}"></iframe>`}/>
+              value={`<iframe src="https://scrol.ly/viewer/?p=${this.props.slug}"></iframe>`}/>
         </div>
       </div>
     );
