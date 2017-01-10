@@ -11,7 +11,7 @@ const {ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
-const allowedFiletypes = ALLOWED_MIME_TYPES.map(mime.extension);
+const allowedFiletypes = ALLOWED_MIME_TYPES.map(mimeType => `.${mime.extension(mimeType)}`);
 const allowedFiletypesString = allowedFiletypes.map(function(filetype, index, array) {
   return index === array.length - 1 ? `and ${filetype}` : filetype;
 }).join(', ');
