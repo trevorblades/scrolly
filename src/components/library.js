@@ -4,6 +4,7 @@ const bytes = require('bytes');
 const classNames = require('classnames');
 const mime = require('mime');
 
+const Button = require('./button');
 const Icon = require('./icon');
 
 const {ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
@@ -162,6 +163,9 @@ const Library = React.createClass({
                 </div>
               );
             })}
+        </div>
+        <div className="sv-library-footer">
+          <Button>Upload asset</Button>
         </div>
       </div>
     );

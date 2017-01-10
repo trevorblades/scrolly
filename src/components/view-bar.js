@@ -3,6 +3,7 @@ const {connect} = require('react-redux');
 const classNames = require('classnames');
 const upperCaseFirst = require('upper-case-first');
 
+const Button = require('./button');
 const Icon = require('./icon');
 
 const {setLayerProperties} = require('../actions');
@@ -78,15 +79,14 @@ const ViewBar = React.createClass({
                     iconName += upperCaseFirst(direction);
                   }
                   return (
-                    <div className="sv-view-bar-align-option"
-                        key={position}
+                    <Button key={position}
                         onClick={!this.props.layer ? null :
                             this._onAlignOptionClick.bind(null, {[axis]: index / 2})}
                         title={index % 2 ?
                             `${upperCaseFirst(position)} ${direction}ly` :
                             `Align ${position}`}>
                       <Icon name={iconName}/>
-                    </div>
+                    </Button>
                   );
                 })}
               </div>

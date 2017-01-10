@@ -3,7 +3,7 @@
   border: none;
   border-radius: @border-radius-small;
   font-size: @font-size-small;
-  line-height: 1em;
+  line-height: 1rem;
   color: @gray-lightest;
   background: none;
   overflow: hidden;
@@ -16,20 +16,25 @@
     top: 0;
     left: 0;
   }
-  &:hover, &:focus {
+  &:hover, &:focus, &:active {
+    color: white;
     &:before {
       background-color: @shadow;
+    }
+
+    .sv-icon {
+      fill: white;
     }
   }
   &:active:before {
     background-color: @shadow-dark;
   }
 
-  * {
-    position: relative;
-  }
   > span {
     display: block;
-    line-height: 1em;
+    position: relative;
+  }
+  .sv-icon {
+    fill: @gray-lightest;
   }
 }
