@@ -4,9 +4,9 @@ const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
 const request = require('request-promise');
 
+const Dialog = require('./dialog');
 const Header = require('./header');
 const Library = require('./library');
-const ShareDialog = require('./share-dialog');
 const Timeline = require('./timeline');
 const ViewBar = require('./view-bar');
 const Viewport = require('./viewport');
@@ -53,8 +53,8 @@ const App = React.createClass({
       compositionHeight: 1080,
       compositionWidth: 1920,
       dragging: false,
-      publishing: false,
       saving: false,
+      sharing: false,
       timelineMaxHeight: 0,
       viewportScale: 1,
       viewportWrapperHeight: 0,
@@ -141,11 +141,11 @@ const App = React.createClass({
   },
 
   _onShareClick: function() {
-    this.setState({publishing: true});
+    this.setState({sharing: true});
   },
 
   _onShareDialogClose: function() {
-    this.setState({publishing: false});
+    this.setState({sharing: false});
   },
 
   _deselectLayer: function() {
@@ -230,9 +230,10 @@ const App = React.createClass({
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}/>
-        {this.state.publishing &&
-          <ShareDialog onClose={this._onShareDialogClose}
-              slug={this.props.slug}/>}
+        {this.state.sharing &&
+          <Dialog onClose={this._onShareDialogClose}>
+            <p>{`https://scrol.ly/viewer/?p=${this.props.slug}`}</p>
+          </Dialog>}
       </div>
     );
   }

@@ -1,0 +1,29 @@
+.sv-dialog {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  .sv-dialog-overlay {
+    width: 100%;
+    height: 100%;
+    background-color: @shadow-dark;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .sv-dialog-window {
+    width: 40rem;
+    margin: 0 auto;
+    padding: @padding-largest;
+    box-shadow: @box-shadow-large;
+    background-color: @gray-dark;
+    position: relative;
+    > p:first-child {
+      margin-top: 0;
+    }
+    > p:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
