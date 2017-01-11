@@ -11,6 +11,7 @@ const Header = React.createClass({
     changedAt: React.PropTypes.string,
     dispatch: React.PropTypes.func.isRequired,
     name: React.PropTypes.string.isRequired,
+    onOpenClick: React.PropTypes.func.isRequired,
     onSaveClick: React.PropTypes.func.isRequired,
     onShareClick: React.PropTypes.func.isRequired,
     saving: React.PropTypes.bool.isRequired,
@@ -32,10 +33,6 @@ const Header = React.createClass({
   _onNewClick: function() {
     history.replaceState(null, null, '/');
     this.props.dispatch({type: 'RESET'});
-  },
-
-  _onOpenClick: function() {
-
   },
 
   _onNameBlur: function() {
@@ -80,7 +77,7 @@ const Header = React.createClass({
         <img className="sv-header-logo" src="/assets/logo.svg"/>
         <div className="sv-header-nav">
           <Button onClick={this._onNewClick}>New</Button>
-          <Button onClick={this._onOpenClick}>Open</Button>
+          <Button onClick={this.props.onOpenClick}>Open</Button>
         </div>
         <div className="sv-header-project">
           <input onBlur={this._onNameBlur}

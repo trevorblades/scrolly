@@ -53,6 +53,7 @@ const App = React.createClass({
       compositionHeight: 1080,
       compositionWidth: 1920,
       dragging: false,
+      opening: false,
       saving: false,
       sharing: false,
       timelineMaxHeight: 0,
@@ -140,6 +141,14 @@ const App = React.createClass({
     event.preventDefault();
   },
 
+  _onOpenClick: function() {
+    this.setState({opening: true});
+  },
+
+  _onOpenDialogClose: function() {
+    this.setState({opening: false});
+  },
+
   _onShareClick: function() {
     this.setState({sharing: true});
   },
@@ -200,7 +209,8 @@ const App = React.createClass({
           onDragLeave={this._onDragLeave}
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
-        <Header onSaveClick={this._saveProject}
+        <Header onOpenClick={this._onOpenClick}
+            onSaveClick={this._saveProject}
             onShareClick={this._onShareClick}
             ref="header"
             saving={this.state.saving}/>
@@ -230,6 +240,10 @@ const App = React.createClass({
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}/>
+        {this.state.opening &&
+          <Dialog onClose={this._onOpenDialogClose}>
+            <h3>Open a project</h3>
+          </Dialog>}
         {this.state.sharing &&
           <Dialog onClose={this._onShareDialogClose}>
             <p>{`https://scrol.ly/viewer/?p=${this.props.slug}`}</p>
