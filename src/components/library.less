@@ -142,18 +142,17 @@
     flex-shrink: 0;
     padding: @padding-smaller;
     border-top: 1px solid @shadow-dark;
-    .sv-button input[type="file"] {
-      width: 100%;
-      height: 100%;
-      font-size: 0;
-      opacity: 0;
-      outline: none;
-      cursor: pointer;
-      position: absolute;
-      top: 0;
-      left: 0;
-      &::-webkit-file-upload-button {
+    .sv-button {
+      input[type="file"] {
         display: none;
+      }
+      span, .sv-icon {
+        display: inline-block;
+        vertical-align: top;
+      }
+      .sv-icon {
+        margin-left: @padding-smallest * -1;
+        margin-right: @padding-smallest;
       }
     }
   }

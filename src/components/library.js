@@ -57,6 +57,10 @@ const Library = React.createClass({
     }
   },
 
+  _onUploadClick: function(event) {
+    event.currentTarget.getElementsByTagName('input')[0].click();
+  },
+
   _onUploadChange: function(event) {
     if (event.target.files.length) {
       this._onFileUpload(event.target.files[0]);
@@ -169,7 +173,8 @@ const Library = React.createClass({
             })}
         </div>
         <div className="sv-library-footer">
-          <Button>
+          <Button onClick={this._onUploadClick}>
+            <Icon name="add"/>
             <span>Upload asset</span>
             <input accept={allowedFiletypes.join(',')}
                 onChange={this._onUploadChange}
