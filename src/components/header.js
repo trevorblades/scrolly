@@ -74,6 +74,7 @@ const Header = React.createClass({
 
     const statusClassName = classNames('sv-header-project-status',
         `sv-${savedStatus.split(' ').join('-').toLowerCase()}`);
+
     return (
       <div className="sv-header">
         <img className="sv-header-logo" src="/assets/logo.svg"/>

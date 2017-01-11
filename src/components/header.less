@@ -4,7 +4,8 @@
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  padding: @padding-smaller @padding-base;
+  padding: @padding-smaller;
+  padding-left: @padding-base;
   border-bottom: 1px solid @brand-primary;
   box-shadow: 0 1px @shadow-dark;
   background-color: @gray-dark;
@@ -13,24 +14,30 @@
     height: @header-logo-height;
   }
   .sv-header-nav {
-    flex-grow: 1;
-    margin-left: @padding-large;
+    display: flex;
+    margin: 0 @padding-large;
     .sv-button:not(:last-child) {
+      flex-shrink: 0;
       margin-right: @padding-smaller;
     }
   }
   .sv-header-project {
     display: flex;
     justify-content: flex-end;
-    flex-shrink: 0;
+    flex-grow: 1;
+    max-width: 36rem;
+    margin-left: auto;
     border: 1px solid @shadow;
     border-radius: @border-radius-small;
     background-color: @gray-darker;
     overflow: hidden;
     input[type="text"] {
+      flex-grow: 1;
+      width: 100%;
       padding: 0 @padding-base;
-      padding-right: @padding-largest;
-      border: 0;
+      margin-right: @padding-smaller;
+      border: none;
+      border-right: 1px solid @shadow;
       color: @gray-lightest;
       background: none;
       cursor: text;
@@ -38,12 +45,14 @@
         color: mix(@gray-lightest, white);
       }
       &:focus {
-        box-shadow: inset 1px 0 @brand-primary;
+        border-color: @brand-primary;
         color: white;
+        background-color: @gray;
         outline: none;
       }
     }
     .sv-button {
+      flex-shrink: 0;
       margin: @padding-smaller;
       margin-left: 0;
       font-weight: 600;
@@ -66,6 +75,7 @@
       }
     }
     .sv-header-project-status {
+      flex-shrink: 0;
       margin: @padding-smaller @padding-small;
       text-align: right;
       &.sv-not-saved, &.sv-nothing-to-save {
