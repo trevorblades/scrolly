@@ -4,7 +4,7 @@
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  padding: @padding-smaller;
+  padding: @padding-smaller 0;
   padding-left: @padding-base;
   border-bottom: 1px solid @brand-primary;
   box-shadow: 0 1px @shadow-dark;
@@ -27,15 +27,16 @@
     flex-grow: 1;
     max-width: 36rem;
     margin-left: auto;
+    padding-right: @padding-base;
     box-shadow: 0 0 0 1px @shadow-dark;
-    border-radius: @border-radius-small;
+    border-top-left-radius: @border-radius-small;
+    border-bottom-left-radius: @border-radius-small;
     background-color: @gray;
     overflow: hidden;
     input[type="text"] {
       flex-grow: 1;
       width: 100%;
       padding: 0 @padding-base;
-      margin-right: @padding-smaller;
       border: none;
       box-shadow: 1px 0 @shadow;
       color: @gray-lightest;
@@ -52,8 +53,7 @@
     }
     .sv-button {
       flex-shrink: 0;
-      margin: @padding-smaller;
-      margin-left: 0;
+      margin: @padding-smaller 0;
       font-weight: 600;
       color: @gray-darker;
       background-color: @brand-primary;
@@ -62,6 +62,9 @@
       }
       &:active {
         background-color: darken(@brand-primary, 10%);
+      }
+      &:last-child {
+        margin-left: @padding-smaller;
       }
       &.sv-header-project-save span {
         display: inline-block;
@@ -78,7 +81,8 @@
     }
     .sv-header-project-status {
       flex-shrink: 0;
-      margin: @padding-smaller @padding-small;
+      margin: @padding-smaller;
+      margin-left: @padding-base;
       text-align: right;
       &.sv-not-saved, &.sv-nothing-to-save {
         span:first-child {
