@@ -160,7 +160,7 @@ gulp.task('dist-viewer-markup', function() {
 gulp.task('dist-viewer-scripts', function() {
   return browserify(path.join(SRC_DIR, 'viewer.js'), {transform: browserifyTransforms})
     .bundle()
-    .pipe(source('viewer.js'))
+    .pipe(source('main.js'))
     .pipe(buffer())
     .pipe(uglify({compress: true}))
     .pipe(gulp.dest(DIST_VIEWER_DIR));
@@ -176,6 +176,7 @@ gulp.task('dist-viewer-styles', function() {
       gutil.log('LESS compilation failed: ' + err.message);
       process.exit(1);
     })
+    .pipe(rename('main.css'))
     .pipe(gulp.dest(DIST_VIEWER_DIR));
 });
 
