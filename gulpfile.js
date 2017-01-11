@@ -4,6 +4,7 @@ const browserSync = require('browser-sync').create();
 const buffer = require('vinyl-buffer');
 const del = require('del');
 const envify = require('envify');
+const eventStream = require('event-stream');
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 const historyApiFallback = require('connect-history-api-fallback');
@@ -12,7 +13,6 @@ const LessPluginAutoPrefix = require('less-plugin-autoprefix');
 const LessPluginCleanCSS = require('less-plugin-clean-css');
 const livereactload = require('livereactload');
 const path = require('path');
-const rename = require('gulp-rename');
 const source = require('vinyl-source-stream');
 const sourcemaps = require('gulp-sourcemaps');
 const uglify = require('gulp-uglify');
@@ -22,9 +22,12 @@ const SRC_DIR = path.join(__dirname, 'src');
 const BUILD_DIR = path.join(__dirname, 'build');
 const DEV_DIR = path.join(BUILD_DIR, 'dev');
 const DIST_DIR = path.join(BUILD_DIR, 'dist');
-const DIST_VIEWER_DIR = path.join(DIST_DIR, 'viewer');
 
 const browserifyTransforms = [babelify, envify];
+const scripts = [
+  path.join(SRC_DIR, 'main.js'),
+  path.join(SRC_DIR, 'viewer', 'main.js')
+];
 
 // development build tasks
 
@@ -35,26 +38,33 @@ function devMarkup() {
 }
 gulp.task('dev-markup', devMarkup);
 
-const browserifyOptions = {
-  debug: true,
-  transform: browserifyTransforms
-};
-if (process.env.NODE_ENV !== 'production') {
-  browserifyOptions.plugin = livereactload;
+function bundle(bundler, file) {
+  return function() {
+    gutil.log('Building', file);
+    return bundler.bundle()
+      .on('error', err => {
+        gutil.log('Error Bundling:', err.stack);
+      })
+      .pipe(source(file))
+      .pipe(gulp.dest(DEV_DIR));
+  };
 }
-const bundlerOptions = Object.assign({}, watchify.args, browserifyOptions);
-const bundler = watchify(browserify(path.join(SRC_DIR, 'main.js'), bundlerOptions));
 
-function bundle() {
-  return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, 'Error Bundling'))
-    .pipe(source('main.js'))
-    .pipe(gulp.dest(DEV_DIR));
-}
-bundler.on('update', bundle);
-bundler.on('log', gutil.log);
-
-gulp.task('dev-scripts', bundle);
+gulp.task('dev-scripts', function() {
+  const bundlerOptions = Object.assign({}, watchify.args, {
+    debug: true,
+    transform: browserifyTransforms,
+    plugin: livereactload
+  });
+  const streams = scripts.map(function(script) {
+    const bundler = watchify(browserify(script, bundlerOptions));
+    const watcher = bundle(bundler, script.replace(SRC_DIR + '/', ''));
+    bundler.on('update', watcher);
+    bundler.on('log', gutil.log);
+    return watcher();
+  });
+  return eventStream.merge(streams);
+});
 
 function devStyles() {
   const stream = gulp.src(path.join(SRC_DIR, 'main.less'))
@@ -123,12 +133,15 @@ gulp.task('dist-markup', function() {
 });
 
 gulp.task('dist-scripts', function() {
-  return browserify(path.join(SRC_DIR, 'main.js'), {transform: browserifyTransforms})
-    .bundle()
-    .pipe(source('main.js'))
-    .pipe(buffer())
-    .pipe(uglify({compress: true}))
-    .pipe(gulp.dest(DIST_DIR));
+  var streams = scripts.map(function(script) {
+    return browserify(script, {transform: browserifyTransforms})
+      .bundle()
+      .pipe(source(script.replace(SRC_DIR + '/', '')))
+      .pipe(buffer())
+      .pipe(uglify({compress: true}))
+      .pipe(gulp.dest(DIST_DIR));
+  });
+  return eventStream.merge(streams);
 });
 
 gulp.task('dist-styles', function() {
@@ -149,49 +162,11 @@ gulp.task('dist-assets', function() {
     .pipe(gulp.dest(DIST_DIR));
 });
 
-// viewer build tasks for distribution
-
-gulp.task('dist-viewer-markup', function() {
-  return gulp.src(path.join(SRC_DIR, 'viewer.html'))
-    .pipe(rename('index.html'))
-    .pipe(gulp.dest(DIST_VIEWER_DIR));
-});
-
-gulp.task('dist-viewer-scripts', function() {
-  return browserify(path.join(SRC_DIR, 'viewer.js'), {transform: browserifyTransforms})
-    .bundle()
-    .pipe(source('main.js'))
-    .pipe(buffer())
-    .pipe(uglify({compress: true}))
-    .pipe(gulp.dest(DIST_VIEWER_DIR));
-});
-
-gulp.task('dist-viewer-styles', function() {
-  return gulp.src(SRC_DIR + '/viewer.less')
-    .pipe(less({
-      relativeUrls: true,
-      plugins: [new LessPluginAutoPrefix(), new LessPluginCleanCSS()]
-    }))
-    .on('error', function(err) {
-      gutil.log('LESS compilation failed: ' + err.message);
-      process.exit(1);
-    })
-    .pipe(rename('main.css'))
-    .pipe(gulp.dest(DIST_VIEWER_DIR));
-});
-
-gulp.task('dist-viewer', gulp.parallel([
-  'dist-viewer-markup',
-  'dist-viewer-scripts',
-  'dist-viewer-styles'
-]));
-
 gulp.task('dist-build', gulp.parallel([
   'dist-markup',
   'dist-scripts',
   'dist-styles',
-  'dist-assets',
-  'dist-viewer'
+  'dist-assets'
 ]));
 
 gulp.task('dist', gulp.series('dist-clean', 'dist-build'));

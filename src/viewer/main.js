@@ -4,9 +4,9 @@ const request = require('request-promise');
 const url = require('url');
 require('core-js/fn/array/find');
 
-const Viewport = require('./components/viewport');
+const Viewport = require('../components/viewport');
 
-const {API_URL} = require('./constants');
+const {API_URL} = require('../constants');
 
 const Viewer = React.createClass({
 
