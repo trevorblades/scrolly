@@ -69,8 +69,11 @@
         &:not(:first-child) {
           margin-left: @padding-smallest;
           font-size: @font-size-smaller;
-          color: mix(@gray, @brand-primary);
+          color: @shadow-dark;
         }
+      }
+      &[disabled] {
+        background-color: @gray-light;
       }
     }
     .sv-header-project-status {

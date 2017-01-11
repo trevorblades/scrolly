@@ -8,17 +8,19 @@
   background: none;
   overflow: hidden;
   position: relative;
-  &:hover, &:focus, &:active {
-    color: white;
-    .sv-icon {
-      fill: white;
+  &:not[disabled="true"] {
+    &:hover, &:focus, &:active {
+      color: white;
+      .sv-icon {
+        fill: white;
+      }
     }
-  }
-  &:hover, &:focus {
-    background-color: @shadow;
-  }
-  &:active {
-    background-color: @shadow-dark;
+    &:hover, &:focus {
+      background-color: @shadow;
+    }
+    &:active {
+      background-color: @shadow-dark;
+    }
   }
 
   .sv-icon {

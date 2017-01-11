@@ -58,17 +58,17 @@ const Header = React.createClass({
   },
 
   render: function() {
+    let changed = !!this.props.changedAt;
     let lastSaved = 'Save your project to publish it';
-    let savedStatus = this.props.saving ? 'Saving project...' :
-        this.props.changedAt === null ? 'Nothing to save' : 'Not saved';
+    let savedStatus = !this.props.changedAt ? 'Nothing to save' : 'Not saved';
     if (this.props.updatedAt) {
       const updatedAt = new Date(this.props.updatedAt);
       lastSaved = `Last saved ${moment().calendar(updatedAt, {
         sameElse: '[on] MMMM D, YYYY'
       }).toLowerCase()}`;
-      if (this.props.changedAt && !this.props.saving) {
-        const saved = updatedAt.getTime() === new Date(this.props.changedAt).getTime();
-        savedStatus = saved ? 'Saved' : 'Unsaved changes';
+      if (this.props.changedAt) {
+        changed = new Date(this.props.changedAt).getTime() !== updatedAt.getTime();
+        savedStatus = changed ? 'Unsaved changes' : 'Saved';
       }
     }
 
@@ -89,15 +89,19 @@ const Header = React.createClass({
               type="text"
               value={this.state.name}/>
           <div className={statusClassName}>
-            <span>{savedStatus}</span>
+            <span>{this.props.saving ? 'Saving project...' : savedStatus}</span>
             <span>{lastSaved}</span>
           </div>
           <Button className="sv-header-project-save"
+              disabled={!changed || this.props.saving}
               onClick={this.props.onSaveClick}>
             <span>Save</span>
             <span dangerouslySetInnerHTML={{__html: `(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '&#8984;' : 'Ctrl'} + S)`}}/>
           </Button>
-          <Button onClick={this.props.onShareClick}>Share</Button>
+          <Button disabled={!this.props.updatedAt}
+              onClick={this.props.onShareClick}>
+            Share
+          </Button>
         </div>
       </div>
     );
