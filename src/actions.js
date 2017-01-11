@@ -1,15 +1,12 @@
-let nextLayerId = 0;
-
 function addLayer(type) {
   return {
     type: 'ADD_LAYER',
-    id: nextLayerId++,
     layerType: type
   };
 }
 
 function addImageLayer(asset) {
-  return Object.assign({}, addLayer('image'), {asset});
+  return Object.assign(addLayer('image'), {asset});
 }
 
 function removeLayer(id) {

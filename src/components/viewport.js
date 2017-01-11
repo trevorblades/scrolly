@@ -161,13 +161,9 @@ const Viewport = React.createClass({
   },
 
   render: function() {
-    const layers = this.props.layers.slice();
-    layers.reverse();
-
     const viewportClassName = classNames('sv-viewport', {
       'sv-dragging': this.state.dragging
     });
-
     return (
       <div className={viewportClassName}
           onDragEnter={this._onDragEnter}
@@ -181,7 +177,7 @@ const Viewport = React.createClass({
           }}>
         {this.state.selectedLayer && this._renderLayer(this.state.selectedLayer)}
         <div className="sv-viewport-layers">
-          {layers.map(this._renderLayer)}
+          {this.props.layers.map(this._renderLayer)}
         </div>
       </div>
     );

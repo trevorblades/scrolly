@@ -329,7 +329,8 @@ let Timeline = React.createClass({
     const layers = this.state.sortOrder ?
         this.state.sortOrder.map(id => {
           return this.props.layers.find(layer => layer.id === id);
-        }) : this.props.layers;
+        }) : this.props.layers.slice();
+    layers.reverse();
 
     const layersClassName = classNames('sv-timeline-layers', {
       'sv-locked': this.state.dragging,

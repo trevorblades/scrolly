@@ -1,9 +1,8 @@
-let nextId = 0;
 module.exports = function(state, action) {
   switch (action.type) {
     case 'ADD_ASSET':
       return {
-        id: nextId++,
+        id: action.id,
         name: action.name,
         mimeType: action.mimeType,
         size: action.size,
