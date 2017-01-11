@@ -7,6 +7,21 @@ const Dialog = React.createClass({
     onClose: React.PropTypes.func.isRequired
   },
 
+  componentWillMount: function() {
+    window.addEventListener('keydown', this._onKeyDown, true);
+  },
+
+  componentWillUnmount: function() {
+    window.removeEventListener('keydown', this._onKeyDown, true);
+  },
+
+  _onKeyDown: function(event) {
+    event.stopPropagation();
+    if (event.keyCode === 27) { // esc key pressed
+      this.props.onClose();
+    }
+  },
+
   render: function() {
     return (
       <div className="sv-dialog">
