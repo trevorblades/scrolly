@@ -16,7 +16,6 @@ const TextField = React.createClass({
     max: React.PropTypes.number,
     min: React.PropTypes.number,
     onChange: React.PropTypes.func.isRequired,
-    singleClick: React.PropTypes.bool,
     step: React.PropTypes.number,
     style: React.PropTypes.object,
     type: React.PropTypes.oneOf(['text', 'number']),
@@ -49,6 +48,14 @@ const TextField = React.createClass({
   _onBlur: function() {
     this.setState({editing: false});
     this.props.onChange(this.state.value);
+  },
+
+  _onDoubleClick: function(event) {
+    const target = event.target;
+    this.setState({editing: true}, function() {
+      target.focus();
+      document.execCommand('selectAll', false, null);
+    });
   },
 
   _onInput: function(event) {
@@ -99,27 +106,17 @@ const TextField = React.createClass({
     }
   },
 
-  _startEditing: function(event) {
-    const target = event.target;
-    this.setState({editing: true}, function() {
-      target.focus();
-      document.execCommand('selectAll', false, null);
-    });
-  },
-
   render: function() {
-    const event = this.props.singleClick ? 'onClick' : 'onDoubleClick';
-    const startEditing = {[event]: this._startEditing};
     return (
       <div className="sv-text-field"
           contentEditable={this.state.editing}
           dangerouslySetInnerHTML={{__html: this.state.value}}
           onBlur={this._onBlur}
+          onDoubleClick={this._onDoubleClick}
           onInput={this._onInput}
           onKeyDown={this._onKeyDown}
           spellCheck={false}
-          style={this.props.style}
-          {...startEditing}/>
+          style={this.props.style}/>
     );
   }
 });

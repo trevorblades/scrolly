@@ -4,7 +4,6 @@ const classNames = require('classnames');
 const moment = require('moment');
 
 const Button = require('./button');
-const TextField = require('./text-field');
 
 const Header = React.createClass({
 
@@ -18,11 +17,16 @@ const Header = React.createClass({
     updatedAt: React.PropTypes.string
   },
 
-  _onNameChange: function(value) {
-    this.props.dispatch({
-      type: 'SET_NAME',
-      value
-    });
+  getInitialState: function() {
+    return {
+      name: this.props.name
+    };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.name !== this.props.name) {
+      this.setState({name: nextProps.name});
+    }
   },
 
   _onNewClick: function() {
@@ -32,6 +36,25 @@ const Header = React.createClass({
 
   _onOpenClick: function() {
 
+  },
+
+  _onNameBlur: function() {
+    if (this.state.name !== this.props.name) {
+      this.props.dispatch({
+        type: 'SET_NAME',
+        value: this.state.name
+      });
+    }
+  },
+
+  _onNameChange: function(event) {
+    this.setState({name: event.target.value});
+  },
+
+  _onNameKeyDown: function(event) {
+    if (event.keyCode === 27) { // esc key pressed
+      event.target.blur();
+    }
   },
 
   render: function() {
@@ -49,24 +72,26 @@ const Header = React.createClass({
       }
     }
 
-    const statusClassName = classNames('sv-header-content-status',
+    const statusClassName = classNames('sv-header-project-status',
         `sv-${savedStatus.split(' ').join('-').toLowerCase()}`);
     return (
       <div className="sv-header">
         <img className="sv-header-logo" src="/assets/logo.svg"/>
-        <div className="sv-header-name">
-          <TextField onChange={this._onNameChange}
-              singleClick
-              value={this.props.name}/>
+        <div className="sv-header-nav">
           <Button onClick={this._onNewClick}>New</Button>
           <Button onClick={this._onOpenClick}>Open</Button>
         </div>
-        <div className="sv-header-content">
+        <div className="sv-header-project">
+          <input onBlur={this._onNameBlur}
+              onChange={this._onNameChange}
+              onKeyDown={this._onNameKeyDown}
+              type="text"
+              value={this.state.name}/>
           <div className={statusClassName}>
             <span>{savedStatus}</span>
             <span>{lastSaved}</span>
           </div>
-          <Button className="sv-header-content-save"
+          <Button className="sv-header-project-save"
               onClick={this.props.onSaveClick}>
             <span>Save</span>
             <span dangerouslySetInnerHTML={{__html: `(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '&#8984;' : 'Ctrl'} + S)`}}/>

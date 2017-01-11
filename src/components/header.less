@@ -1,6 +1,4 @@
 @header-logo-height: @padding-larger;
-@header-name-width: 40rem;
-@header-name-height: @padding-largest;
 
 .sv-header {
   display: flex;
@@ -14,38 +12,40 @@
   .sv-header-logo {
     height: @header-logo-height;
   }
-  .sv-header-name {
+  .sv-header-nav {
+    flex-grow: 1;
+    margin-left: @padding-large;
+    .sv-button:not(:last-child) {
+      margin-right: @padding-smaller;
+    }
+  }
+  .sv-header-project {
     display: flex;
-    width: @header-name-width;
-    min-width: @header-name-width / 2;
-    margin: 0 @padding-largest;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    border: 1px solid @shadow;
     border-radius: @border-radius-small;
-    box-shadow: inset 0 0 0 1px @shadow;
-    line-height: @header-name-height;
     background-color: @gray-darker;
     overflow: hidden;
-    .sv-button {
-      border-radius: 0;
-      color: @brand-primary;
-    }
-    .sv-text-field {
-      flex-grow: 1;
+    input[type="text"] {
       padding: 0 @padding-base;
+      padding-right: @padding-largest;
+      border: 0;
+      color: @gray-lightest;
+      background: none;
       cursor: text;
       &:hover {
         color: mix(@gray-lightest, white);
       }
       &:focus {
+        box-shadow: inset 1px 0 @brand-primary;
         color: white;
+        outline: none;
       }
     }
-  }
-  .sv-header-content {
-    display: flex;
-    justify-content: flex-end;
-    flex-grow: 1;
-    flex-shrink: 0;
     .sv-button {
+      margin: @padding-smaller;
+      margin-left: 0;
       font-weight: 600;
       color: @gray-darker;
       background-color: @brand-primary;
@@ -55,13 +55,18 @@
       &:active {
         background-color: darken(@brand-primary, 10%);
       }
-      &:not(:last-child) {
-        margin-right: @padding-smaller;
+      &.sv-header-project-save span {
+        display: inline-block;
+        line-height: 1em;
+        &:not(:first-child) {
+          margin-left: @padding-smallest;
+          font-size: @font-size-smaller;
+          color: mix(@gray, @brand-primary);
+        }
       }
     }
-    .sv-header-content-status {
-      margin-right: @padding-small;
-      font-size: @font-size-smaller;
+    .sv-header-project-status {
+      margin: @padding-smaller @padding-small;
       text-align: right;
       &.sv-not-saved, &.sv-nothing-to-save {
         span:first-child {
@@ -74,16 +79,9 @@
 
       span {
         display: block;
-        white-space: nowrap;
-      }
-    }
-    .sv-header-content-save span {
-      display: inline-block;
-      line-height: 1em;
-      &:not(:first-child) {
-        margin-left: @padding-smallest;
         font-size: @font-size-smaller;
-        color: mix(@gray, @brand-primary);
+        line-height: 1rem;
+        white-space: nowrap;
       }
     }
   }
