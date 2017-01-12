@@ -107,7 +107,7 @@ gulp.task('dev-serve', ['dev-build'], function(done) {
   }, done);
 });
 
-gulp.task('dev', ['dev-serve'], function(done) {
+gulp.task('dev', ['dev-serve'], function() {
   gulp.watch(`${SRC_DIR}/**/index.html`, ['dev-markup']);
   gulp.watch(`${SRC_DIR}/**/*.less`, ['dev-styles']);
   gulp.watch(`${SRC_DIR}/**/assets/**`, ['dev-assets']);
