@@ -12,31 +12,27 @@ const less = require('gulp-less');
 const LessPluginAutoPrefix = require('less-plugin-autoprefix');
 const LessPluginCleanCSS = require('less-plugin-clean-css');
 const livereactload = require('livereactload');
-const path = require('path');
+const sequence = require('run-sequence');
 const source = require('vinyl-source-stream');
 const sourcemaps = require('gulp-sourcemaps');
 const uglify = require('gulp-uglify');
 const watchify = require('watchify');
 
-const SRC_DIR = path.join(__dirname, 'src');
-const BUILD_DIR = path.join(__dirname, 'build');
-const DEV_DIR = path.join(BUILD_DIR, 'dev');
-const DIST_DIR = path.join(BUILD_DIR, 'dist');
+const SRC_DIR = `${__dirname}/src`;
+const BUILD_DIR = `${__dirname}/build`;
+const DEV_DIR = `${BUILD_DIR}/dev`;
+const DIST_DIR = `${BUILD_DIR}/dist`;
 
 const browserifyTransforms = [babelify, envify];
-const scripts = [
-  path.join(SRC_DIR, 'main.js'),
-  path.join(SRC_DIR, 'viewer', 'main.js')
-];
+const scripts = [`${SRC_DIR}/main.js`, `${SRC_DIR}/viewer/main.js`];
 
 // development build tasks
 
-function devMarkup() {
-  return gulp.src(path.join(SRC_DIR, 'index.html'))
+gulp.task('dev-markup', function() {
+  return gulp.src(`${SRC_DIR}/**/index.html`)
     .pipe(gulp.dest(DEV_DIR))
     .pipe(browserSync.reload({stream: true}));
-}
-gulp.task('dev-markup', devMarkup);
+});
 
 function bundle(bundler, file) {
   return function() {
@@ -51,13 +47,16 @@ function bundle(bundler, file) {
 }
 
 gulp.task('dev-scripts', function() {
-  const bundlerOptions = Object.assign({}, watchify.args, {
+  const bundlerOptions = Object.assign({}, {
     debug: true,
-    transform: browserifyTransforms,
-    plugin: livereactload
-  });
-  const streams = scripts.map(function(script) {
-    const bundler = watchify(browserify(script, bundlerOptions));
+    transform: browserifyTransforms
+  }, watchify.args);
+  const streams = scripts.map(function(script, index) {
+    const bundler = watchify(
+      browserify(script, bundlerOptions).plugin(livereactload, {
+        port: 4474 + index
+      })
+    );
     const watcher = bundle(bundler, script.replace(SRC_DIR + '/', ''));
     bundler.on('update', watcher);
     bundler.on('log', gutil.log);
@@ -66,8 +65,8 @@ gulp.task('dev-scripts', function() {
   return eventStream.merge(streams);
 });
 
-function devStyles() {
-  const stream = gulp.src(path.join(SRC_DIR, 'main.less'))
+gulp.task('dev-styles', function() {
+  const stream = gulp.src(`${SRC_DIR}/**/main.less`)
     .pipe(sourcemaps.init())
     .pipe(less({
       relativeUrls: true,
@@ -82,24 +81,22 @@ function devStyles() {
     .pipe(gulp.dest(DEV_DIR))
     .pipe(browserSync.stream());
   return stream;
-}
-gulp.task('dev-styles', devStyles);
+});
 
-function devAssets() {
-  return gulp.src(path.join(SRC_DIR, '**', 'assets', '**'))
+gulp.task('dev-assets', function() {
+  return gulp.src(`${SRC_DIR}/**/assets/**`)
     .pipe(gulp.dest(DEV_DIR))
     .pipe(browserSync.stream());
-}
-gulp.task('dev-assets', devAssets);
+});
 
-gulp.task('dev-build', gulp.parallel([
+gulp.task('dev-build', [
   'dev-markup',
   'dev-scripts',
   'dev-styles',
   'dev-assets'
-]));
+]);
 
-gulp.task('dev-browser-sync', function(done) {
+gulp.task('dev-serve', ['dev-build'], function(done) {
   return browserSync.init({
     server: {
       baseDir: DEV_DIR
@@ -110,25 +107,20 @@ gulp.task('dev-browser-sync', function(done) {
   }, done);
 });
 
-gulp.task('dev-serve', gulp.series('dev-build', 'dev-browser-sync'));
-
-gulp.task('dev-watch', function(done) {
-  gulp.watch(path.join(SRC_DIR, 'index.html'), devMarkup);
-  gulp.watch(path.join(SRC_DIR, '**', '*.less'), devStyles);
-  gulp.watch(path.join(SRC_DIR, '**', 'assets', '**'), devAssets);
-  done();
+gulp.task('dev', ['dev-serve'], function(done) {
+  gulp.watch(`${SRC_DIR}/**/index.html`, ['dev-markup']);
+  gulp.watch(`${SRC_DIR}/**/*.less`, ['dev-styles']);
+  gulp.watch(`${SRC_DIR}/**/assets/**`, ['dev-assets']);
 });
-
-gulp.task('dev', gulp.parallel('dev-serve', 'dev-watch'));
 
 // distribution build tasks
 
 gulp.task('dist-clean', function() {
-  return del(path.join(DIST_DIR, '**', '*'));
+  return del(`${DIST_DIR}/**/*`);
 });
 
 gulp.task('dist-markup', function() {
-  return gulp.src(path.join(SRC_DIR, 'index.html'))
+  return gulp.src(`${SRC_DIR}/**/index.html`)
     .pipe(gulp.dest(DIST_DIR));
 });
 
@@ -145,7 +137,7 @@ gulp.task('dist-scripts', function() {
 });
 
 gulp.task('dist-styles', function() {
-  return gulp.src(SRC_DIR + '/main.less')
+  return gulp.src(`${SRC_DIR}/**/main.less`)
     .pipe(less({
       relativeUrls: true,
       plugins: [new LessPluginAutoPrefix(), new LessPluginCleanCSS()]
@@ -158,15 +150,15 @@ gulp.task('dist-styles', function() {
 });
 
 gulp.task('dist-assets', function() {
-  return gulp.src(path.join(SRC_DIR, '**', 'assets', '**'))
+  return gulp.src(`${SRC_DIR}/**/assets/**`)
     .pipe(gulp.dest(DIST_DIR));
 });
 
-gulp.task('dist-build', gulp.parallel([
-  'dist-markup',
-  'dist-scripts',
-  'dist-styles',
-  'dist-assets'
-]));
-
-gulp.task('dist', gulp.series('dist-clean', 'dist-build'));
+gulp.task('dist', function(done) {
+  sequence('dist-clean', [
+    'dist-markup',
+    'dist-script',
+    'dist-style',
+    'dist-assets'
+  ], done);
+});
