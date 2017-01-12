@@ -157,8 +157,8 @@ gulp.task('dist-assets', function() {
 gulp.task('dist', function(done) {
   sequence('dist-clean', [
     'dist-markup',
-    'dist-script',
-    'dist-style',
+    'dist-scripts',
+    'dist-styles',
     'dist-assets'
   ], done);
 });
