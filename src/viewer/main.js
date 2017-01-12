@@ -1,8 +1,8 @@
 const React = require('react');
 const {render} = require('react-dom');
-const request = require('request-promise');
 const url = require('url');
 require('core-js/fn/array/find');
+require('whatwg-fetch');
 
 const Viewport = require('../components/viewport');
 
@@ -16,7 +16,13 @@ const Viewer = React.createClass({
     const slug = parsed.query.project || parsed.query.p;
     if (slug) {
       loading = true;
-      request.get({url: `${API_URL}/projects/${slug}`, json: true})
+      fetch(`${API_URL}/projects/${slug}`)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error();
+          }
+          return res.json();
+        })
         .then(project => {
           this.setState({
             assets: project.assets,

@@ -2,7 +2,6 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
-const request = require('request-promise');
 
 const Dialog = require('./dialog');
 const Header = require('./header');
@@ -163,37 +162,44 @@ const App = React.createClass({
 
   _saveProject: function() {
     if (this.props.changed) {
+      let url = `${API_URL}/projects`;
+      if (this.props.id) {
+        url += `/${this.props.id}`;
+      }
       const options = {
-        url: `${API_URL}/projects`,
-        body: {
+        method: this.props.id ? 'PUT' : 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           name: this.props.name,
           assets: this.props.assets,
           layers: this.props.layers,
           step: this.props.step
-        },
-        json: true
+        })
       };
-      const client = !this.props.id ?
-          request.post(options) :
-          request.put(Object.assign(options, {
-            url: `${options.url}/${this.props.id}`}
-          ));
-      client.then(this._handleSaveResponse)
+      fetch(url, options)
+        .then(function(res) {
+          if (!res.ok) {
+            throw new Error();
+          }
+          return res.json();
+        })
+        .then(project => {
+          this.setState({
+            changed: false,
+            saving: false
+          });
+          this.props.dispatch(updateProject(project));
+          history.replaceState(null, null, `/${project.slug}`);
+        })
         .catch(err => {
           this.setState({saving: false});
         });
 
       this.setState({saving: true});
     }
-  },
-
-  _handleSaveResponse: function(project) {
-    history.replaceState(null, null, `/${project.slug}`);
-    this.props.dispatch(updateProject(project));
-    this.setState({
-      changed: false,
-      saving: false
-    });
   },
 
   _getLayerDimensions: function(id) {

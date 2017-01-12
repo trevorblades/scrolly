@@ -2,8 +2,8 @@ const React = require('react');
 const {render} = require('react-dom');
 const {createStore} = require('redux');
 const {Provider, connect} = require('react-redux');
-const request = require('request-promise');
 require('core-js/fn/array/find');
+require('whatwg-fetch');
 
 const App = require('./components/app');
 
@@ -22,10 +22,16 @@ const Wrapper = connect()(React.createClass({
     const slug = window.location.pathname.split('/').filter(Boolean)[0];
     if (slug) {
       loading = true;
-      request.get({url: `${API_URL}/projects/${slug}`, json: true})
+      fetch(`${API_URL}/projects/${slug}`)
+        .then(function(res) {
+          if (!res.ok) {
+            throw new Error();
+          }
+          return res.json();
+        })
         .then(project => {
-          this.props.dispatch(updateProject(project));
           this.setState({loading: false});
+          this.props.dispatch(updateProject(project));
         })
         .catch(err => {
           this.setState({loading: false});
