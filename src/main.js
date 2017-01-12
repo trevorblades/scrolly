@@ -38,11 +38,26 @@ const Wrapper = connect()(React.createClass({
           history.pushState(null, null, window.location.origin);
         });
     }
-    return {loading};
+    return {
+      loading,
+      projects: null
+    };
+  },
+
+  componentWillMount: function() {
+    fetch(`${API_URL}/projects`)
+      .then(function(res) {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then(projects => {
+        this.setState({projects});
+      });
   },
 
   render: function() {
-    return this.state.loading ? null : <App/>;
+    return this.state.loading ? null : <App projects={this.state.projects}/>;
   }
 }));
 

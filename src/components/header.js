@@ -1,9 +1,10 @@
 const React = require('react');
 const {connect} = require('react-redux');
 const classNames = require('classnames');
-const moment = require('moment');
 
 const Button = require('./button');
+
+const formatDate = require('../util/format-date');
 
 const Header = React.createClass({
 
@@ -60,9 +61,7 @@ const Header = React.createClass({
     let savedStatus = !this.props.changedAt ? 'Nothing to save' : 'Not saved';
     if (this.props.updatedAt) {
       const updatedAt = new Date(this.props.updatedAt);
-      lastSaved = `Last saved ${moment().calendar(updatedAt, {
-        sameElse: '[on] MMMM D, YYYY'
-      }).toLowerCase()}`;
+      lastSaved = `Last saved ${formatDate(updatedAt)}`;
       if (this.props.changedAt) {
         changed = new Date(this.props.changedAt).getTime() !== updatedAt.getTime();
         savedStatus = changed ? 'Unsaved changes' : 'Saved';

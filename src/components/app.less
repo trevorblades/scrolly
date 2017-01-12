@@ -41,4 +41,26 @@
       }
     }
   }
+  .sv-app-projects {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: @padding-base;
+    .sv-app-project {
+      width: 50%;
+      padding: @padding-small;
+      background-color: @gray;
+      cursor: pointer;
+      &:hover {
+        background-color: @gray-light;
+      }
+
+      span {
+        display: block;
+        &:last-child {
+          font-size: @font-size-small;
+          color: @gray-lighter;
+        }
+      }
+    }
+  }
 }
