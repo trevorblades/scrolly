@@ -150,7 +150,7 @@ const Library = React.createClass({
               </div>
               <h5>Upload images</h5>
               <p>Drag and drop images from your computer into this panel to use them in your composition.</p>
-              <p>{`Accepted file types include ${allowedFiletypesString}.`}</p>
+              <p>{`Accepted file types include ${allowedFiletypesString.replace(/\./g, '')}.`}</p>
             </div> :
             this.props.assets.map((asset, index) => {
               const assetClassName = classNames('sv-library-asset', {
