@@ -6,13 +6,13 @@ const {ActionCreators} = require('redux-undo');
 const Dialog = require('./dialog');
 const Header = require('./header');
 const Library = require('./library');
+const OpenDialog = require('./open-dialog');
 const Timeline = require('./timeline');
 const ViewBar = require('./view-bar');
 const Viewport = require('./viewport');
 
 const {selectLayer, updateProject} = require('../actions');
 const {API_URL, FILE_DRAG_TYPE} = require('../constants');
-const formatDate = require('../util/format-date');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
@@ -43,7 +43,6 @@ const App = React.createClass({
     id: React.PropTypes.number,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     name: React.PropTypes.string.isRequired,
-    projects: React.PropTypes.array,
     selectedLayer: React.PropTypes.number,
     slug: React.PropTypes.string,
     step: React.PropTypes.number.isRequired
@@ -144,11 +143,6 @@ const App = React.createClass({
 
   _onOpenClick: function() {
     this.setState({opening: true});
-  },
-
-  _onProjectOpen: function(project) {
-    this._onOpenDialogClose();
-    this.props.dispatch(updateProject(project));
   },
 
   _onOpenDialogClose: function() {
@@ -253,22 +247,7 @@ const App = React.createClass({
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}/>
-        {this.state.opening &&
-          <Dialog onClose={this._onOpenDialogClose}>
-            <h3>Open a project</h3>
-            <div className="sv-app-projects">
-              {this.props.projects.map(project => {
-                return (
-                  <div className="sv-app-project"
-                      key={project.id}
-                      onClick={this._onProjectOpen.bind(null, project)}>
-                    <span>{project.name}</span>
-                    <span>{`Last modified ${formatDate(project.updated_at)}`}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </Dialog>}
+        {this.state.opening && <OpenDialog onClose={this._onOpenDialogClose}/>}
         {this.state.sharing &&
           <Dialog onClose={this._onShareDialogClose}>
             <p>{`https://scrol.ly/viewer/?p=${this.props.slug}`}</p>

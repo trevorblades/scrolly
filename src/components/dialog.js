@@ -1,9 +1,11 @@
 const React = require('react');
+const classNames = require('classnames');
 
 const Dialog = React.createClass({
 
   propTypes: {
     children: React.PropTypes.node,
+    className: React.PropTypes.string,
     onClose: React.PropTypes.func.isRequired
   },
 
@@ -24,7 +26,7 @@ const Dialog = React.createClass({
 
   render: function() {
     return (
-      <div className="sv-dialog">
+      <div className={classNames('sv-dialog', this.props.className)}>
         <div className="sv-dialog-overlay"
             onClick={this.props.onClose}/>
         <div className="sv-dialog-window">
