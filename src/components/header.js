@@ -53,7 +53,7 @@ const Header = React.createClass({
 
   render: function() {
     let changed = !!this.props.changedAt;
-    let lastSaved = 'Save your project to publish it';
+    let lastSaved = 'Save your project to share it';
     let savedStatus = !this.props.changedAt ? 'Nothing to save' : 'Not saved';
     if (this.props.updatedAt) {
       const updatedAt = new Date(this.props.updatedAt);
