@@ -31,28 +31,34 @@ const ViewBar = React.createClass({
     viewportScale: React.PropTypes.number.isRequired
   },
 
-  _onAlignOptionClick: function(properties) {
-    const property = Object.keys(properties)[0];
+  _onAlignOptionClick: function(axis, amount) {
+    let delta;
+    let offset;
     const dimensions = this.props.getLayerDimensions(this.props.layer.id);
+    if (axis === 'x') {
+      delta = this.props.compositionWidth - dimensions.width;
+      offset = dimensions.width * this.props.layer.anchorX;
+    } else {
+      delta = this.props.compositionHeight - dimensions.height;
+      offset = dimensions.height * this.props.layer.anchorY;
+    }
+    let value = amount * delta + offset;
 
-    let value = properties[property] * (property === 'x' ?
-        this.props.compositionWidth - dimensions.width :
-        this.props.compositionHeight - dimensions.height);
     if (this.props.layer.parent) {
       const parents = getParents(this.props.layer, this.props.layers);
       const parent = getParentProperties(parents, this.props.percentPlayed);
       const parentScale = parent.scale / this.props.layer.parent.offsetScale;
       value = getUnlinkedPosition(
         value,
-        parent[property],
+        parent[axis],
         parentScale,
-        this.props.layer.parent[`offset${property.toUpperCase()}`]
+        this.props.layer.parent[`offset${axis.toUpperCase()}`]
       );
     }
 
     this.props.dispatch(setLayerProperties(this.props.layer.id, {
-      [property]: typeof this.props.layer[property] === 'object' ?
-          Object.assign({}, this.props.layer[property], {
+      [axis]: typeof this.props.layer[axis] === 'object' ?
+          Object.assign({}, this.props.layer[axis], {
             [this.props.percentPlayed]: value
           }) : value
     }));
@@ -81,7 +87,7 @@ const ViewBar = React.createClass({
                   return (
                     <Button key={position}
                         onClick={!this.props.layer ? null :
-                            this._onAlignOptionClick.bind(null, {[axis]: index / 2})}
+                            this._onAlignOptionClick.bind(null, axis, index / 2)}
                         title={index % 2 ?
                             `${upperCaseFirst(position)} ${direction}ly` :
                             `Align ${position}`}>
