@@ -10,15 +10,15 @@ const undoConfig = {filter: excludeAction([
   'SELECT_LAYER'
 ])};
 
-function getUpdateReducer(key, defaultState = null) {
+function createUpdateReducer(key, defaultState = null) {
   return function(state = defaultState, action) {
     return action.type === 'UPDATE_PROJECT' ? action[key] : state;
   };
 }
 
 const combinedReducer = combineReducers({
-  id: getUpdateReducer('id'),
-  slug: getUpdateReducer('slug'),
+  id: createUpdateReducer('id'),
+  slug: createUpdateReducer('slug'),
   name: undoable(function(state = 'Untitled project', action) {
     switch (action.type) {
       case 'SET_NAME':
@@ -41,8 +41,8 @@ const combinedReducer = combineReducers({
         return state;
     }
   }, undoConfig),
-  createdAt: getUpdateReducer('createdAt'),
-  updatedAt: getUpdateReducer('updatedAt'),
+  createdAt: createUpdateReducer('createdAt'),
+  updatedAt: createUpdateReducer('updatedAt'),
   changedAt: undoable(function(state = null, action) {
     switch (action.type) {
       case 'UPDATE_PROJECT':
@@ -62,6 +62,8 @@ const combinedReducer = combineReducers({
         return state;
     }
   }),
+  width: createUpdateReducer('width', 1920),
+  height: createUpdateReducer('width', 1080),
   percentPlayed: function(state = 0, action) {
     if (action.type === 'SET_PERCENT_PLAYED') {
       return action.value;
@@ -78,7 +80,10 @@ const combinedReducer = combineReducers({
 
 module.exports = function(state, action) {
   if (action.type === 'RESET') {
-    state = undefined;
+    const nextState = combinedReducer(undefined, action);
+    nextState.width = action.width;
+    nextState.height = action.height;
+    return nextState;
   }
   return combinedReducer(state, action);
 };

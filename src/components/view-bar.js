@@ -7,6 +7,7 @@ const Button = require('./button');
 const Icon = require('./icon');
 
 const {setLayerProperties} = require('../actions');
+const getAspectRatio = require('../util/get-aspect-ratio');
 const getParentProperties = require('../util/get-parent-properties');
 const getParents = require('../util/get-parents');
 const getUnlinkedPosition = require('../util/get-unlinked-position');
@@ -20,7 +21,6 @@ const alignOptions = {
 const ViewBar = React.createClass({
 
   propTypes: {
-    aspectRatio: React.PropTypes.string.isRequired,
     compositionHeight: React.PropTypes.number.isRequired,
     compositionWidth: React.PropTypes.number.isRequired,
     dispatch: React.PropTypes.func.isRequired,
@@ -71,7 +71,7 @@ const ViewBar = React.createClass({
     return (
       <div className="sv-view-bar">
         <div className="sv-view-bar-info">
-          <span>{`Aspect ratio: ${this.props.aspectRatio}`}</span>
+          <span>{`Aspect ratio: ${getAspectRatio(this.props.compositionWidth, this.props.compositionHeight)}`}</span>
           <span>{`Scale: ${Math.round(this.props.viewportScale * 1000) / 10}%`}</span>
         </div>
         <div className={alignClassName}>

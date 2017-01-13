@@ -3,10 +3,10 @@ const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
 
-const Button = require('./button');
 const Dialog = require('./dialog');
 const Header = require('./header');
 const Library = require('./library');
+const NewDialog = require('./new-dialog');
 const OpenDialog = require('./open-dialog');
 const Timeline = require('./timeline');
 const ViewBar = require('./view-bar');
@@ -31,15 +31,13 @@ function setTitle(name) {
   document.title = `${name} - Scrolly`;
 }
 
-function getGCD(a, b) {
-  return b === 0 ? a : getGCD(b, a % b);
-}
-
 const App = React.createClass({
 
   propTypes: {
     assets: React.PropTypes.array.isRequired,
     changed: React.PropTypes.bool.isRequired,
+    compositionHeight: React.PropTypes.number.isRequired,
+    compositionWidth: React.PropTypes.number.isRequired,
     dispatch: React.PropTypes.func.isRequired,
     id: React.PropTypes.number,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
@@ -51,8 +49,6 @@ const App = React.createClass({
 
   getInitialState: function() {
     return {
-      compositionHeight: 1080,
-      compositionWidth: 1920,
       dragging: false,
       newDialogShown: false,
       openDialogShown: false,
@@ -171,11 +167,6 @@ const App = React.createClass({
     this.props.dispatch(selectLayer(null));
   },
 
-  _createProject: function() {
-    history.replaceState(null, null, '/');
-    this.props.dispatch({type: 'RESET'});
-  },
-
   _saveProject: function() {
     if (this.props.changed) {
       let url = `${API_URL}/projects`;
@@ -223,8 +214,6 @@ const App = React.createClass({
   },
 
   render: function() {
-    const gcd = getGCD(this.state.compositionWidth, this.state.compositionHeight);
-    const aspectRatio = `${this.state.compositionWidth / gcd}:${this.state.compositionHeight / gcd}`;
     return (
       <div className="sv-app"
           onDragEnter={this._onDragEnter}
@@ -246,17 +235,16 @@ const App = React.createClass({
             <div className="sv-app-content-viewport-wrapper"
                 onClick={this._deselectLayer}
                 ref="viewportWrapper">
-              <ConnectedViewport compositionHeight={this.state.compositionHeight}
-                  compositionWidth={this.state.compositionWidth}
+              <ConnectedViewport compositionHeight={this.props.compositionHeight}
+                  compositionWidth={this.props.compositionWidth}
                   ref="viewport"
                   wrapperHeight={this.state.viewportWrapperHeight}
                   wrapperOffsetLeft={this.state.viewportWrapperOffsetLeft}
                   wrapperOffsetTop={this.state.viewportWrapperOffsetTop}
                   wrapperWidth={this.state.viewportWrapperWidth}/>
             </div>
-            <ViewBar aspectRatio={aspectRatio}
-                compositionHeight={this.state.compositionHeight}
-                compositionWidth={this.state.compositionWidth}
+            <ViewBar compositionHeight={this.props.compositionHeight}
+                compositionWidth={this.props.compositionWidth}
                 getLayerDimensions={this._getLayerDimensions}
                 viewportScale={this.state.viewportScale}/>
           </div>
@@ -264,13 +252,9 @@ const App = React.createClass({
         <Timeline maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}/>
         {this.state.newDialogShown &&
-          <Dialog onClose={this._onNewDialogClose}>
-            <h3>New project</h3>
-            <Button onClick={this._createProject} secondary>
-              Create project
-            </Button>
-            <Button onClick={this._onNewDialogClose} secondary>Cancel</Button>
-          </Dialog>}
+          <NewDialog height={this.props.compositionHeight}
+              onClose={this._onNewDialogClose}
+              width={this.props.compositionWidth}/>}
         {this.state.openDialogShown &&
           <OpenDialog onClose={this._onOpenDialogClose}/>}
         {this.state.shareDialogShown &&
@@ -292,6 +276,8 @@ module.exports = connect(function(state) {
     name: state.name.present,
     selectedLayer: state.selectedLayer,
     slug: state.slug,
-    step: state.step.present
+    step: state.step.present,
+    compositionHeight: state.height,
+    compositionWidth: state.width
   };
 })(App);

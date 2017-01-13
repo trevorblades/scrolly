@@ -1,0 +1,32 @@
+.sv-checkbox {
+  display: flex;
+  height: @padding-base;
+  align-items: center;
+  cursor: pointer;
+  &.sv-checked .sv-checkbox-indicator {
+    background-color: @gray-darkest;
+    &:before {
+      content: '';
+      width: 50%;
+      height: 100%;
+      border-right: 2px solid @brand-primary;
+      border-bottom: 2px solid @brand-primary;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -65%) rotate(45deg);
+    }
+  }
+
+  label {
+    margin-left: @padding-smaller;
+    cursor: pointer;
+  }
+  .sv-checkbox-indicator {
+    width: @padding-small;
+    height: @padding-small;
+    border: 1px solid @shadow-dark;
+    background-color: @gray-darker;
+    position: relative;
+  }
+}

@@ -82,26 +82,28 @@ const TextField = React.createClass({
       return event.target.blur();
     }
 
-    const allowedKeys = [8, 37, 39, 46, 110, 190]; // backspace, left, right, numpad period, delete, or period
-    if (typeof this.props.min === 'undefined' || this.props.min < 0) {
-      allowedKeys.push(189);
-    }
-    const disallowed = allowedKeys.indexOf(event.keyCode) === -1 && // isn't an allowed character
-        (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && // isn't a top row number
-        (event.keyCode < 96 || event.keyCode > 105) && // isn't a numpad number
-        !event.metaKey && !event.ctrlKey;
-    const isUpOrDown = event.keyCode === 38 || event.keyCode === 40;
-    if (this.props.type === 'number' && (isUpOrDown || disallowed)) {
-      event.preventDefault();
-      if (isUpOrDown) {
-        let direction = event.keyCode === 38 ? 1 : -1;
-        if (event.shiftKey) {
-          direction *= 10;
+    if (this.props.type === 'number') {
+      const allowedKeys = [8, 37, 39, 46, 110, 190]; // backspace, left, right, numpad period, delete, or period
+      if (typeof this.props.min === 'undefined' || this.props.min < 0) {
+        allowedKeys.push(189);
+      }
+      const disallowed = allowedKeys.indexOf(event.keyCode) === -1 && // isn't an allowed character
+          (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && // isn't a top row number
+          (event.keyCode < 96 || event.keyCode > 105) && // isn't a numpad number
+          !event.metaKey && !event.ctrlKey;
+      const isUpOrDown = event.keyCode === 38 || event.keyCode === 40;
+      if (isUpOrDown || disallowed) {
+        event.preventDefault();
+        if (isUpOrDown) {
+          let direction = event.keyCode === 38 ? 1 : -1;
+          if (event.shiftKey) {
+            direction *= 10;
+          }
+          let value = parseFloat(this.state.value);
+          value = value + this.props.step * direction;
+          value = Math.round(value * 100) / 100;
+          this.setState({value: value}, resetCaret.bind(null, event.target));
         }
-        let value = parseFloat(this.state.value);
-        value = value + this.props.step * direction;
-        value = Math.round(value * 100) / 100;
-        this.setState({value: value}, resetCaret.bind(null, event.target));
       }
     }
   },
