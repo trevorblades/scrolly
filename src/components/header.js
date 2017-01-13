@@ -12,6 +12,7 @@ const Header = React.createClass({
     changedAt: React.PropTypes.string,
     dispatch: React.PropTypes.func.isRequired,
     name: React.PropTypes.string.isRequired,
+    onNewClick: React.PropTypes.func.isRequired,
     onOpenClick: React.PropTypes.func.isRequired,
     onSaveClick: React.PropTypes.func.isRequired,
     onShareClick: React.PropTypes.func.isRequired,
@@ -29,11 +30,6 @@ const Header = React.createClass({
     if (nextProps.name !== this.props.name) {
       this.setState({name: nextProps.name});
     }
-  },
-
-  _onNewClick: function() {
-    history.replaceState(null, null, '/');
-    this.props.dispatch({type: 'RESET'});
   },
 
   _onNameBlur: function() {
@@ -68,14 +64,14 @@ const Header = React.createClass({
       }
     }
 
-    const statusClassName = classNames('sv-header-project-status',
+    const statusClassName = classNames('sv-header-project-controls-status',
         `sv-${savedStatus.split(' ').join('-').toLowerCase()}`);
 
     return (
       <div className="sv-header">
         <img className="sv-header-logo" src="/assets/logo.svg"/>
         <div className="sv-header-nav">
-          <Button onClick={this._onNewClick}>New</Button>
+          <Button onClick={this.props.onNewClick}>New</Button>
           <Button onClick={this.props.onOpenClick}>Open</Button>
         </div>
         <div className="sv-header-project">
@@ -84,20 +80,22 @@ const Header = React.createClass({
               onKeyDown={this._onNameKeyDown}
               type="text"
               value={this.state.name}/>
-          <div className={statusClassName}>
-            <span>{this.props.saving ? 'Saving project...' : savedStatus}</span>
-            <span>{lastSaved}</span>
+          <div className="sv-header-project-controls">
+            <div className={statusClassName}>
+              <span>{this.props.saving ? 'Saving project...' : savedStatus}</span>
+              <span>{lastSaved}</span>
+            </div>
+            <Button className="sv-header-project-controls-save"
+                disabled={!changed || this.props.saving}
+                onClick={this.props.onSaveClick}>
+              <span>Save</span>
+              <span dangerouslySetInnerHTML={{__html: `(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '&#8984;' : 'Ctrl'} + S)`}}/>
+            </Button>
+            <Button disabled={!this.props.updatedAt}
+                onClick={this.props.onShareClick}>
+              Share
+            </Button>
           </div>
-          <Button className="sv-header-project-save"
-              disabled={!changed || this.props.saving}
-              onClick={this.props.onSaveClick}>
-            <span>Save</span>
-            <span dangerouslySetInnerHTML={{__html: `(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '&#8984;' : 'Ctrl'} + S)`}}/>
-          </Button>
-          <Button disabled={!this.props.updatedAt}
-              onClick={this.props.onShareClick}>
-            Share
-          </Button>
         </div>
       </div>
     );

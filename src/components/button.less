@@ -1,26 +1,40 @@
 .sv-button {
+  display: inline-block;
   padding: @padding-smaller @padding-small;
   border: none;
   border-radius: @border-radius-small;
   font-size: @font-size-small;
   line-height: 1rem;
   color: @gray-lightest;
-  background: none;
+  background: @gray-dark;
   overflow: hidden;
   position: relative;
-  &:not([disabled]) {
-    &:hover, &:focus, &:active {
-      color: white;
-      .sv-icon {
-        fill: white;
-      }
+  &:hover, &:focus, &:active {
+    color: white;
+    .sv-icon {
+      fill: white;
     }
+  }
+  &:hover, &:focus {
+    background-color: mix(@gray-dark, @gray);
+  }
+  &:active {
+    background-color: mix(@gray-dark, @gray-darker);
+  }
+  &[disabled] {
+    pointer-events: none;
+  }
+  &.sv-secondary {
+    background-color: @gray;
     &:hover, &:focus {
-      background-color: @shadow;
+      background-color: mix(@gray, @gray-light);
     }
     &:active {
-      background-color: @shadow-dark;
+      background-color: mix(@gray, @gray-dark);
     }
+  }
+  + .sv-button {
+    margin-left: @padding-smaller;
   }
 
   .sv-icon {

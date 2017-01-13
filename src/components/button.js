@@ -8,6 +8,7 @@ const Button = React.createClass({
     className: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     onClick: React.PropTypes.func,
+    secondary: React.PropTypes.bool,
     title: React.PropTypes.string,
     type: React.PropTypes.string
   },
@@ -24,8 +25,11 @@ const Button = React.createClass({
   },
 
   render: function() {
+    const buttonClassName = classNames('sv-button', this.props.className, {
+      'sv-secondary': this.props.secondary
+    });
     return (
-      <button className={classNames('sv-button', this.props.className)}
+      <button className={buttonClassName}
           disabled={this.props.disabled}
           onClick={this.props.onClick}
           onMouseDown={this._onMouseDown}

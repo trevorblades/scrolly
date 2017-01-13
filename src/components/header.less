@@ -25,9 +25,8 @@
     display: flex;
     justify-content: flex-end;
     flex-grow: 1;
-    max-width: 36rem;
+    max-width: 40rem;
     margin-left: auto;
-    padding-right: @padding-base;
     box-shadow: 0 0 0 1px @shadow-dark;
     border-top-left-radius: @border-radius-small;
     border-bottom-left-radius: @border-radius-small;
@@ -51,53 +50,54 @@
         outline: none;
       }
     }
-    .sv-button {
+    .sv-header-project-controls {
+      display: flex;
       flex-shrink: 0;
-      margin: @padding-smaller 0;
-      font-weight: 600;
-      color: @gray-darker;
-      background-color: @brand-primary;
-      &:hover, &:focus {
-        background-color: darken(@brand-primary, 5%);
-      }
-      &:active {
-        background-color: darken(@brand-primary, 10%);
-      }
-      &:last-child {
-        margin-left: @padding-smaller;
-      }
-      &.sv-header-project-save span {
-        display: inline-block;
-        line-height: 1em;
-        &:not(:first-child) {
-          margin-left: @padding-smallest;
-          font-size: @font-size-smaller;
-          color: @shadow-dark;
+      padding: @padding-smaller @padding-base;
+      .sv-button {
+        flex-shrink: 0;
+        font-weight: 600;
+        color: @gray-darker;
+        background-color: @brand-primary;
+        &:hover, &:focus {
+          background-color: lighten(@brand-primary, 10%);
+        }
+        &:active {
+          background-color: darken(@brand-primary, 5%);
+        }
+        &[disabled] {
+          color: @gray;
+          background-color: @gray-light;
+        }
+        &.sv-header-project-save span {
+          display: inline-block;
+          line-height: 1em;
+          &:not(:first-child) {
+            margin-left: @padding-smallest;
+            font-size: @font-size-smaller;
+            opacity: 0.5;
+          }
         }
       }
-      &[disabled] {
-        background-color: @gray-light;
-      }
-    }
-    .sv-header-project-status {
-      flex-shrink: 0;
-      margin: @padding-smaller;
-      margin-left: @padding-base;
-      text-align: right;
-      &.sv-not-saved, &.sv-nothing-to-save {
-        span:first-child {
-          color: @gray-lighter;
+      .sv-header-project-controls-status {
+        flex-shrink: 0;
+        margin-right: @padding-smaller;
+        text-align: right;
+        &.sv-not-saved, &.sv-nothing-to-save {
+          span:first-child {
+            color: @gray-lighter;
+          }
         }
-      }
-      &.sv-unsaved-changes span:first-child {
-        color: @brand-primary;
-      }
+        &.sv-unsaved-changes span:first-child {
+          color: @brand-primary;
+        }
 
-      span {
-        display: block;
-        font-size: @font-size-smaller;
-        line-height: 1rem;
-        white-space: nowrap;
+        span {
+          display: block;
+          font-size: @font-size-smaller;
+          line-height: 1rem;
+          white-space: nowrap;
+        }
       }
     }
   }

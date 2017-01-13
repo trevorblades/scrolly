@@ -3,7 +3,6 @@
     display: flex;
     flex-wrap: wrap;
     margin: 0 @padding-smaller * -1;
-    margin-top: @padding-base;
     .sv-open-dialog-project {
       width: 50%;
       padding: @padding-smaller;
@@ -12,7 +11,7 @@
         background-color: @gray;
         cursor: pointer;
         &:hover {
-          background-color: @gray-light;
+          background-color: mix(@gray, @gray-light);
         }
 
         span {

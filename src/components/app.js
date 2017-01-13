@@ -3,6 +3,7 @@ const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
 
+const Button = require('./button');
 const Dialog = require('./dialog');
 const Header = require('./header');
 const Library = require('./library');
@@ -53,9 +54,10 @@ const App = React.createClass({
       compositionHeight: 1080,
       compositionWidth: 1920,
       dragging: false,
-      opening: false,
+      newDialogShown: false,
+      openDialogShown: false,
       saving: false,
-      sharing: false,
+      shareDialogShown: false,
       timelineMaxHeight: 0,
       viewportScale: 1,
       viewportWrapperHeight: 0,
@@ -141,24 +143,37 @@ const App = React.createClass({
     event.preventDefault();
   },
 
+  _onNewClick: function() {
+    this.setState({newDialogShown: true});
+  },
+
+  _onNewDialogClose: function() {
+    this.setState({newDialogShown: false});
+  },
+
   _onOpenClick: function() {
-    this.setState({opening: true});
+    this.setState({openDialogShown: true});
   },
 
   _onOpenDialogClose: function() {
-    this.setState({opening: false});
+    this.setState({openDialogShown: false});
   },
 
   _onShareClick: function() {
-    this.setState({sharing: true});
+    this.setState({shareDialogShown: true});
   },
 
   _onShareDialogClose: function() {
-    this.setState({sharing: false});
+    this.setState({shareDialogShown: false});
   },
 
   _deselectLayer: function() {
     this.props.dispatch(selectLayer(null));
+  },
+
+  _createProject: function() {
+    history.replaceState(null, null, '/');
+    this.props.dispatch({type: 'RESET'});
   },
 
   _saveProject: function() {
@@ -216,7 +231,8 @@ const App = React.createClass({
           onDragLeave={this._onDragLeave}
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
-        <Header onOpenClick={this._onOpenClick}
+        <Header onNewClick={this._onNewClick}
+            onOpenClick={this._onOpenClick}
             onSaveClick={this._saveProject}
             onShareClick={this._onShareClick}
             ref="header"
@@ -247,8 +263,17 @@ const App = React.createClass({
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}/>
-        {this.state.opening && <OpenDialog onClose={this._onOpenDialogClose}/>}
-        {this.state.sharing &&
+        {this.state.newDialogShown &&
+          <Dialog onClose={this._onNewDialogClose}>
+            <h3>New project</h3>
+            <Button onClick={this._createProject} secondary>
+              Create project
+            </Button>
+            <Button onClick={this._onNewDialogClose} secondary>Cancel</Button>
+          </Dialog>}
+        {this.state.openDialogShown &&
+          <OpenDialog onClose={this._onOpenDialogClose}/>}
+        {this.state.shareDialogShown &&
           <Dialog onClose={this._onShareDialogClose}>
             <p>{`https://scrol.ly/viewer/?p=${this.props.slug}`}</p>
           </Dialog>}
