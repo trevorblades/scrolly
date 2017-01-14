@@ -1,5 +1,4 @@
 const React = require('react');
-const url = require('url');
 
 const Button = require('./button');
 
@@ -12,7 +11,6 @@ const Login = React.createClass({
   },
 
   getInitialState: function() {
-    const query = url.parse(window.location.href, true).query;
     return {
       email: '',
       error: false,
@@ -20,7 +18,7 @@ const Login = React.createClass({
       password: '',
       passwordConfirm: '',
       signingUp: false,
-      signUpFormShown: typeof query.signup !== 'undefined'
+      signUpFormShown: false
     };
   },
 
@@ -73,6 +71,10 @@ const Login = React.createClass({
     this.setState({[event.target.name]: event.target.value});
   },
 
+  _toggleSignUpForm: function() {
+    this.setState({signUpFormShown: !this.state.signUpFormShown});
+  },
+
   render: function() {
     const onSubmit = this.state.signUpFormShown ?
         this._onSignUpSubmit : this._onLogInSubmit;
@@ -99,9 +101,14 @@ const Login = React.createClass({
                   type="password"
                   value={this.state.passwordConfirm}/>}
             <Button large secondary type="submit">
-              {this.state.signUpFormShown ? 'Sign up' : 'Log in'}
+              {this.state.signUpFormShown ? 'Create account' : 'Log in'}
             </Button>
           </form>
+          <p>
+            <a onClick={this._toggleSignUpForm}>
+              {`Click here to ${this.state.signUpFormShown ? 'log in' : 'create an account'}`}
+            </a>
+          </p>
         </div>
       </div>
     );
