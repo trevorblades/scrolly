@@ -15,6 +15,27 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+label {
+  line-height: @padding-large;
+  color: @gray-lighter;
+}
+
+input[type="text"], input[type="number"] {
+  padding: @padding-smaller @padding-small;
+  border: 1px solid @shadow-dark;
+  color: @gray-lightest;
+  background: @gray-darker;
+  &::-webkit-inner-spin-button, &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  &:focus {
+    border-color: @brand-primary;
+    background: mix(@gray-darker, @gray-dark);
+    outline: none;
+  }
+}
+
 .sv-ellipsized {
   white-space: nowrap;
   overflow: hidden;

@@ -5,6 +5,7 @@ const Button = require('./button');
 const Checkbox = require('./checkbox');
 const Dialog = require('./dialog');
 
+const {DEFAULT_NAME} = require('../constants');
 const getAspectRatio = require('../util/get-aspect-ratio');
 
 const NewDialog = React.createClass({
@@ -22,28 +23,13 @@ const NewDialog = React.createClass({
       aspectRatio: this.props.width / this.props.height,
       constrained: true,
       height: this.props.height,
-      name: this.props.name,
+      name: DEFAULT_NAME,
       width: this.props.width
     };
   },
 
-  _onNameBlur: function() {
-    if (this.state.name !== this.props.name) {
-      this.props.dispatch({
-        type: 'SET_NAME',
-        value: this.state.name
-      });
-    }
-  },
-
   _onNameChange: function(event) {
     this.setState({name: event.target.value});
-  },
-
-  _onNameKeyDown: function(event) {
-    if (event.keyCode === 27) { // esc key pressed
-      event.target.blur();
-    }
   },
 
   _onDimensionChange: function(event) {
@@ -77,6 +63,7 @@ const NewDialog = React.createClass({
     history.replaceState(null, null, '/');
     this.props.dispatch({
       type: 'RESET',
+      name: this.state.name,
       width: this.state.width,
       height: this.state.height
     });
@@ -94,17 +81,17 @@ const NewDialog = React.createClass({
   },
 
   render: function() {
-    const aspectRatio = getAspectRatio(1, 1 / this.state.aspectRatio);
     return (
       <Dialog className="sv-new-dialog" onClose={this.props.onClose}>
         <h3>New project</h3>
-        <div className="sv-new-dialog-content">
-          <div className="sv-new-dialog-content-fields">
-            <label>Project name</label>
-            <input onChange={this._onNameChange}
-                type="text"
-                value={this.state.name}/>
-            <label>Width</label>
+        <label>Project name</label>
+        <input className="sv-new-dialog-name"
+            onChange={this._onNameChange}
+            type="text"
+            value={this.state.name}/>
+        <label>Width</label>
+        <div className="sv-new-dialog-dimensions">
+          <div className="sv-new-dialog-dimensions-fields">
             <input name="width"
                 onBlur={this._onDimensionBlur}
                 onChange={this._onDimensionChange}
@@ -117,11 +104,12 @@ const NewDialog = React.createClass({
                 type="number"
                 value={this.state.height}/>
           </div>
-          <div className="sv-new-dialog-content-aspect-ratio">
+          <div className="sv-new-dialog-dimensions-constrain">
             <Checkbox checked={this.state.constrained}
-                label="Constrain to aspect ratio"
+                label="Constrain dimensions to aspect ratio"
                 onChange={this._onConstrainChange}/>
-            {aspectRatio && <h6>{aspectRatio}</h6>}
+            {this.state.constrained &&
+              <h6>{getAspectRatio(1, 1 / this.state.aspectRatio)}</h6>}
           </div>
         </div>
         <Button onClick={this._onCreateProjectClick} secondary>

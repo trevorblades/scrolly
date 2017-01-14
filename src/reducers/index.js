@@ -5,6 +5,8 @@ const {excludeAction} = require('redux-undo');
 const assetsReducer = require('./assets');
 const layersReducer = require('./layers');
 
+const {DEFAULT_NAME} = require('../constants');
+
 const undoConfig = {filter: excludeAction([
   'SET_PERCENT_PLAYED',
   'SELECT_LAYER'
@@ -19,15 +21,11 @@ function createUpdateReducer(key, defaultState = null) {
 const combinedReducer = combineReducers({
   id: createUpdateReducer('id'),
   slug: createUpdateReducer('slug'),
-  name: undoable(function(state = 'Untitled project', action) {
-    switch (action.type) {
-      case 'SET_NAME':
-        return action.value;
-      case 'UPDATE_PROJECT':
-        return action.name;
-      default:
-        return state;
+  name: undoable(function(state = DEFAULT_NAME, action) {
+    if (action.type === 'UPDATE_PROJECT' || action.type === 'RESET') {
+      return action.name;
     }
+    return state;
   }),
   assets: undoable(assetsReducer, undoConfig),
   layers: undoable(layersReducer, undoConfig),
@@ -62,8 +60,18 @@ const combinedReducer = combineReducers({
         return state;
     }
   }),
-  width: createUpdateReducer('width', 1920),
-  height: createUpdateReducer('width', 1080),
+  width: function(state = 1920, action) {
+    if (action.type === 'UPDATE_PROJECT' || action.type === 'RESET') {
+      return action.width;
+    }
+    return state;
+  },
+  height:  function(state = 1080, action) {
+    if (action.type === 'UPDATE_PROJECT' || action.type === 'RESET') {
+      return action.height;
+    }
+    return state;
+  },
   percentPlayed: function(state = 0, action) {
     if (action.type === 'SET_PERCENT_PLAYED') {
       return action.value;
@@ -80,10 +88,7 @@ const combinedReducer = combineReducers({
 
 module.exports = function(state, action) {
   if (action.type === 'RESET') {
-    const nextState = combinedReducer(undefined, action);
-    nextState.width = action.width;
-    nextState.height = action.height;
-    return nextState;
+    return combinedReducer(undefined, action);
   }
   return combinedReducer(state, action);
 };

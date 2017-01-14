@@ -1,13 +1,21 @@
 .sv-new-dialog {
-  .sv-new-dialog-content {
-    display: flex;
-    align-items: center;
+  .sv-new-dialog-name {
+    width: 100%;
     margin-bottom: @padding-base;
-    .sv-new-dialog-content-fields {
+  }
+  .sv-new-dialog-dimensions {
+    display: flex;
+    margin-bottom: @padding-large;
+    .sv-new-dialog-dimensions-fields {
       margin-right: @padding-base;
       input:not(:last-child) {
         margin-bottom: @padding-smaller;
       }
+    }
+    .sv-new-dialog-dimensions-constrain {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
   }
 }
