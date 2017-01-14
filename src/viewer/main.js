@@ -33,9 +33,7 @@ const Viewer = React.createClass({
             width: project.width
           });
         })
-        .catch(err => {
-          this.setState({loading: false});
-        });
+        .catch(() => this.setState({loading: false}));
     }
     return {
       assets: [],

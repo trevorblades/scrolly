@@ -37,31 +37,8 @@ const Wrapper = connect()(React.createClass({
       }
     }
 
-    let loading = false;
-    const slug = window.location.pathname.split('/').filter(Boolean)[0];
-    if (slug) {
-      loading = true;
-      const headers = {'Authorization': `Bearer ${user.token}`};
-      fetch(`${API_URL}/projects/${slug}`, {headers})
-        .then(function(res) {
-          if (!res.ok) {
-            throw new Error();
-          }
-          return res.json();
-        })
-        .then(project => {
-          this.setState({loading: false});
-          this.props.dispatch(loadProject(project));
-        })
-        .catch(err => {
-          this.setState({loading: false});
-          history.pushState(null, null, '/');
-        });
-    }
-
     return {
-      loading,
-      loggingIn: false,
+      loading: this._loadProject(user),
       user
     };
   },
@@ -70,12 +47,42 @@ const Wrapper = connect()(React.createClass({
     const user = jwtDecode(token);
     user.token = token;
     localStorage.setItem(TOKEN_KEY, token);
-    this.setState({user});
+    this.setState({
+      loading: this._loadProject(user),
+      user
+    });
   },
 
   _onLogOutClick: function() {
     localStorage.removeItem(TOKEN_KEY);
     this.setState({user: null});
+  },
+
+  _loadProject: function(user) {
+    let loading = false;
+    if (user) {
+      const slug = window.location.pathname.split('/').filter(Boolean)[0];
+      if (slug) {
+        loading = true;
+        const headers = {'Authorization': `Bearer ${user.token}`};
+        fetch(`${API_URL}/projects/${slug}`, {headers})
+          .then(function(res) {
+            if (!res.ok) {
+              throw new Error();
+            }
+            return res.json();
+          })
+          .then(project => {
+            this.setState({loading: false});
+            this.props.dispatch(loadProject(project));
+          })
+          .catch(() => {
+            this.setState({loading: false});
+            history.pushState(null, null, '/');
+          });
+      }
+    }
+    return loading;
   },
 
   render: function() {

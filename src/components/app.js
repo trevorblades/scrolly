@@ -211,9 +211,7 @@ const App = React.createClass({
           this.props.dispatch(loadProject(project));
           history.replaceState(null, null, `/${project.slug}`);
         })
-        .catch(err => {
-          this.setState({saving: false});
-        });
+        .catch(() => this.setState({saving: false}));
 
       this.setState({saving: true});
     }

@@ -41,24 +41,31 @@ const OpenDialog = React.createClass({
   },
 
   render: function() {
+    let projects;
+    if (this.state.projects) {
+      projects = this.state.projects.length ? (
+        <div className="sv-open-dialog-projects">
+          {this.state.projects.map(project => {
+            return (
+              <div className="sv-open-dialog-project" key={project.id}>
+                <div className="sv-open-dialog-project-card"
+                    onClick={this._onProjectOpen.bind(null, project)}>
+                  <span>{project.name}</span>
+                  <span>{`Last modified ${formatDate(project.updated_at)}`}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : <p>You have no saved projects.</p>;
+    } else {
+      projects = <p>Loading projects...</p>;
+    }
+
     return (
       <Dialog className="sv-open-dialog" onClose={this.props.onClose}>
         <h3>Open a project</h3>
-        {this.state.projects ?
-          <div className="sv-open-dialog-projects">
-            {this.state.projects.map(project => {
-              return (
-                <div className="sv-open-dialog-project" key={project.id}>
-                  <div className="sv-open-dialog-project-card"
-                      onClick={this._onProjectOpen.bind(null, project)}>
-                    <span>{project.name}</span>
-                    <span>{`Last modified ${formatDate(project.updated_at)}`}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div> :
-          <p>Loading projects...</p>}
+        {projects}
       </Dialog>
     );
   }
