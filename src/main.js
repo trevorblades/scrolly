@@ -2,6 +2,7 @@ const React = require('react');
 const {render} = require('react-dom');
 const {createStore} = require('redux');
 const {Provider, connect} = require('react-redux');
+const jwtDecode = require('jwt-decode');
 require('core-js/fn/array/find');
 require('whatwg-fetch');
 
@@ -46,35 +47,11 @@ const Wrapper = connect()(React.createClass({
     };
   },
 
-  _onLoginSubmit: function(email, password) {
-    const options = {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({email, password})
-    };
-    fetch(`${API_URL}/auth`, options)
-      .then(function(res) {
-        if (!res.ok) {
-          throw new Error();
-        }
-        return res.text();
-      })
-      .then(token => {
-        const user = {
-          token: token
-        };
-        this.setState({
-          loggingIn: false,
-          user
-        });
-      })
-      .catch(() => {
-        this.setState({loggingIn: false});
-      });
-    this.setState({loggingIn: true});
+  _onLogInSuccess: function(token) {
+    const user = jwtDecode(token);
+    user.token = token;
+    console.log(user);
+    this.setState({user});
   },
 
   _onLogOutClick: function() {
@@ -83,7 +60,7 @@ const Wrapper = connect()(React.createClass({
 
   render: function() {
     if (!this.state.user) {
-      return <Login onSubmit={this._onLoginSubmit}/>;
+      return <Login onSuccess={this._onLogInSuccess}/>;
     }
     return this.state.loading ? null : <App onLogOutClick={this._onLogOutClick}/>;
   }

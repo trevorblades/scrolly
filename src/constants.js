@@ -4,5 +4,9 @@ module.exports = {
           'https://api.scrol.ly' : 'http://localhost:8000'),
   ASSET_DRAG_TYPE: 'text/id',
   DEFAULT_NAME: 'Untitled project',
-  FILE_DRAG_TYPE: 'Files'
+  FILE_DRAG_TYPE: 'Files',
+  JSON_HEADERS: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
 };

@@ -73,6 +73,7 @@
     "bytes": "^2.4.0",
     "classnames": "^2.2.5",
     "core-js": "^2.4.1",
+    "jwt-decode": "^2.1.0",
     "mime": "^1.3.4",
     "moment": "^2.17.1",
     "planet-css": "^1.1.1",

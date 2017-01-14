@@ -13,7 +13,7 @@ const ViewBar = require('./view-bar');
 const Viewport = require('./viewport');
 
 const {selectLayer, loadProject} = require('../actions');
-const {API_URL, FILE_DRAG_TYPE} = require('../constants');
+const {API_URL, FILE_DRAG_TYPE, JSON_HEADERS} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
@@ -183,10 +183,7 @@ const App = React.createClass({
       }
       const options = {
         method: this.props.id ? 'PUT' : 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
+        headers: JSON_HEADERS,
         body: JSON.stringify({
           name: this.props.name,
           width: this.props.compositionWidth,
