@@ -66,6 +66,8 @@ function loadProject(project) {
     id: project.id,
     slug: project.slug,
     name: project.name,
+    width: project.width,
+    height: project.height,
     layers: project.layers,
     assets: project.assets,
     step: project.step,

@@ -188,8 +188,10 @@ const App = React.createClass({
         },
         body: JSON.stringify({
           name: this.props.name,
-          assets: this.props.assets,
+          width: this.props.compositionWidth,
+          height: this.props.compositionHeight,
           layers: this.props.layers,
+          assets: this.props.assets,
           step: this.props.step
         })
       };
