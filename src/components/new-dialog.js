@@ -52,7 +52,7 @@ const NewDialog = React.createClass({
     if (nextState[key] && !isNaN(nextState[key])) {
       const value = parseInt(nextState[key]);
       if (value) {
-        nextState = this._constrainDimensions({[key]: value});
+        nextState = this._getConstrainedDimensions({[key]: value});
       }
     }
     this.setState(nextState);
@@ -60,7 +60,7 @@ const NewDialog = React.createClass({
 
   _onDimensionBlur: function(event) {
     if (!event.target.value) {
-      const nextState = this._constrainDimensions({[event.target.name]: 1});
+      const nextState = this._getConstrainedDimensions({[event.target.name]: 1});
       this.setState(nextState);
     }
   },
@@ -83,7 +83,7 @@ const NewDialog = React.createClass({
     this.props.onClose();
   },
 
-  _constrainDimensions: function(dimensions) {
+  _getConstrainedDimensions: function(dimensions) {
     if (!this.state.constrained) {
       return dimensions;
     }
