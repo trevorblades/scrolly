@@ -50,7 +50,6 @@ const Wrapper = connect()(React.createClass({
   _onLogInSuccess: function(token) {
     const user = jwtDecode(token);
     user.token = token;
-    console.log(user);
     this.setState({user});
   },
 

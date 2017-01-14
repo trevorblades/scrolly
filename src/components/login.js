@@ -34,15 +34,19 @@ const Login = React.createClass({
     };
     fetch(`${API_URL}/auth`, options)
       .then(res => {
+        if (!res.ok) {
+          throw new Error();
+        }
+        this.setState({loggingIn: false});
+        return res.text();
+      })
+      .then(this.props.onSuccess)
+      .catch(() => {
         this.setState({
-          error: !res.ok,
+          error: true,
           loggingIn: false
         });
-        if (res.ok) {
-          return res.text();
-        }
-      })
-      .then(this.props.onSuccess);
+      });
     this.setState({loggingIn: true});
   },
 
