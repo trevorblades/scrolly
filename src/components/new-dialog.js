@@ -115,7 +115,7 @@ const NewDialog = React.createClass({
         <Button onClick={this._onCreateProjectClick} secondary>
           Create project
         </Button>
-        <Button onClick={this._onNewDialogClose} secondary>Cancel</Button>
+        <Button onClick={this.props.onClose} secondary>Cancel</Button>
       </Dialog>
     );
   }
