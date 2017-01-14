@@ -18,6 +18,10 @@
   &:hover, &:focus {
     background-color: mix(@gray-dark, @gray);
   }
+  &:focus {
+    box-shadow: 0 0 0 1px @brand-primary;
+    outline: none;
+  }
   &:active {
     background-color: mix(@gray-dark, @gray-darker);
   }

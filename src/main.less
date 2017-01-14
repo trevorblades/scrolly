@@ -4,6 +4,8 @@
 @import './components/control';
 @import './components/icon';
 @import './components/text-field';
+
+@import './components/login';
 @import './components/app';
 
 body {
@@ -20,7 +22,8 @@ label {
   color: @gray-lighter;
 }
 
-input[type="text"], input[type="number"] {
+input[type="text"], input[type="password"], input[type="number"] {
+  display: block;
   padding: @padding-smaller @padding-small;
   border: 1px solid @shadow-dark;
   color: @gray-lightest;

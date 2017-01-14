@@ -12,9 +12,14 @@
   .sv-header-logo {
     height: @header-logo-height;
   }
-  .sv-header-nav {
+  .sv-header-navs {
     display: flex;
     margin: 0 @padding-large;
+    .sv-header-nav:not(:last-child) {
+      margin-right: @padding-small;
+      padding-right: @padding-small;
+      border-right: 1px solid @gray-darker;
+    }
   }
   .sv-header-controls {
     display: flex;

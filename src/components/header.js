@@ -12,12 +12,17 @@ const Header = React.createClass({
     changedAt: React.PropTypes.string,
     dispatch: React.PropTypes.func.isRequired,
     onEditClick: React.PropTypes.func.isRequired,
+    onLogInClick: React.PropTypes.func.isRequired,
     onNewClick: React.PropTypes.func.isRequired,
     onOpenClick: React.PropTypes.func.isRequired,
     onSaveClick: React.PropTypes.func.isRequired,
     onShareClick: React.PropTypes.func.isRequired,
     saving: React.PropTypes.bool.isRequired,
     updatedAt: React.PropTypes.string
+  },
+
+  _onLogOutClick: function() {
+    this.props.dispatch({type: 'LOG_OUT'});
   },
 
   render: function() {
@@ -36,13 +41,30 @@ const Header = React.createClass({
     const statusClassName = classNames('sv-header-controls-status',
         `sv-${savedStatus.split(' ').join('-').toLowerCase()}`);
 
+    const navs = [
+      {
+        'New': this.props.onNewClick,
+        'Edit': this.props.onEditClick,
+        'Open': this.props.onOpenClick
+      },
+      {
+        'Log out': this._onLogOutClick
+      }
+    ];
+
     return (
       <div className="sv-header">
         <img className="sv-header-logo" src="/assets/logo.svg"/>
-        <div className="sv-header-nav">
-          <Button onClick={this.props.onNewClick}>New</Button>
-          <Button onClick={this.props.onEditClick}>Edit</Button>
-          <Button onClick={this.props.onOpenClick}>Open</Button>
+        <div className="sv-header-navs">
+          {navs.map(function(nav, index) {
+            return (
+              <div className="sv-header-nav" key={index}>
+                {Object.keys(nav).map(function(key) {
+                  return <Button key={key} onClick={nav[key]}>{key}</Button>;
+                })}
+              </div>
+            );
+          })}
         </div>
         <div className="sv-header-controls">
           <div className={statusClassName}>

@@ -6,6 +6,7 @@ require('core-js/fn/array/find');
 require('whatwg-fetch');
 
 const App = require('./components/app');
+const Login = require('./components/login');
 
 const {loadProject} = require('./actions');
 const {API_URL} = require('./constants');
@@ -38,10 +39,20 @@ const Wrapper = connect()(React.createClass({
           history.pushState(null, null, '/');
         });
     }
-    return {loading};
+    return {
+      loading,
+      user: null
+    };
+  },
+
+  _onLoginSubmit: function(email, password) {
+    // log them in
   },
 
   render: function() {
+    if (!this.state.user) {
+      return <Login onSubmit={this._onLoginSubmit}/>;
+    }
     return this.state.loading ? null : <App/>;
   }
 }));
