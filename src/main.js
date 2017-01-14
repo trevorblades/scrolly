@@ -22,11 +22,27 @@ const Wrapper = connect()(React.createClass({
   },
 
   getInitialState: function() {
+    let user = null;
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (token) {
+      let claims;
+      try {
+        claims = jwtDecode(token);
+      } catch (err) {
+        // token has been tampered with
+      }
+
+      if (claims && claims.exp && claims.exp * 1000 > Date.now()) {
+        user = Object.assign({token: token}, claims);
+      }
+    }
+
     let loading = false;
     const slug = window.location.pathname.split('/').filter(Boolean)[0];
     if (slug) {
       loading = true;
-      fetch(`${API_URL}/projects/${slug}`)
+      const headers = {'Authorization': `Bearer ${user.token}`};
+      fetch(`${API_URL}/projects/${slug}`, {headers})
         .then(function(res) {
           if (!res.ok) {
             throw new Error();
@@ -41,21 +57,6 @@ const Wrapper = connect()(React.createClass({
           this.setState({loading: false});
           history.pushState(null, null, '/');
         });
-    }
-
-    let user = null;
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (token) {
-      let claims;
-      try {
-        claims = jwtDecode(token);
-      } catch (err) {
-        // token has been tampered with
-      }
-
-      if (claims && claims.exp && claims.exp * 1000 > Date.now()) {
-        user = Object.assign({token: token}, claims);
-      }
     }
 
     return {
@@ -81,7 +82,10 @@ const Wrapper = connect()(React.createClass({
     if (!this.state.user) {
       return <Login onSuccess={this._onLogInSuccess}/>;
     }
-    return this.state.loading ? null : <App onLogOutClick={this._onLogOutClick}/>;
+    return this.state.loading ?
+        null :
+        <App onLogOutClick={this._onLogOutClick}
+            user={this.state.user}/>;
   }
 }));
 

@@ -11,7 +11,8 @@ const OpenDialog = React.createClass({
 
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired
+    onClose: React.PropTypes.func.isRequired,
+    user: React.PropTypes.object.isRequired
   },
 
   getInitialState: function() {
@@ -21,7 +22,8 @@ const OpenDialog = React.createClass({
   },
 
   componentWillMount: function() {
-    fetch(`${API_URL}/projects`)
+    const headers = {'Authorization': `Bearer ${this.props.user.token}`};
+    fetch(`${API_URL}/projects`, {headers})
       .then(function(res) {
         if (res.ok) {
           return res.json();
@@ -42,19 +44,21 @@ const OpenDialog = React.createClass({
     return (
       <Dialog className="sv-open-dialog" onClose={this.props.onClose}>
         <h3>Open a project</h3>
-        <div className="sv-open-dialog-projects">
-          {this.state.projects ? this.state.projects.map(project => {
-            return (
-              <div className="sv-open-dialog-project" key={project.id}>
-                <div className="sv-open-dialog-project-card"
-                    onClick={this._onProjectOpen.bind(null, project)}>
-                  <span>{project.name}</span>
-                  <span>{`Last modified ${formatDate(project.updated_at)}`}</span>
+        {this.state.projects ?
+          <div className="sv-open-dialog-projects">
+            {this.state.projects.map(project => {
+              return (
+                <div className="sv-open-dialog-project" key={project.id}>
+                  <div className="sv-open-dialog-project-card"
+                      onClick={this._onProjectOpen.bind(null, project)}>
+                    <span>{project.name}</span>
+                    <span>{`Last modified ${formatDate(project.updated_at)}`}</span>
+                  </div>
                 </div>
-              </div>
-            );
-          }) : 'Loading projects...'}
-        </div>
+              );
+            })}
+          </div> :
+          <p>Loading projects...</p>}
       </Dialog>
     );
   }

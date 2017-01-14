@@ -45,7 +45,8 @@ const App = React.createClass({
     onLogOutClick: React.PropTypes.func.isRequired,
     selectedLayer: React.PropTypes.number,
     slug: React.PropTypes.string,
-    step: React.PropTypes.number.isRequired
+    step: React.PropTypes.number.isRequired,
+    user: React.PropTypes.object.isRequired
   },
 
   getInitialState: function() {
@@ -183,7 +184,9 @@ const App = React.createClass({
       }
       const options = {
         method: this.props.id ? 'PUT' : 'POST',
-        headers: JSON_HEADERS,
+        headers: Object.assign({
+          'Authorization': `Bearer ${this.props.user.token}`
+        }, JSON_HEADERS),
         body: JSON.stringify({
           name: this.props.name,
           width: this.props.compositionWidth,
@@ -264,7 +267,8 @@ const App = React.createClass({
           <EditDialog onClose={this._onEditDialogClose}
               reset={this.state.newDialogShown}/>}
         {this.state.openDialogShown &&
-          <OpenDialog onClose={this._onOpenDialogClose}/>}
+          <OpenDialog onClose={this._onOpenDialogClose}
+              user={this.props.user}/>}
         {this.state.shareDialogShown &&
           <Dialog onClose={this._onShareDialogClose}>
             <p>{`https://scrol.ly/viewer/?p=${this.props.slug}`}</p>
