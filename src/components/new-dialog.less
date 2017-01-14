@@ -7,9 +7,13 @@
     display: flex;
     margin-bottom: @padding-large;
     .sv-new-dialog-dimensions-fields {
+      width: 7rem;
       margin-right: @padding-base;
-      input:not(:last-child) {
-        margin-bottom: @padding-smaller;
+      input {
+        width: 100%;
+        &:not(:last-child) {
+          margin-bottom: @padding-smaller;
+        }
       }
     }
     .sv-new-dialog-dimensions-constrain {

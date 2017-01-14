@@ -109,7 +109,7 @@ const NewDialog = React.createClass({
                 label="Constrain dimensions to aspect ratio"
                 onChange={this._onConstrainChange}/>
             {this.state.constrained &&
-              <h6>{getAspectRatio(1, 1 / this.state.aspectRatio)}</h6>}
+              <h6>{`Aspect ratio: ${getAspectRatio(1, 1 / this.state.aspectRatio)}`}</h6>}
           </div>
         </div>
         <Button onClick={this._onCreateProjectClick} secondary>
