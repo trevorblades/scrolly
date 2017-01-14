@@ -42,6 +42,7 @@ const App = React.createClass({
     id: React.PropTypes.number,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     name: React.PropTypes.string.isRequired,
+    onLogOutClick: React.PropTypes.func.isRequired,
     selectedLayer: React.PropTypes.number,
     slug: React.PropTypes.string,
     step: React.PropTypes.number.isRequired
@@ -230,6 +231,7 @@ const App = React.createClass({
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
         <Header onEditClick={this._onEditClick}
+            onLogOutClick={this.props.onLogOutClick}
             onNewClick={this._onNewClick}
             onOpenClick={this._onOpenClick}
             onSaveClick={this._saveProject}

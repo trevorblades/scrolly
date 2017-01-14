@@ -41,19 +41,51 @@ const Wrapper = connect()(React.createClass({
     }
     return {
       loading,
+      loggingIn: false,
       user: null
     };
   },
 
   _onLoginSubmit: function(email, password) {
-    // log them in
+    const options = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({email, password})
+    };
+    fetch(`${API_URL}/auth`, options)
+      .then(function(res) {
+        if (!res.ok) {
+          throw new Error();
+        }
+        return res.text();
+      })
+      .then(token => {
+        const user = {
+          token: token
+        };
+        this.setState({
+          loggingIn: false,
+          user
+        });
+      })
+      .catch(() => {
+        this.setState({loggingIn: false});
+      });
+    this.setState({loggingIn: true});
+  },
+
+  _onLogOutClick: function() {
+    this.setState({user: null});
   },
 
   render: function() {
     if (!this.state.user) {
       return <Login onSubmit={this._onLoginSubmit}/>;
     }
-    return this.state.loading ? null : <App/>;
+    return this.state.loading ? null : <App onLogOutClick={this._onLogOutClick}/>;
   }
 }));
 

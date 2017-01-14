@@ -12,17 +12,13 @@ const Header = React.createClass({
     changedAt: React.PropTypes.string,
     dispatch: React.PropTypes.func.isRequired,
     onEditClick: React.PropTypes.func.isRequired,
-    onLogInClick: React.PropTypes.func.isRequired,
+    onLogOutClick: React.PropTypes.func.isRequired,
     onNewClick: React.PropTypes.func.isRequired,
     onOpenClick: React.PropTypes.func.isRequired,
     onSaveClick: React.PropTypes.func.isRequired,
     onShareClick: React.PropTypes.func.isRequired,
     saving: React.PropTypes.bool.isRequired,
     updatedAt: React.PropTypes.string
-  },
-
-  _onLogOutClick: function() {
-    this.props.dispatch({type: 'LOG_OUT'});
   },
 
   render: function() {
@@ -48,7 +44,7 @@ const Header = React.createClass({
         'Open': this.props.onOpenClick
       },
       {
-        'Log out': this._onLogOutClick
+        'Log out': this.props.onLogOutClick
       }
     ];
 
