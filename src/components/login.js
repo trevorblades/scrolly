@@ -14,61 +14,44 @@ const Login = React.createClass({
     return {
       email: '',
       error: false,
-      loggingIn: false,
       password: '',
       passwordConfirm: '',
       signingUp: false,
-      signUpFormShown: false
+      submitting: false
     };
   },
 
-  _onLogInSubmit: function(event) {
+  _onSubmit: function(event) {
     event.preventDefault();
+
+    const body = {
+      email: this.state.email,
+      password: this.state.password
+    };
+    if (this.state.signingUp) {
+      body.passwordConfirm = this.state.passwordConfirm;
+    }
     const options = {
       method: 'POST',
       headers: JSON_HEADERS,
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password
-      })
+      body: JSON.stringify(body)
     };
-    fetch(`${API_URL}/auth`, options)
+    fetch(`${API_URL}/${this.state.signingUp ? 'users' : 'auth'}`, options)
       .then(res => {
         if (!res.ok) {
           throw new Error();
         }
-        this.setState({loggingIn: false});
+        this.setState({submitting: false});
         return res.text();
       })
       .then(this.props.onSuccess)
       .catch(() => {
         this.setState({
           error: true,
-          loggingIn: false
+          submitting: false
         });
       });
-    this.setState({loggingIn: true});
-  },
-
-  _onSignUpSubmit: function(event) {
-    event.preventDefault();
-    const options = {
-      method: 'POST',
-      headers: JSON_HEADERS,
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password,
-        passwordConfirm: this.state.passwordConfirm
-      })
-    };
-    fetch(`${API_URL}/users`, options)
-      .then(res => {
-        this.setState({
-          error: !res.ok,
-          signingUp: true
-        });
-      });
-    this.setState({signingUp: true});
+    this.setState({submitting: true});
   },
 
   _onInputChange: function(event) {
@@ -76,18 +59,16 @@ const Login = React.createClass({
   },
 
   _toggleSignUpForm: function() {
-    this.setState({signUpFormShown: !this.state.signUpFormShown});
+    this.setState({signingUp: !this.state.signingUp});
   },
 
   render: function() {
-    const onSubmit = this.state.signUpFormShown ?
-        this._onSignUpSubmit : this._onLogInSubmit;
     return (
       <div className="sv-login">
         <div className="sv-login-content">
           <img src="/assets/logo.svg" title="Scrolly"/>
           <form className={this.state.error ? 'sv-error' : null}
-              onSubmit={onSubmit}>
+              onSubmit={this._onSubmit}>
             <input name="email"
                 onChange={this._onInputChange}
                 placeholder="Email"
@@ -98,19 +79,23 @@ const Login = React.createClass({
                 placeholder="Password"
                 type="password"
                 value={this.state.password}/>
-            {this.state.signUpFormShown &&
+            {this.state.signingUp &&
               <input name="passwordConfirm"
                   onChange={this._onInputChange}
                   placeholder="Confirm password"
                   type="password"
                   value={this.state.passwordConfirm}/>}
-            <Button large secondary type="submit">
-              {this.state.signUpFormShown ? 'Create account' : 'Log in'}
+            <Button disabled={this.state.submitting}
+                large
+                secondary
+                type="submit">
+              {this.state.submitting ? 'Submitting...' :
+                  this.state.signingUp ? 'Create account' : 'Log in'}
             </Button>
           </form>
           <p>
             <a onClick={this._toggleSignUpForm}>
-              {`Click here to ${this.state.signUpFormShown ? 'log in' : 'create an account'}`}
+              {`Click here to ${this.state.signingUp ? 'log in' : 'create an account'}`}
             </a>
           </p>
         </div>
