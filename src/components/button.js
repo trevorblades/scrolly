@@ -7,6 +7,7 @@ const Button = React.createClass({
     children: React.PropTypes.node,
     className: React.PropTypes.string,
     disabled: React.PropTypes.bool,
+    large: React.PropTypes.bool,
     onClick: React.PropTypes.func,
     secondary: React.PropTypes.bool,
     title: React.PropTypes.string,
@@ -26,6 +27,7 @@ const Button = React.createClass({
 
   render: function() {
     const buttonClassName = classNames('sv-button', this.props.className, {
+      'sv-large': this.props.large,
       'sv-secondary': this.props.secondary
     });
     return (

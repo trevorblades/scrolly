@@ -40,7 +40,7 @@ const Login = React.createClass({
                 placeholder="Password"
                 type="password"
                 value={this.state.password}/>
-            <Button secondary type="submit">Log in</Button>
+            <Button large secondary type="submit">Log in</Button>
           </form>
         </div>
       </div>
