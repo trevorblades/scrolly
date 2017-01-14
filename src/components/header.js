@@ -11,44 +11,12 @@ const Header = React.createClass({
   propTypes: {
     changedAt: React.PropTypes.string,
     dispatch: React.PropTypes.func.isRequired,
-    name: React.PropTypes.string.isRequired,
     onNewClick: React.PropTypes.func.isRequired,
     onOpenClick: React.PropTypes.func.isRequired,
     onSaveClick: React.PropTypes.func.isRequired,
     onShareClick: React.PropTypes.func.isRequired,
     saving: React.PropTypes.bool.isRequired,
     updatedAt: React.PropTypes.string
-  },
-
-  getInitialState: function() {
-    return {
-      name: this.props.name
-    };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    if (nextProps.name !== this.props.name) {
-      this.setState({name: nextProps.name});
-    }
-  },
-
-  _onNameBlur: function() {
-    if (this.state.name !== this.props.name) {
-      this.props.dispatch({
-        type: 'SET_NAME',
-        value: this.state.name
-      });
-    }
-  },
-
-  _onNameChange: function(event) {
-    this.setState({name: event.target.value});
-  },
-
-  _onNameKeyDown: function(event) {
-    if (event.keyCode === 27) { // esc key pressed
-      event.target.blur();
-    }
   },
 
   render: function() {
@@ -64,7 +32,7 @@ const Header = React.createClass({
       }
     }
 
-    const statusClassName = classNames('sv-header-project-controls-status',
+    const statusClassName = classNames('sv-header-controls-status',
         `sv-${savedStatus.split(' ').join('-').toLowerCase()}`);
 
     return (
@@ -74,28 +42,21 @@ const Header = React.createClass({
           <Button onClick={this.props.onNewClick}>New</Button>
           <Button onClick={this.props.onOpenClick}>Open</Button>
         </div>
-        <div className="sv-header-project">
-          <input onBlur={this._onNameBlur}
-              onChange={this._onNameChange}
-              onKeyDown={this._onNameKeyDown}
-              type="text"
-              value={this.state.name}/>
-          <div className="sv-header-project-controls">
-            <div className={statusClassName}>
-              <span>{this.props.saving ? 'Saving project...' : savedStatus}</span>
-              <span>{lastSaved}</span>
-            </div>
-            <Button className="sv-header-project-controls-save"
-                disabled={!changed || this.props.saving}
-                onClick={this.props.onSaveClick}>
-              <span>Save</span>
-              <span dangerouslySetInnerHTML={{__html: `(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '&#8984;' : 'Ctrl'} + S)`}}/>
-            </Button>
-            <Button disabled={!this.props.updatedAt}
-                onClick={this.props.onShareClick}>
-              Share
-            </Button>
+        <div className="sv-header-controls">
+          <div className={statusClassName}>
+            <span>{this.props.saving ? 'Saving project...' : savedStatus}</span>
+            <span>{lastSaved}</span>
           </div>
+          <Button className="sv-header-controls-save"
+              disabled={!changed || this.props.saving}
+              onClick={this.props.onSaveClick}>
+            <span>Save</span>
+            <span dangerouslySetInnerHTML={{__html: `(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '&#8984;' : 'Ctrl'} + S)`}}/>
+          </Button>
+          <Button disabled={!this.props.updatedAt}
+              onClick={this.props.onShareClick}>
+            Share
+          </Button>
         </div>
       </div>
     );
@@ -105,7 +66,6 @@ const Header = React.createClass({
 module.exports = connect(function(state) {
   return {
     changedAt: state.changedAt.present,
-    name: state.name.present,
     updatedAt: state.updatedAt
   };
 })(Header);

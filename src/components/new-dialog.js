@@ -4,7 +4,6 @@ const {connect} = require('react-redux');
 const Button = require('./button');
 const Checkbox = require('./checkbox');
 const Dialog = require('./dialog');
-const TextField = require('./text-field');
 
 const getAspectRatio = require('../util/get-aspect-ratio');
 
@@ -13,36 +12,65 @@ const NewDialog = React.createClass({
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
     height: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
     onClose: React.PropTypes.func.isRequired,
     width: React.PropTypes.number.isRequired
   },
 
   getInitialState: function() {
     return {
+      aspectRatio: this.props.width / this.props.height,
       constrained: true,
       height: this.props.height,
+      name: this.props.name,
       width: this.props.width
     };
   },
 
-  _onWidthChange: function(width) {
-    const nextState = {width};
-    if (this.state.constrained) {
-      nextState.height = width / (this.state.width / this.state.height);
+  _onNameBlur: function() {
+    if (this.state.name !== this.props.name) {
+      this.props.dispatch({
+        type: 'SET_NAME',
+        value: this.state.name
+      });
+    }
+  },
+
+  _onNameChange: function(event) {
+    this.setState({name: event.target.value});
+  },
+
+  _onNameKeyDown: function(event) {
+    if (event.keyCode === 27) { // esc key pressed
+      event.target.blur();
+    }
+  },
+
+  _onDimensionChange: function(event) {
+    const key = event.target.name;
+    let nextState = {[key]: event.target.value};
+    if (nextState[key] && !isNaN(nextState[key])) {
+      const value = parseInt(nextState[key]);
+      if (value) {
+        nextState = this._constrainDimensions({[key]: value});
+      }
     }
     this.setState(nextState);
   },
 
-  _onHeightChange: function(height) {
-    const nextState = {height};
-    if (this.state.constrained) {
-      nextState.width = height * (this.state.height / this.state.width);
+  _onDimensionBlur: function(event) {
+    if (!event.target.value) {
+      const nextState = this._constrainDimensions({[event.target.name]: 1});
+      this.setState(nextState);
     }
-    this.setState(nextState);
   },
 
   _onConstrainChange: function(constrained) {
-    this.setState({constrained});
+    const nextState = {constrained};
+    if (constrained) {
+      nextState.aspectRatio = this.state.width / this.state.height;
+    }
+    this.setState(nextState);
   },
 
   _onCreateProjectClick: function() {
@@ -55,18 +83,37 @@ const NewDialog = React.createClass({
     this.props.onClose();
   },
 
+  _constrainDimensions: function(dimensions) {
+    if (!this.state.constrained) {
+      return dimensions;
+    }
+    const additional = 'width' in dimensions ?
+        {height: dimensions.width / this.state.aspectRatio} :
+        {width: dimensions.height * this.state.aspectRatio};
+    return Object.assign({}, dimensions, additional);
+  },
+
   render: function() {
+    const aspectRatio = getAspectRatio(1, 1 / this.state.aspectRatio);
     return (
       <Dialog className="sv-new-dialog" onClose={this.props.onClose}>
         <h3>New project</h3>
-        <label>Width</label>
         <div className="sv-new-dialog-content">
           <div className="sv-new-dialog-content-fields">
-            <TextField onChange={this._onWidthChange}
+            <label>Project name</label>
+            <input onChange={this._onNameChange}
+                type="text"
+                value={this.state.name}/>
+            <label>Width</label>
+            <input name="width"
+                onBlur={this._onDimensionBlur}
+                onChange={this._onDimensionChange}
                 type="number"
                 value={this.state.width}/>
             <label>Height</label>
-            <TextField onChange={this._onHeightChange}
+            <input name="height"
+                onBlur={this._onDimensionBlur}
+                onChange={this._onDimensionChange}
                 type="number"
                 value={this.state.height}/>
           </div>
@@ -74,7 +121,7 @@ const NewDialog = React.createClass({
             <Checkbox checked={this.state.constrained}
                 label="Constrain to aspect ratio"
                 onChange={this._onConstrainChange}/>
-            <h6>{getAspectRatio(this.state.width, this.state.height)}</h6>
+            {aspectRatio && <h6>{aspectRatio}</h6>}
           </div>
         </div>
         <Button onClick={this._onCreateProjectClick} secondary>
@@ -88,6 +135,7 @@ const NewDialog = React.createClass({
 
 module.exports = connect(function(state) {
   return {
+    name: state.name.present,
     width: state.width,
     height: state.height
   };
