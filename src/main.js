@@ -13,6 +13,8 @@ const {loadProject} = require('./actions');
 const {API_URL} = require('./constants');
 const reducer = require('./reducers');
 
+const TOKEN_KEY = 'sv-token';
+
 const Wrapper = connect()(React.createClass({
 
   propTypes: {
@@ -40,20 +42,38 @@ const Wrapper = connect()(React.createClass({
           history.pushState(null, null, '/');
         });
     }
+
+    let user = null;
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (token) {
+      let claims;
+      try {
+        claims = jwtDecode(token);
+      } catch (err) {
+        // token has been tampered with
+      }
+
+      if (claims && claims.exp && claims.exp * 1000 > Date.now()) {
+        user = Object.assign({token: token}, claims);
+      }
+    }
+
     return {
       loading,
       loggingIn: false,
-      user: null
+      user
     };
   },
 
   _onLogInSuccess: function(token) {
     const user = jwtDecode(token);
     user.token = token;
+    localStorage.setItem(TOKEN_KEY, token);
     this.setState({user});
   },
 
   _onLogOutClick: function() {
+    localStorage.removeItem(TOKEN_KEY);
     this.setState({user: null});
   },
 
