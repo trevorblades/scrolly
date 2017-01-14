@@ -17,7 +17,7 @@ module.exports = function(state = [], action) {
         }
       }
       return [...state.slice(0, index), ...state.slice(index + 1)];
-    case 'UPDATE_PROJECT':
+    case 'LOAD_PROJECT':
       return action.assets;
     default:
       return state;

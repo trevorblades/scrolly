@@ -4,15 +4,15 @@ const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
 
 const Dialog = require('./dialog');
+const EditDialog = require('./edit-dialog');
 const Header = require('./header');
 const Library = require('./library');
-const NewDialog = require('./new-dialog');
 const OpenDialog = require('./open-dialog');
 const Timeline = require('./timeline');
 const ViewBar = require('./view-bar');
 const Viewport = require('./viewport');
 
-const {selectLayer, updateProject} = require('../actions');
+const {selectLayer, loadProject} = require('../actions');
 const {API_URL, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
@@ -143,8 +143,15 @@ const App = React.createClass({
     this.setState({newDialogShown: true});
   },
 
-  _onNewDialogClose: function() {
-    this.setState({newDialogShown: false});
+  _onEditClick: function() {
+    this.setState({editDialogShown: true});
+  },
+
+  _onEditDialogClose: function() {
+    this.setState({
+      newDialogShown: false,
+      editDialogShown: false
+    });
   },
 
   _onOpenClick: function() {
@@ -198,7 +205,7 @@ const App = React.createClass({
             changed: false,
             saving: false
           });
-          this.props.dispatch(updateProject(project));
+          this.props.dispatch(loadProject(project));
           history.replaceState(null, null, `/${project.slug}`);
         })
         .catch(err => {
@@ -220,7 +227,8 @@ const App = React.createClass({
           onDragLeave={this._onDragLeave}
           onDragOver={this._onDragOver}
           onDrop={this._onDragLeave}>
-        <Header onNewClick={this._onNewClick}
+        <Header onEditClick={this._onEditClick}
+            onNewClick={this._onNewClick}
             onOpenClick={this._onOpenClick}
             onSaveClick={this._saveProject}
             onShareClick={this._onShareClick}
@@ -251,10 +259,9 @@ const App = React.createClass({
         </div>
         <Timeline maxHeight={this.state.timelineMaxHeight}
             onResize={this._onResize}/>
-        {this.state.newDialogShown &&
-          <NewDialog height={this.props.compositionHeight}
-              onClose={this._onNewDialogClose}
-              width={this.props.compositionWidth}/>}
+        {(this.state.newDialogShown || this.state.editDialogShown) &&
+          <EditDialog onClose={this._onEditDialogClose}
+              reset={this.state.newDialogShown}/>}
         {this.state.openDialogShown &&
           <OpenDialog onClose={this._onOpenDialogClose}/>}
         {this.state.shareDialogShown &&

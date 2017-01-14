@@ -8,13 +8,14 @@ const Dialog = require('./dialog');
 const {DEFAULT_NAME} = require('../constants');
 const getAspectRatio = require('../util/get-aspect-ratio');
 
-const NewDialog = React.createClass({
+const EditDialog = React.createClass({
 
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
     height: React.PropTypes.number.isRequired,
     name: React.PropTypes.string.isRequired,
     onClose: React.PropTypes.func.isRequired,
+    reset: React.PropTypes.bool,
     width: React.PropTypes.number.isRequired
   },
 
@@ -23,9 +24,21 @@ const NewDialog = React.createClass({
       aspectRatio: this.props.width / this.props.height,
       constrained: true,
       height: this.props.height,
-      name: DEFAULT_NAME,
+      name: this.props.reset ? DEFAULT_NAME : this.props.name,
       width: this.props.width
     };
+  },
+
+  _onSubmit: function(event) {
+    event.preventDefault();
+    history.replaceState(null, null, '/');
+    this.props.dispatch({
+      type: this.props.reset ? 'RESET_PROJECT' : 'UPDATE_PROJECT',
+      name: this.state.name,
+      width: this.state.width,
+      height: this.state.height
+    });
+    this.props.onClose();
   },
 
   _onNameChange: function(event) {
@@ -59,17 +72,6 @@ const NewDialog = React.createClass({
     this.setState(nextState);
   },
 
-  _onCreateProjectClick: function() {
-    history.replaceState(null, null, '/');
-    this.props.dispatch({
-      type: 'RESET',
-      name: this.state.name,
-      width: this.state.width,
-      height: this.state.height
-    });
-    this.props.onClose();
-  },
-
   _getConstrainedDimensions: function(dimensions) {
     if (!this.state.constrained) {
       return dimensions;
@@ -82,40 +84,42 @@ const NewDialog = React.createClass({
 
   render: function() {
     return (
-      <Dialog className="sv-new-dialog" onClose={this.props.onClose}>
-        <h3>New project</h3>
-        <label>Project name</label>
-        <input className="sv-new-dialog-name"
-            onChange={this._onNameChange}
-            type="text"
-            value={this.state.name}/>
-        <label>Width</label>
-        <div className="sv-new-dialog-dimensions">
-          <div className="sv-new-dialog-dimensions-fields">
-            <input name="width"
-                onBlur={this._onDimensionBlur}
-                onChange={this._onDimensionChange}
-                type="number"
-                value={this.state.width}/>
-            <label>Height</label>
-            <input name="height"
-                onBlur={this._onDimensionBlur}
-                onChange={this._onDimensionChange}
-                type="number"
-                value={this.state.height}/>
+      <Dialog className="sv-edit-dialog" onClose={this.props.onClose}>
+        <h3>{`${this.props.reset ? 'New' : 'Edit'} project`}</h3>
+        <form onSubmit={this._onSubmit}>
+          <label>Project name</label>
+          <input className="sv-edit-dialog-name"
+              onChange={this._onNameChange}
+              type="text"
+              value={this.state.name}/>
+          <label>Width</label>
+          <div className="sv-edit-dialog-dimensions">
+            <div className="sv-edit-dialog-dimensions-fields">
+              <input name="width"
+                  onBlur={this._onDimensionBlur}
+                  onChange={this._onDimensionChange}
+                  type="number"
+                  value={this.state.width}/>
+              <label>Height</label>
+              <input name="height"
+                  onBlur={this._onDimensionBlur}
+                  onChange={this._onDimensionChange}
+                  type="number"
+                  value={this.state.height}/>
+            </div>
+            <div className="sv-edit-dialog-dimensions-constrain">
+              <Checkbox checked={this.state.constrained}
+                  label="Constrain dimensions to aspect ratio"
+                  onChange={this._onConstrainChange}/>
+              {this.state.constrained &&
+                <h6>{`Aspect ratio: ${getAspectRatio(1, 1 / this.state.aspectRatio)}`}</h6>}
+            </div>
           </div>
-          <div className="sv-new-dialog-dimensions-constrain">
-            <Checkbox checked={this.state.constrained}
-                label="Constrain dimensions to aspect ratio"
-                onChange={this._onConstrainChange}/>
-            {this.state.constrained &&
-              <h6>{`Aspect ratio: ${getAspectRatio(1, 1 / this.state.aspectRatio)}`}</h6>}
-          </div>
-        </div>
-        <Button onClick={this._onCreateProjectClick} secondary>
-          Create project
-        </Button>
-        <Button onClick={this.props.onClose} secondary>Cancel</Button>
+          <Button secondary type="submit">
+            {`${this.props.reset ? 'Create' : 'Update'} project`}
+          </Button>
+          <Button onClick={this.props.onClose} secondary>Cancel</Button>
+        </form>
       </Dialog>
     );
   }
@@ -127,4 +131,4 @@ module.exports = connect(function(state) {
     width: state.width,
     height: state.height
   };
-})(NewDialog);
+})(EditDialog);

@@ -11,6 +11,7 @@ const Header = React.createClass({
   propTypes: {
     changedAt: React.PropTypes.string,
     dispatch: React.PropTypes.func.isRequired,
+    onEditClick: React.PropTypes.func.isRequired,
     onNewClick: React.PropTypes.func.isRequired,
     onOpenClick: React.PropTypes.func.isRequired,
     onSaveClick: React.PropTypes.func.isRequired,
@@ -40,6 +41,7 @@ const Header = React.createClass({
         <img className="sv-header-logo" src="/assets/logo.svg"/>
         <div className="sv-header-nav">
           <Button onClick={this.props.onNewClick}>New</Button>
+          <Button onClick={this.props.onEditClick}>Edit</Button>
           <Button onClick={this.props.onOpenClick}>Open</Button>
         </div>
         <div className="sv-header-controls">

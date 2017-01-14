@@ -12,38 +12,46 @@ const undoConfig = {filter: excludeAction([
   'SELECT_LAYER'
 ])};
 
-function createUpdateReducer(key, defaultState = null) {
+function createLoadableReducer(key, defaultState = null) {
   return function(state = defaultState, action) {
-    return action.type === 'UPDATE_PROJECT' ? action[key] : state;
+    return action.type === 'LOAD_PROJECT' ? action[key] : state;
+  };
+}
+
+function createUpdatableReducer(key, defaultState = null) {
+  return function(state = defaultState, action) {
+    switch (action.type) {
+      case 'LOAD_PROJECT':
+      case 'UPDATE_PROJECT':
+      case 'RESET_PROJECT':
+        return action[key];
+      default:
+        return state;
+    }
   };
 }
 
 const combinedReducer = combineReducers({
-  id: createUpdateReducer('id'),
-  slug: createUpdateReducer('slug'),
-  name: undoable(function(state = DEFAULT_NAME, action) {
-    if (action.type === 'UPDATE_PROJECT' || action.type === 'RESET') {
-      return action.name;
-    }
-    return state;
-  }),
+  id: createLoadableReducer('id'),
+  slug: createLoadableReducer('slug'),
+  name: undoable(createUpdatableReducer('name', DEFAULT_NAME)),
   assets: undoable(assetsReducer, undoConfig),
   layers: undoable(layersReducer, undoConfig),
   step: undoable(function(state = 1, action) {
     switch (action.type) {
       case 'SET_STEP':
         return action.value;
-      case 'UPDATE_PROJECT':
+      case 'LOAD_PROJECT':
         return action.step;
       default:
         return state;
     }
   }, undoConfig),
-  createdAt: createUpdateReducer('createdAt'),
-  updatedAt: createUpdateReducer('updatedAt'),
+  createdAt: createLoadableReducer('createdAt'),
+  updatedAt: createLoadableReducer('updatedAt'),
   changedAt: undoable(function(state = null, action) {
     switch (action.type) {
-      case 'UPDATE_PROJECT':
+      case 'LOAD_PROJECT':
         return new Date(action.updatedAt).toISOString();
       case 'SET_NAME':
       case 'SET_STEP':
@@ -55,23 +63,14 @@ const combinedReducer = combineReducers({
       case 'LINK_LAYERS':
       case 'ADD_ASSET':
       case 'REMOVE_ASSET':
+      case 'UPDATE_PROJECT':
         return new Date().toISOString();
       default:
         return state;
     }
   }),
-  width: function(state = 1920, action) {
-    if (action.type === 'UPDATE_PROJECT' || action.type === 'RESET') {
-      return action.width;
-    }
-    return state;
-  },
-  height:  function(state = 1080, action) {
-    if (action.type === 'UPDATE_PROJECT' || action.type === 'RESET') {
-      return action.height;
-    }
-    return state;
-  },
+  width: createUpdatableReducer('width', 1920),
+  height: createUpdatableReducer('height', 1080),
   percentPlayed: function(state = 0, action) {
     if (action.type === 'SET_PERCENT_PLAYED') {
       return action.value;
@@ -87,7 +86,7 @@ const combinedReducer = combineReducers({
 });
 
 module.exports = function(state, action) {
-  if (action.type === 'RESET') {
+  if (action.type === 'RESET_PROJECT') {
     return combinedReducer(undefined, action);
   }
   return combinedReducer(state, action);

@@ -3,7 +3,7 @@ const {connect} = require('react-redux');
 
 const Dialog = require('./dialog');
 
-const {updateProject} = require('../actions');
+const {loadProject} = require('../actions');
 const {API_URL} = require('../constants');
 const formatDate = require('../util/format-date');
 
@@ -33,7 +33,7 @@ const OpenDialog = React.createClass({
   },
 
   _onProjectOpen: function(project) {
-    this.props.dispatch(updateProject(project));
+    this.props.dispatch(loadProject(project));
     this.props.onClose();
   },
 

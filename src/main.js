@@ -7,7 +7,7 @@ require('whatwg-fetch');
 
 const App = require('./components/app');
 
-const {updateProject} = require('./actions');
+const {loadProject} = require('./actions');
 const {API_URL} = require('./constants');
 const reducer = require('./reducers');
 
@@ -31,7 +31,7 @@ const Wrapper = connect()(React.createClass({
         })
         .then(project => {
           this.setState({loading: false});
-          this.props.dispatch(updateProject(project));
+          this.props.dispatch(loadProject(project));
         })
         .catch(err => {
           this.setState({loading: false});

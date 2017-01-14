@@ -60,9 +60,9 @@ function selectLayer(id) {
   };
 }
 
-function updateProject(project) {
+function loadProject(project) {
   return {
-    type: 'UPDATE_PROJECT',
+    type: 'LOAD_PROJECT',
     id: project.id,
     slug: project.slug,
     name: project.name,
@@ -84,5 +84,5 @@ module.exports = {
   linkLayers,
   setPercentPlayed,
   selectLayer,
-  updateProject
+  loadProject
 };

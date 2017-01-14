@@ -32,7 +32,7 @@ module.exports = function(state = [], action) {
     case 'TOGGLE_LAYER_VISIBILITY':
     case 'LINK_LAYERS':
       return state.map(layer => layerReducer(layer, action));
-    case 'UPDATE_PROJECT':
+    case 'LOAD_PROJECT':
       return action.layers;
     default:
       return state;
