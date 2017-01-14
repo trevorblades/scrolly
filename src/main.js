@@ -73,6 +73,9 @@ const Wrapper = connect()(React.createClass({
             return res.json();
           })
           .then(project => {
+            if (project.user_id !== user.id) {
+              throw new Error();
+            }
             this.setState({loading: false});
             this.props.dispatch(loadProject(project));
           })
