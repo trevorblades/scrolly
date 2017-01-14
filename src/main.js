@@ -35,7 +35,7 @@ const Wrapper = connect()(React.createClass({
         })
         .catch(err => {
           this.setState({loading: false});
-          history.pushState(null, null, window.location.origin);
+          history.pushState(null, null, '/');
         });
     }
     return {loading};

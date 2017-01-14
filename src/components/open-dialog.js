@@ -33,6 +33,7 @@ const OpenDialog = React.createClass({
   },
 
   _onProjectOpen: function(project) {
+    history.pushState(null, null, `/${project.slug}`);
     this.props.dispatch(loadProject(project));
     this.props.onClose();
   },

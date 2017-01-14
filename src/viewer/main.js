@@ -26,9 +26,11 @@ const Viewer = React.createClass({
         .then(project => {
           this.setState({
             assets: project.assets,
+            height: project.height,
             layers: project.layers,
             loading: false,
-            step: project.step
+            step: project.step,
+            width: project.width
           });
         })
         .catch(err => {
@@ -37,12 +39,12 @@ const Viewer = React.createClass({
     }
     return {
       assets: [],
-      compositionHeight: 1080,
-      compositionWidth: 1920,
+      height: 0,
       layers: [],
       loading,
       percentPlayed: 0,
       step: 1,
+      width: 0,
       windowHeight: 0,
       windowWidth: 0
     };
@@ -79,8 +81,8 @@ const Viewer = React.createClass({
     return (
       <div className="sv-viewer">
         <Viewport assets={this.state.assets}
-            compositionHeight={this.state.compositionHeight}
-            compositionWidth={this.state.compositionWidth}
+            compositionHeight={this.state.height}
+            compositionWidth={this.state.width}
             layers={this.state.layers}
             percentPlayed={this.state.percentPlayed}
             readOnly
