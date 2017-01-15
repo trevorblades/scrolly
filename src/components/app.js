@@ -168,6 +168,10 @@ const App = React.createClass({
     this.setState({shareDialogShown: true});
   },
 
+  _onShareInputClick: function(event) {
+    event.target.select();
+  },
+
   _onShareDialogClose: function() {
     this.setState({shareDialogShown: false});
   },
@@ -268,8 +272,13 @@ const App = React.createClass({
           <OpenDialog onClose={this._onOpenDialogClose}
               user={this.props.user}/>}
         {this.state.shareDialogShown &&
-          <Dialog onClose={this._onShareDialogClose}>
-            <p>{`https://scrol.ly/viewer/?p=${this.props.slug}`}</p>
+          <Dialog className="sv-app-share-dialog" onClose={this._onShareDialogClose}>
+            <h3>Share your project</h3>
+            <label>Use the following link to share your creation with the world:</label>
+            <input onClick={this._onShareInputClick}
+                readOnly
+                type="text"
+                value={`${window.location.origin}/viewer/?p=${this.props.slug}`}/>
           </Dialog>}
       </div>
     );
