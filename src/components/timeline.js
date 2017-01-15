@@ -329,8 +329,7 @@ let Timeline = React.createClass({
     const layers = this.state.sortOrder ?
         this.state.sortOrder.map(id => {
           return this.props.layers.find(layer => layer.id === id);
-        }) : this.props.layers.slice();
-    layers.reverse();
+        }) : this.props.layers;
 
     const layersClassName = classNames('sv-timeline-layers', {
       'sv-locked': this.state.dragging,
@@ -442,11 +441,13 @@ let Timeline = React.createClass({
 });
 
 function mapStateToProps(state) {
+  const layers = state.layers.present.slice();
+  layers.reverse();
   return {
     getInterpolatedValue: function(value) {
       return getInterpolatedValue(value, state.percentPlayed);
     },
-    layers: state.layers.present,
+    layers,
     percentPlayed: state.percentPlayed,
     selectedLayer: state.selectedLayer,
     step: state.step.present
