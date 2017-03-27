@@ -31,7 +31,7 @@ for (var i = 0; i < numTicks; i++) {
   ticks.push({});
 }
 
-let Timeline = React.createClass({
+const Timeline = React.createClass({
 
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
@@ -137,7 +137,9 @@ let Timeline = React.createClass({
   },
 
   _onLayerDragEnd: function() {
-    this.props.dispatch(orderLayers(this.state.sortOrder));
+    const sortOrder = this.state.sortOrder.slice();
+    sortOrder.reverse();
+    this.props.dispatch(orderLayers(sortOrder));
     this.setState({
       sortId: null,
       sortOrder: null
@@ -161,7 +163,7 @@ let Timeline = React.createClass({
     }
 
     if (changed) {
-      this.setState({sortOrder: sortOrder});
+      this.setState({sortOrder});
     }
   },
 

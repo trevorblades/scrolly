@@ -6,7 +6,7 @@ module.exports = function(state, action) {
       var layer = {
         id: action.id,
         type: action.layerType,
-        name: `Layer ${action.id + 1}`,
+        name: `Layer ${action.id}`,
         in: properties.in.default,
         out: properties.out.default,
         anchorX: properties.anchorX.default,
