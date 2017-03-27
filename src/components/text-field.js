@@ -45,6 +45,10 @@ const TextField = React.createClass({
     }
   },
 
+  shouldComponentUpdate: function(nextProps, nextState) {
+    return !(this.state.editing && nextState.editing);
+  },
+
   _onBlur: function() {
     this.setState({editing: false});
     this.props.onChange(this.state.value);
