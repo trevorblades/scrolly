@@ -14,11 +14,27 @@
   }
   .sv-header-navs {
     display: flex;
-    margin: 0 @padding-large;
+    margin-left: @padding-large;
     .sv-header-nav:not(:last-child) {
       margin-right: @padding-small;
       padding-right: @padding-small;
       border-right: 1px solid @gray-light;
+    }
+  }
+  .sv-header-name {
+    flex-grow: 1;
+    margin: 0 @padding-largest;
+    border-radius: @border-radius-large;
+    box-shadow: inset 0 0 0 1px @gray-darker;
+    line-height: @header-logo-height;
+    text-align: center;
+    background-color: @gray;
+    cursor: pointer;
+    &:hover {
+      background-color: mix(@gray, @gray-light);
+    }
+    &.sv-changed {
+      color: @brand-primary;
     }
   }
   .sv-header-controls {

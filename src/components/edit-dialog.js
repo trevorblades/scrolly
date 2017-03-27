@@ -29,6 +29,11 @@ const EditDialog = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    this.refs.name.focus();
+    this.refs.name.select();
+  },
+
   _onSubmit: function(event) {
     event.preventDefault();
     history.replaceState(null, null, '/');
@@ -90,6 +95,7 @@ const EditDialog = React.createClass({
           <label>Project name</label>
           <input className="sv-edit-dialog-name"
               onChange={this._onNameChange}
+              ref="name"
               type="text"
               value={this.state.name}/>
           <label>Width</label>

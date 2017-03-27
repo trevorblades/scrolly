@@ -11,6 +11,7 @@ const Header = React.createClass({
   propTypes: {
     changedAt: React.PropTypes.string,
     dispatch: React.PropTypes.func.isRequired,
+    name: React.PropTypes.string.isRequired,
     onEditClick: React.PropTypes.func.isRequired,
     onLogOutClick: React.PropTypes.func.isRequired,
     onNewClick: React.PropTypes.func.isRequired,
@@ -62,6 +63,10 @@ const Header = React.createClass({
             );
           })}
         </div>
+        <div className={classNames('sv-header-name', {'sv-changed': changed})}
+            onClick={this.props.onEditClick}>
+          {this.props.name}
+        </div>
         <div className="sv-header-controls">
           <div className={statusClassName}>
             <span>{this.props.saving ? 'Saving project...' : savedStatus}</span>
@@ -86,6 +91,7 @@ const Header = React.createClass({
 module.exports = connect(function(state) {
   return {
     changedAt: state.changedAt.present,
+    name: state.name.present,
     updatedAt: state.updatedAt
   };
 })(Header);
