@@ -357,15 +357,15 @@ const TimelineLayer = React.createClass({
 
     return (
       <div className={layerClassName}
-          draggable
-          onDragEnd={this.props.onDragEnd}
           onDragOver={this.props.onDragOver}
-          onDragStart={this.props.onDragStart}
           onMouseDown={this.props.onMouseDown}
           onMouseUp={this.props.onMouseUp}>
         <div className="sv-timeline-layer-top">
           <Control actions={topActions}
-              onClick={this.props.selectLayer}>
+              draggable
+              onClick={this.props.selectLayer}
+              onDragEnd={this.props.onDragEnd}
+              onDragStart={this.props.onDragStart}>
             <TextField onChange={this._onNameChange}
                 value={this.props.layer.name}/>
           </Control>
