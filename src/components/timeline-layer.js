@@ -121,10 +121,22 @@ const TimelineLayer = React.createClass({
   _onBarMouseUp: function() {
     if (this.props.layer.in !== this.state.dragIn ||
         this.props.layer.out !== this.state.dragOut) {
-      this.props.onPropertiesChange({
+      const properties = {
         in: this.state.dragIn,
         out: this.state.dragOut
+      };
+      const delta = this.state.dragIn - this.props.layer.in;
+      Object.keys(this.props.layer).forEach((key) => {
+        const property = this.props.layer[key];
+        if (property && typeof property === 'object') {
+          const keyframes = Object.keys(property);
+          properties[key] = keyframes.reduce((obj, keyframe) => {
+            obj[parseFloat(keyframe) + delta] = property[keyframe];
+            return obj;
+          }, {});
+        }
       });
+      this.props.onPropertiesChange(properties);
     }
     this.setState({dragging: false});
     document.removeEventListener('mousemove', this._boundBarMouseMove);
@@ -369,9 +381,7 @@ const TimelineLayer = React.createClass({
             <TextField onChange={this._onNameChange}
                 value={this.props.layer.name}/>
           </Control>
-          <div className="sv-timeline-layer-track"
-              key={this.props.layer.id}
-              ref="track">
+          <div className="sv-timeline-layer-track" ref="track">
             <div className="sv-timeline-layer-top-bar"
                 onMouseDown={this._onBarMouseDown}
                 style={{
