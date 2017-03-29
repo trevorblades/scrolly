@@ -1,5 +1,23 @@
 @library-width: 20rem;
 
+@keyframes sv-library-assets-loading-before {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
+
+@keyframes sv-library-assets-loading-after {
+  0%, 25% {
+    transform: scale(0);
+  }
+  75% {
+    transform: scale(1);
+  }
+}
+
 .sv-library {
   display: flex;
   flex-direction: column;
@@ -8,14 +26,12 @@
   border-right: 1px solid @shadow-dark;
   overflow: hidden;
   position: relative;
-  z-index: 0;
   .sv-library-preview {
     display: flex;
     flex-shrink: 0;
     height: 4.75rem;
     border-bottom: 1px solid @shadow-dark;
     position: relative;
-    z-index: 1;
     .sv-library-preview-thumb {
       display: flex;
       flex-shrink: 0;
@@ -53,7 +69,6 @@
     overflow: auto;
     position: relative;
     &.sv-highlighted {
-      z-index: 1;
       &:after {
         content: '';
         width: 100%;
@@ -68,6 +83,35 @@
       }
     }
 
+    .sv-library-assets-loading {
+      width: 100%;
+      height: 1px;
+      background-color: mix(@brand-primary, black);
+      position: absolute;
+      top: 0;
+      left: 0;
+      &:before, &:after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-origin: left;
+        animation-duration: @transition-duration-slow * 4;
+        animation-iteration-count: infinite;
+      }
+      &:before {
+        background-color: @brand-primary;
+        animation-name: sv-library-assets-loading-before;
+        animation-timing-function: ease-in-out;
+      }
+      &:after {
+        background-color: mix(@brand-primary, black);
+        animation-name: sv-library-assets-loading-after;
+        animation-timing-function: ease-out;
+      }
+    }
     .sv-library-asset {
       display: flex;
       align-items: center;

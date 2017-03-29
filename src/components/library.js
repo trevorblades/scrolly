@@ -135,7 +135,8 @@ const Library = React.createClass({
         <div className="sv-library-preview">
           <div className="sv-library-preview-thumb">
             {selectedAsset ?
-              <img src={selectedAsset.src}/> : <Icon name="image"/>}
+              <img src={selectedAsset.src}/> :
+              <Icon name="image"/>}
           </div>
           <div className="sv-library-preview-info">
             {selectedAsset && <div>
@@ -151,6 +152,7 @@ const Library = React.createClass({
             onDragLeave={this._onDragLeave}
             onDragOver={this._onDragOver}
             onDrop={this._onDrop}>
+          {this.state.uploading && <div className="sv-library-assets-loading"/>}
           {!this.props.assets.length ?
             <div className="sv-library-assets-empty">
               <div style={{width: '25%'}}>
