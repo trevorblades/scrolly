@@ -3,6 +3,7 @@ const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
 
+const ConnectedViewport = require('./connected-viewport');
 const Dialog = require('./dialog');
 const EditDialog = require('./edit-dialog');
 const Header = require('./header');
@@ -10,22 +11,12 @@ const Library = require('./library');
 const OpenDialog = require('./open-dialog');
 const Timeline = require('./timeline');
 const ViewBar = require('./view-bar');
-const Viewport = require('./viewport');
 
 const {selectLayer, loadProject} = require('../actions');
 const {API_URL, FILE_DRAG_TYPE, JSON_HEADERS} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
 const layerPropType = require('../util/layer-prop-type');
-
-const ConnectedViewport = connect(function(state) {
-  return {
-    assets: state.assets.present,
-    layers: state.layers.present,
-    percentPlayed: state.percentPlayed,
-    selectedLayer: state.selectedLayer
-  };
-}, null, null, {withRef: true})(Viewport);
 
 function setTitle(name) {
   document.title = `${name} - Scrolly`;
