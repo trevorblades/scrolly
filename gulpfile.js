@@ -125,7 +125,7 @@ gulp.task('dist-markup', function() {
 });
 
 gulp.task('dist-scripts', function() {
-  var streams = scripts.map(function(script) {
+  const streams = scripts.map(function(script) {
     return browserify(script, {transform: browserifyTransforms})
       .bundle()
       .pipe(source(script.replace(SRC_DIR + '/', '')))

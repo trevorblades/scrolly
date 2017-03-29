@@ -298,7 +298,7 @@ const TimelineLayer = React.createClass({
     });
 
     const handles = [];
-    for (var i = 0; i < 2; i++) {
+    for (let i = 0; i < 2; i++) {
       handles.push(
         <div className="sv-timeline-layer-bar-handle"
             key={i}

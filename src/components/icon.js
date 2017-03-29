@@ -46,7 +46,7 @@ const Icon = React.createClass({
     for (let i = 0; i < icon.childNodes.length; i++) {
       const childNode = icon.childNodes.item(i);
       if (childNode.nodeType === 1 && childNode.tagName !== 'title') {
-        var attributes = Array.prototype.slice.call(childNode.attributes, 0);
+        const attributes = Array.prototype.slice.call(childNode.attributes, 0);
         shapes.push({
           tagName: childNode.tagName,
           attributes: attributes.reduce(function(obj, attr) {

@@ -8,15 +8,16 @@ module.exports = function(state = [], action) {
         ...state,
         assetReducer(undefined, Object.assign(action, {id: getNextId(state)}))
       ];
-    case 'REMOVE_ASSET':
-      var index = -1;
-      for (var i = 0; i < state.length; i++) {
+    case 'REMOVE_ASSET': {
+      let index = -1;
+      for (let i = 0; i < state.length; i++) {
         if (state[i].id === action.id) {
           index = i;
           break;
         }
       }
       return [...state.slice(0, index), ...state.slice(index + 1)];
+    }
     case 'LOAD_PROJECT':
       return action.assets;
     default:

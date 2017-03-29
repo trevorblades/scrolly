@@ -2,8 +2,8 @@ const properties = require('../util/properties');
 
 module.exports = function(state, action) {
   switch (action.type) {
-    case 'ADD_LAYER':
-      var layer = {
+    case 'ADD_LAYER': {
+      const layer = {
         id: action.id,
         type: action.layerType,
         name: `Layer ${action.id}`,
@@ -35,6 +35,7 @@ module.exports = function(state, action) {
       }
 
       return layer;
+    }
     case 'SET_LAYER_PROPERTIES':
       if (state.id !== action.id) {
         return state;

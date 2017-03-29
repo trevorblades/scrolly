@@ -9,16 +9,16 @@ module.exports = function(state = [], action) {
         ...state,
         layerReducer(undefined, Object.assign(action, {id: getNextId(state)}))
       ];
-    case 'REMOVE_LAYER':
-      var nextState = state.map(function(layer) {
+    case 'REMOVE_LAYER': {
+      const nextState = state.map(function(layer) {
         if (layer.parent && layer.parent.id === action.id) {
           return layerReducer(layer, linkLayers(layer.id, null));
         }
         return layer;
       });
 
-      var index = -1;
-      for (var i = 0; i < nextState.length; i++) {
+      let index = -1;
+      for (let i = 0; i < nextState.length; i++) {
         if (nextState[i].id === action.id) {
           index = i;
           break;

@@ -27,7 +27,7 @@ const MIN_HEIGHT = 200;
 
 let numTicks = 17;
 const ticks = [];
-for (var i = 0; i < numTicks; i++) {
+for (let i = 0; i < numTicks; i++) {
   ticks.push({});
 }
 
@@ -97,7 +97,7 @@ const Timeline = React.createClass({
     let stuckLayerId = null;
     const scrollPos = event.currentTarget.scrollTop;
     const layers = event.currentTarget.childNodes;
-    for (var i = layers.length - 1; i >= 0; i--) {
+    for (let i = layers.length - 1; i >= 0; i--) {
       const layer = layers[i];
       if (layer.childNodes.length > 1 &&
           layer.offsetTop <= scrollPos) {
@@ -155,7 +155,7 @@ const Timeline = React.createClass({
     sortOrder.splice(targetIndex, 0, this.state.sortId);
 
     let changed = false;
-    for (var i = sortOrder.length - 1; i >= 0; i--) {
+    for (let i = sortOrder.length - 1; i >= 0; i--) {
       if (sortOrder[i] !== this.state.sortOrder[i]) {
         changed = true;
         break;
@@ -270,13 +270,13 @@ const Timeline = React.createClass({
     if (event.shiftKey) {
       if (this.state.snapToKeyframes) {
         const snapPositions = Object.keys(this.props.layers.reduce(function(obj, layer) {
-          for (var property in layer) {
+          for (let property in layer) {
             const value = layer[property];
             if ((property === 'in' || property === 'out') &&
                 shouldSnap(value, percentPlayed)) {
               obj[value] = true;
             } else if (typeof value === 'object') {
-              for (var key in value) {
+              for (let key in value) {
                 if (shouldSnap(key, percentPlayed)) {
                   obj[key] = true;
                 }
