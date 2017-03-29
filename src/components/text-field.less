@@ -1,7 +1,9 @@
 .sv-text-field {
   outline: none;
   white-space: nowrap;
-  user-select: auto;
+  &[contenteditable="true"] {
+    user-select: auto;
+  }
   &:not([contenteditable="true"]) {
     cursor: default;
   }
