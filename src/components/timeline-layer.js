@@ -365,7 +365,7 @@ const TimelineLayer = React.createClass({
       {
         content: <Icon name="copy"/>,
         onClick: this.props.onCopyClick,
-        title: 'Copy layer'
+        title: 'Duplicate layer'
       },
       {
         content: <Icon name="trash"/>,
