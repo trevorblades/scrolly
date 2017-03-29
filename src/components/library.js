@@ -7,7 +7,7 @@ const mime = require('mime');
 const Button = require('./button');
 const Icon = require('./icon');
 
-const {ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
+const {API_URL, ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
@@ -82,21 +82,29 @@ const Library = React.createClass({
   _onReaderLoad: function(file, event) {
     const img = new Image();
     const data = event.target.result;
-    img.onload = this._onImageLoad.bind(null, data, file);
+    img.onload = this._onImageLoad.bind(null, file);
     img.src = data;
   },
 
-  _onImageLoad: function(data, file, event) {
-    this.props.dispatch({
-      type: 'ADD_ASSET',
-      name: file.name,
-      mimeType: file.type,
-      size: file.size,
-      src: data,
-      width: event.target.width,
-      height: event.target.height
-    });
-    this.setState({uploading: false});
+  _onImageLoad: function(file, event) {
+    const {width, height} = event.target;
+
+    const body = new FormData();
+    body.append('file', file, file.name);
+    fetch(`${API_URL}/asset`, {method: 'POST', body})
+      .then(res => res.text())
+      .then((src) => {
+        this.props.dispatch({
+          type: 'ADD_ASSET',
+          name: file.name,
+          mimeType: file.type,
+          size: file.size,
+          src,
+          width,
+          height
+        });
+        this.setState({uploading: false});
+      });
   },
 
   _onAssetsClick: function() {
