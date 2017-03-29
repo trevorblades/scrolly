@@ -16,6 +16,13 @@ function removeLayer(id) {
   };
 }
 
+function copyLayer(id) {
+  return {
+    type: 'COPY_LAYER',
+    id
+  };
+}
+
 function orderLayers(order) {
   return {
     type: 'ORDER_LAYERS',
@@ -80,6 +87,7 @@ module.exports = {
   addLayer,
   addImageLayer,
   removeLayer,
+  copyLayer,
   orderLayers,
   setLayerProperties,
   toggleLayerVisibility,

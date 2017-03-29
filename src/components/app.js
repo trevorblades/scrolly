@@ -12,7 +12,7 @@ const OpenDialog = require('./open-dialog');
 const Timeline = require('./timeline');
 const ViewBar = require('./view-bar');
 
-const {selectLayer, loadProject} = require('../actions');
+const {copyLayer, selectLayer, loadProject} = require('../actions');
 const {API_URL, FILE_DRAG_TYPE, JSON_HEADERS} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const isInput = require('../util/is-input');
@@ -79,18 +79,24 @@ const App = React.createClass({
   },
 
   _onKeyDown: function(event) {
-    if (event.keyCode === 90 && event.metaKey) { // cmd + z pressed
+    const modifier = event.metaKey || event.ctrlKey;
+    if (event.keyCode === 68 && modifier) {
+      event.preventDefault();
+      if (this.props.selectedLayer) {
+        this.props.dispatch(copyLayer(this.props.selectedLayer));
+      }
+    } else if (event.keyCode === 90 && modifier) { // cmd/ctrl + z pressed
       this.props.dispatch(ActionCreators[event.shiftKey ? 'redo' : 'undo']());
+    } else if (event.keyCode === 83 && modifier) { // cmd/ctrl + s pressed
+      event.preventDefault();
+      if (this.props.changed) {
+        this._saveProject();
+      }
     } else if (this.props.selectedLayer !== null && event.keyCode === 27) { // esc key pressed
       if (isInput(event.target)) {
         return event.target.blur();
       }
       this._deselectLayer();
-    } else if (event.keyCode === 83 && (event.metaKey || event.ctrlKey)) {
-      event.preventDefault();
-      if (this.props.changed) {
-        this._saveProject();
-      }
     }
   },
 

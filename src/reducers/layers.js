@@ -26,6 +26,24 @@ module.exports = function(state = [], action) {
       }
 
       return [...nextState.slice(0, index), ...nextState.slice(index + 1)];
+    }
+    case 'COPY_LAYER': {
+      let layer;
+      for (var i = 0; i < state.length; i++) {
+        if (state[i].id === action.id) {
+          layer = Object.assign({}, state[i], {
+            id: getNextId(state),
+            name: `${state[i].name} copy`
+          });
+          break;
+        }
+      }
+
+      if (!layer) {
+        return state;
+      }
+      return [...state, layer];
+    }
     case 'ORDER_LAYERS':
       return action.order.map(id => state.find(layer => layer.id === id));
     case 'SET_LAYER_PROPERTIES':

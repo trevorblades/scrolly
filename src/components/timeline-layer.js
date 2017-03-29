@@ -8,6 +8,7 @@ const Icon = require('./icon');
 const TextField = require('./text-field');
 
 const {
+  copyLayer,
   removeLayer,
   setLayerProperties,
   toggleLayerVisibility,
@@ -37,6 +38,7 @@ const TimelineLayer = React.createClass({
     layer: layerPropType.isRequired,
     layers: React.PropTypes.arrayOf(layerPropType).isRequired,
     linkable: React.PropTypes.bool.isRequired,
+    onCopyClick: React.PropTypes.func.isRequired,
     onDragEnd: React.PropTypes.func.isRequired,
     onDragOver: React.PropTypes.func.isRequired,
     onDragStart: React.PropTypes.func.isRequired,
@@ -361,6 +363,11 @@ const TimelineLayer = React.createClass({
         title: `${this.props.layer.visible ? 'Hide' : 'Show'} layer`
       },
       {
+        content: <Icon name="copy"/>,
+        onClick: this.props.onCopyClick,
+        title: 'Copy layer'
+      },
+      {
         content: <Icon name="trash"/>,
         onClick: this.props.onRemoveClick,
         title: 'Remove layer'
@@ -495,6 +502,10 @@ module.exports = connect(null, function(dispatch, props) {
     onRemoveClick: function(event) {
       event.stopPropagation();
       dispatch(removeLayer(props.layer.id));
+    },
+    onCopyClick: function(event) {
+      event.stopPropagation();
+      dispatch(copyLayer(props.layer.id));
     },
     onVisiblityToggle: function(event) {
       event.stopPropagation();
