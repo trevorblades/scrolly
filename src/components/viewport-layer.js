@@ -248,10 +248,12 @@ const ViewportLayer = React.createClass({
         content = (
           <TextField onChange={this._onTextChange}
               style={{
+                padding: `${this.props.layer.paddingY * layerScale}px ${this.props.layer.paddingX * layerScale}px`,
                 fontSize: `${this.props.layer.fontSize * this.props.viewportScale * layerScale}px`,
                 fontWeight: this.props.layer.fontWeight,
                 fontStyle: this.props.layer.fontStyle,
                 color: this.props.layer.fontColor,
+                backgroundColor: this.props.layer.backgroundColor,
                 opacity: layerOpacity
               }}
               value={this.props.layer.value}/>

@@ -71,6 +71,16 @@ module.exports = {
   height: {
     type: 'number'
   },
+  paddingX: {
+    type: 'number',
+    default: 0,
+    mutable: true
+  },
+  paddingY: {
+    type: 'number',
+    default: 0,
+    mutable: true
+  },
   fontSize: {
     type: 'number',
     min: 1,
@@ -90,6 +100,11 @@ module.exports = {
   fontColor: {
     type: 'text',
     default: 'black',
+    mutable: true
+  },
+  backgroundColor: {
+    type: 'text',
+    default: 'transparent',
     mutable: true
   }
 };

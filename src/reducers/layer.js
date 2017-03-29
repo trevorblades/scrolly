@@ -23,10 +23,13 @@ module.exports = function(state, action) {
       switch (layer.type) {
         case 'text':
           layer.value = 'Enter text here';
+          layer.paddingX = properties.paddingX.default;
+          layer.paddingY = properties.paddingY.default;
           layer.fontSize = properties.fontSize.default;
           layer.fontWeight = properties.fontWeight.default;
           layer.fontStyle = properties.fontStyle.default;
           layer.fontColor = properties.fontColor.default;
+          layer.backgroundColor = properties.backgroundColor.default;
           break;
         case 'image':
           layer.asset = action.asset;
