@@ -202,6 +202,7 @@ const Library = React.createClass({
             <Icon name="add"/>
             <span>Upload asset</span>
             <input accept={allowedFiletypes.join(',')}
+                multiple
                 onChange={this._onUploadChange}
                 type="file"/>
           </Button>
