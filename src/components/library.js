@@ -32,6 +32,10 @@ const Library = React.createClass({
     };
   },
 
+  componentWillMount: function() {
+    this._filesToUpload = 0;
+  },
+
   _onDragEnter: function(event) {
     event.preventDefault();
     if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
@@ -52,7 +56,9 @@ const Library = React.createClass({
   _onDrop: function(event) {
     event.preventDefault();
     if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
-      this._onFileUpload(event.dataTransfer.files[0]);
+      for (let i = 0; i < event.dataTransfer.files.length; i++) {
+        this._onFileUpload(event.dataTransfer.files[i]);
+      }
       this.setState({dragging: false});
     }
   },
@@ -63,7 +69,9 @@ const Library = React.createClass({
 
   _onUploadChange: function(event) {
     if (event.target.files.length) {
-      this._onFileUpload(event.target.files[0]);
+      for (let i = 0; i < event.dataTransfer.files.length; i++) {
+        this._onFileUpload(event.dataTransfer.files[i]);
+      }
       event.target.value = null;
     }
   },
@@ -76,7 +84,11 @@ const Library = React.createClass({
     const reader = new FileReader();
     reader.onload = this._onReaderLoad.bind(null, file);
     reader.readAsDataURL(file);
-    this.setState({uploading: true});
+
+    this._filesToUpload++;
+    if (!this.state.uploading) {
+      this.setState({uploading: true});
+    }
   },
 
   _onReaderLoad: function(file, event) {
@@ -103,7 +115,10 @@ const Library = React.createClass({
           width,
           height
         });
-        this.setState({uploading: false});
+        this._filesToUpload--;
+        if (!this._filesToUpload) {
+          this.setState({uploading: false});
+        }
       });
   },
 
