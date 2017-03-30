@@ -206,6 +206,7 @@ const Library = React.createClass({
                 onChange={this._onUploadChange}
                 type="file"/>
           </Button>
+          <Button>Preset assets</Button>
         </div>
       </div>
     );
