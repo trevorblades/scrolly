@@ -2,6 +2,7 @@ const React = require('react');
 const {render} = require('react-dom');
 const {createStore} = require('redux');
 const {Provider, connect} = require('react-redux');
+const {devToolsEnhancer} = require('redux-devtools-extension/logOnlyInProduction');
 const jwtDecode = require('jwt-decode');
 require('core-js/fn/array/find');
 require('whatwg-fetch');
@@ -100,7 +101,9 @@ const Wrapper = connect()(React.createClass({
 }));
 
 render(
-  <Provider store={createStore(reducer)}>
+  <Provider store={createStore(reducer, devToolsEnhancer({
+
+  }))}>
     <Wrapper/>
   </Provider>,
   document.getElementById('sv-root')
