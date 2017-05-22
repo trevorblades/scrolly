@@ -1,7 +1,7 @@
 module.exports = function(layer, layers) {
-  const parents = [];
   let current = layer;
-  while (current.parent) {
+  const parents = [];
+  while (current && current.parent) {
     current = layers.find(l => l.id === current.parent.id);
     parents.unshift(current);
   }

@@ -129,13 +129,15 @@ const TimelineLayer = React.createClass({
       };
       const delta = this.state.dragIn - this.props.layer.in;
       Object.keys(this.props.layer).forEach((key) => {
-        const property = this.props.layer[key];
-        if (property && typeof property === 'object') {
-          const keyframes = Object.keys(property);
-          properties[key] = keyframes.reduce((obj, keyframe) => {
-            obj[parseFloat(keyframe) + delta] = property[keyframe];
-            return obj;
-          }, {});
+        if (key !== 'parent') {
+          const property = this.props.layer[key];
+          if (property && typeof property === 'object') {
+            const keyframes = Object.keys(property);
+            properties[key] = keyframes.reduce((obj, keyframe) => {
+              obj[parseFloat(keyframe) + delta] = property[keyframe];
+              return obj;
+            }, {});
+          }
         }
       });
       this.props.onPropertiesChange(properties);
