@@ -7,7 +7,10 @@ module.exports = function(state = [], action) {
     case 'ADD_LAYER':
       return [
         ...state,
-        layerReducer(undefined, Object.assign(action, {id: getNextId(state)}))
+        layerReducer(undefined, Object.assign(action, {
+          id: getNextId(state),
+          layers: state
+        }))
       ];
     case 'REMOVE_LAYER': {
       const nextState = state.map(function(layer) {

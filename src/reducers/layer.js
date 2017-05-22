@@ -31,9 +31,15 @@ module.exports = function(state, action) {
           layer.fontColor = properties.fontColor.default;
           layer.backgroundColor = properties.backgroundColor.default;
           break;
-        case 'image':
-          layer.asset = action.asset;
+        case 'image': {
+          layer.asset = action.asset.id;
+          layer.name = action.asset.name;
+          const duplicateCount = action.layers.filter(({asset}) => asset === action.asset.id).length;
+          if (duplicateCount) {
+            layer.name += ` (${duplicateCount + 1})`;
+          }
           break;
+        }
         default:
       }
 

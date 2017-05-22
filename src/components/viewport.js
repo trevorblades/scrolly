@@ -123,7 +123,11 @@ const Viewport = React.createClass({
     event.preventDefault();
     const id = event.dataTransfer.getData(ASSET_DRAG_TYPE);
     if (id) {
-      this.props.dispatch(addImageLayer(parseInt(id)));
+      const idInt = parseInt(id);
+      const asset = this.props.assets.find(asset => asset.id === idInt);
+      if (asset) {
+        this.props.dispatch(addImageLayer(asset));
+      }
       this._dragCounter = 0;
       this.setState({dragging: false});
     }
