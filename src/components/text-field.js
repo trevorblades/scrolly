@@ -18,7 +18,7 @@ const TextField = React.createClass({
     onChange: React.PropTypes.func.isRequired,
     step: React.PropTypes.number,
     style: React.PropTypes.object,
-    title: React.PropTypes.text,
+    title: React.PropTypes.string,
     type: React.PropTypes.oneOf(['text', 'number']),
     value: React.PropTypes.oneOfType([
       React.PropTypes.string,
