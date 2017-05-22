@@ -386,6 +386,7 @@ const TimelineLayer = React.createClass({
               onDragEnd={this.props.onDragEnd}
               onDragStart={this.props.onDragStart}>
             <TextField onChange={this._onNameChange}
+                title={this.props.layer.name}
                 value={this.props.layer.name}/>
           </Control>
           <div className="sv-timeline-layer-track" ref="track">
