@@ -92,7 +92,7 @@ const TextField = React.createClass({
     }
 
     if (this.props.type === 'number') {
-      const allowedKeys = [8, 37, 39, 46, 110, 190]; // backspace, left, right, numpad period, delete, or period
+      const allowedKeys = [8, 37, 39, 46, 109, 110, 190]; // backspace, left, right, subtract, decimal point, delete, or period
       if (typeof this.props.min === 'undefined' || this.props.min < 0) {
         allowedKeys.push(189);
       }
