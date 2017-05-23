@@ -21,6 +21,8 @@ const layerPropType = require('../util/layer-prop-type');
 const properties = require('../util/properties');
 const shouldSnap = require('../util/should-snap');
 
+const KEYFRAME_CLASS_NAME = 'sv-timeline-layer-property-keyframe';
+
 function clamp(key, value) {
   const property = properties[key];
   if (typeof property.min !== 'undefined' && value < property.min) {
@@ -77,10 +79,12 @@ const TimelineLayer = React.createClass({
       return typeof this.props.layer[key] !== 'undefined';
     });
     window.addEventListener('keydown', this._onKeyDown);
+    document.body.addEventListener('click', this._onBodyClick);
   },
 
   componentWillUnmount: function() {
     window.removeEventListener('keydown', this._onKeyDown);
+    document.body.removeEventListener('click', this._onBodyClick);
   },
 
   _onKeyDown: function(event) {
@@ -89,6 +93,15 @@ const TimelineLayer = React.createClass({
         this.state.selectedKeyframeKey &&
         this.state.selectedKeyframeProperty) {
       this._removeKeyframe(this.state.selectedKeyframeProperty);
+    }
+  },
+
+  _onBodyClick: function(event) {
+    if (event.target.classList[0] !== KEYFRAME_CLASS_NAME) {
+      this.setState({
+        selectedKeyframeKey: null,
+        selectedKeyframeProperty: null
+      });
     }
   },
 
@@ -476,14 +489,13 @@ const TimelineLayer = React.createClass({
                       const position = dragging ?
                           this.state.keyframeDragPosition : keyframe;
 
-                      const keyframeClassName = classNames('sv-timeline-layer-property-keyframe', {
+                      const keyframeClassName = classNames(KEYFRAME_CLASS_NAME, {
                         'sv-selected': this.state.selectedKeyframeKey === keyframe && this.state.selectedKeyframeProperty === key
                       });
 
                       return (
                         <div className={keyframeClassName}
                             key={index}
-                            onClick={this._onKeyframeClick}
                             onMouseDown={this._onKeyframeMouseDown.bind(null, key, keyframe)}
                             style={{left: `${position * 100}%`}}/>
                       );
