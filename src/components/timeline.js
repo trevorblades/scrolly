@@ -50,7 +50,6 @@ const Timeline = React.createClass({
   getInitialState: function() {
     return {
       adding: false,
-      dragging: false,
       height: 200,
       linkingLayerId: null,
       scrolling: false,
@@ -205,15 +204,6 @@ const Timeline = React.createClass({
     this.setState({linkingLayerId: null});
   },
 
-  _onLayerMouseDown: function(event) {
-    event.stopPropagation();
-    this.setState({dragging: true});
-  },
-
-  _onLayerMouseUp: function() {
-    this.setState({dragging: false});
-  },
-
   _onLayerSelect: function(id, event) {
     event.stopPropagation();
     this.props.selectLayer(id);
@@ -334,7 +324,6 @@ const Timeline = React.createClass({
         }) : this.props.layers;
 
     const layersClassName = classNames('sv-timeline-layers', {
-      'sv-locked': this.state.dragging,
       'sv-scrolling': this.state.scrolling
     });
 
@@ -407,8 +396,6 @@ const Timeline = React.createClass({
                     onDragStart={this._onLayerDragStart.bind(null, layer.id)}
                     onLinkClick={this._onLayerLinkClick.bind(null, layer.id)}
                     onLinkTargetClick={this._onLayerLinkTargetClick.bind(null, layer)}
-                    onMouseDown={this._onLayerMouseDown}
-                    onMouseUp={this._onLayerMouseUp}
                     parent={layer.parent &&
                         this.props.layers.find(l => l.id === layer.parent.id)}
                     percentPlayed={this.props.percentPlayed}

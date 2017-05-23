@@ -44,8 +44,6 @@ const TimelineLayer = React.createClass({
     onDragStart: React.PropTypes.func.isRequired,
     onLinkClick: React.PropTypes.func.isRequired,
     onLinkTargetClick: React.PropTypes.func.isRequired,
-    onMouseDown: React.PropTypes.func.isRequired,
-    onMouseUp: React.PropTypes.func.isRequired,
     onPropertiesChange: React.PropTypes.func.isRequired,
     onRemoveClick: React.PropTypes.func.isRequired,
     onVisiblityToggle: React.PropTypes.func.isRequired,
@@ -150,7 +148,7 @@ const TimelineLayer = React.createClass({
 
   _onBarHandleMouseDown: function(index, event) {
     if (event.button === 0) {
-      this.props.onMouseDown(event); // this stops propagation as well
+      event.stopPropagation();
       this.setState({
         dragIn: this.props.layer.in,
         dragOut: this.props.layer.out,
@@ -379,8 +377,7 @@ const TimelineLayer = React.createClass({
     return (
       <div className={layerClassName}
           onDragOver={this.props.onDragOver}
-          onMouseDown={this.props.onMouseDown}
-          onMouseUp={this.props.onMouseUp}>
+          onMouseDown={event => event.stopPropagation()}>
         <div className="sv-timeline-layer-top">
           <Control actions={topActions}
               draggable
