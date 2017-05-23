@@ -15,6 +15,7 @@ const TextField = React.createClass({
   propTypes: {
     max: React.PropTypes.number,
     min: React.PropTypes.number,
+    multiline: React.PropTypes.bool,
     onChange: React.PropTypes.func.isRequired,
     step: React.PropTypes.number,
     style: React.PropTypes.object,
@@ -83,7 +84,10 @@ const TextField = React.createClass({
   },
 
   _onKeyDown: function(event) {
-    if ([9, 13, 27].indexOf(event.keyCode) !== -1) { // tab, esc, or return key pressed
+    if ([9, 27, 13].indexOf(event.keyCode) !== -1) { // tab, esc, or return key pressed
+      if (this.props.multiline && event.keyCode === 13 && !(event.metaKey || event.ctrlKey)) { // return key pressed on a mutliline field
+        return;
+      }
       return event.target.blur();
     }
 

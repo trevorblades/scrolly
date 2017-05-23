@@ -246,7 +246,8 @@ const ViewportLayer = React.createClass({
         break;
       case 'text':
         content = (
-          <TextField onChange={this._onTextChange}
+          <TextField multiline
+              onChange={this._onTextChange}
               style={{
                 padding: `${this.props.layer.paddingY * layerScale}px
                     ${this.props.layer.paddingX * layerScale}px`,
