@@ -453,11 +453,6 @@ function mapDispatchToProps(dispatch) {
       dispatch({type: 'SET_STEP', value});
     },
     setPercentPlayed: function(value) {
-      if (value < 0) {
-        value = 0;
-      } else if (value > 1) {
-        value = 1;
-      }
       dispatch(setPercentPlayed(value));
     },
     selectLayer: function(id) {

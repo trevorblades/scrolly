@@ -13,7 +13,8 @@ const {
   setLayerProperties,
   toggleLayerVisibility,
   linkLayers,
-  selectLayer
+  selectLayer,
+  setPercentPlayed
 } = require('../actions');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const layerPropType = require('../util/layer-prop-type');
@@ -51,6 +52,7 @@ const TimelineLayer = React.createClass({
     percentPlayed: React.PropTypes.number.isRequired,
     selectLayer: React.PropTypes.func.isRequired,
     selected: React.PropTypes.bool.isRequired,
+    setPercentPlayed: React.PropTypes.func.isRequired,
     sticky: React.PropTypes.bool.isRequired,
     stuck: React.PropTypes.bool.isRequired,
     unlinkable: React.PropTypes.bool
@@ -64,7 +66,9 @@ const TimelineLayer = React.createClass({
       expanded: false,
       keyframeDragKey: null,
       keyframeDragProperty: null,
-      keyframeDragPosition: null
+      keyframeDragPosition: null,
+      selectedKeyframeKey: null,
+      selectedKeyframeProperty: null
     };
   },
 
@@ -179,13 +183,20 @@ const TimelineLayer = React.createClass({
     delete this._boundBarHandleMouseMove;
   },
 
-  _onKeyframeMouseDown: function(key, position, event) {
+  _onKeyframeMouseDown: function(property, position, event) {
     if (event.button === 0) {
-      this.setState({
+      const nextState = {
         keyframeDragKey: position,
-        keyframeDragProperty: key,
+        keyframeDragProperty: property,
         keyframeDragPosition: position
-      });
+      };
+
+      if (position !== this.state.selectedKeyframeKey || property !== this.state.selectedKeyframeProperty) {
+        nextState.selectedKeyframeKey = null;
+        nextState.selectedKeyframeProperty = null;
+      }
+
+      this.setState(nextState);
       document.addEventListener('mousemove', this._onKeyframeMouseMove);
       document.addEventListener('mouseup', this._onKeyframeMouseUp);
     }
@@ -196,24 +207,30 @@ const TimelineLayer = React.createClass({
     this.setState({keyframeDragPosition: position});
   },
 
-  _onKeyframeMouseUp: function() {
-    const value = this.props.layer[this.state.keyframeDragProperty];
-    const nextValue = Object.assign({}, value, {
-      [this.state.keyframeDragPosition]: value[this.state.keyframeDragKey]
-    });
-    if (this.state.keyframeDragKey !== this.state.keyframeDragPosition.toString()) {
-      delete nextValue[this.state.keyframeDragKey];
-    }
-    this.props.onPropertiesChange({
-      [this.state.keyframeDragProperty]: nextValue
-    });
-
-    this.setState({
+  _onKeyframeMouseUp: function(event) {
+    const nextState = {
       keyframeDragKey: null,
       keyframeDragProperty: null,
       keyframeDragPosition: null
-    });
+    };
 
+    if (this.state.keyframeDragKey !== this.state.keyframeDragPosition.toString()) {
+      const value = this.props.layer[this.state.keyframeDragProperty];
+      const nextValue = Object.assign({}, value, {
+        [this.state.keyframeDragPosition]: value[this.state.keyframeDragKey]
+      });
+      delete nextValue[this.state.keyframeDragKey];
+
+      this.props.onPropertiesChange({
+        [this.state.keyframeDragProperty]: nextValue
+      });
+    } else {
+      nextState.selectedKeyframeKey = this.state.keyframeDragKey;
+      nextState.selectedKeyframeProperty = this.state.keyframeDragProperty;
+      this.props.setPercentPlayed(parseFloat(this.state.keyframeDragKey));
+    }
+
+    this.setState(nextState);
     document.removeEventListener('mousemove', this._onKeyframeMouseMove);
     document.removeEventListener('mouseup', this._onKeyframeMouseUp);
   },
@@ -444,9 +461,15 @@ const TimelineLayer = React.createClass({
                           keyframe === this.state.keyframeDragKey;
                       const position = dragging ?
                           this.state.keyframeDragPosition : keyframe;
+
+                      const keyframeClassName = classNames('sv-timeline-layer-property-keyframe', {
+                        'sv-selected': this.state.selectedKeyframeKey === keyframe && this.state.selectedKeyframeProperty === key
+                      });
+
                       return (
-                        <div className="sv-timeline-layer-property-keyframe"
+                        <div className={keyframeClassName}
                             key={index}
+                            onClick={this._onKeyframeClick}
                             onMouseDown={this._onKeyframeMouseDown.bind(null, key, keyframe)}
                             style={{left: `${position * 100}%`}}/>
                       );
@@ -517,6 +540,9 @@ module.exports = connect(null, function(dispatch, props) {
     selectLayer: function(event) {
       event.stopPropagation();
       dispatch(selectLayer(props.layer.id));
+    },
+    setPercentPlayed: function(value) {
+      dispatch(setPercentPlayed(value));
     }
   };
 })(TimelineLayer);
