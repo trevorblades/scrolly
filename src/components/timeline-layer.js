@@ -76,6 +76,20 @@ const TimelineLayer = React.createClass({
     this._keys = Object.keys(properties).filter(key => {
       return typeof this.props.layer[key] !== 'undefined';
     });
+    window.addEventListener('keydown', this._onKeyDown);
+  },
+
+  componentWillUnmount: function() {
+    window.removeEventListener('keydown', this._onKeyDown);
+  },
+
+  _onKeyDown: function(event) {
+     // backspace or delete key pressed when a keyframe is selected
+    if ((event.keyCode === 8 || event.keyCode === 46) &&
+        this.state.selectedKeyframeKey &&
+        this.state.selectedKeyframeProperty) {
+      this._removeKeyframe(this.state.selectedKeyframeProperty);
+    }
   },
 
   _onBarMouseDown: function(event) {
