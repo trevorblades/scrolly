@@ -27,15 +27,23 @@ const Presets = React.createClass({
   },
 
   componentWillMount: function() {
+    window.addEventListener('keydown', this._onKeyDown);
     document.body.addEventListener('click', this._onBodyClick);
   },
 
   componentWillUnmount: function() {
+    window.removeEventListener('keydown', this._onKeyDown);
     document.body.removeEventListener('click', this._onBodyClick);
   },
 
+  _onKeyDown: function(event) {
+    if (this.state.panelShown && event.keyCode === 27) { // esc key pressed
+      this._closePanel();
+    }
+  },
+
   _onBodyClick: function(event) {
-    if (!findDOMNode(this).contains(event.target)) {
+    if (this.state.panelShown && !findDOMNode(this).contains(event.target)) {
       this._closePanel();
     }
   },
