@@ -6,6 +6,7 @@ const mime = require('mime');
 
 const Button = require('./button');
 const Icon = require('./icon');
+const Presets = require('./presets');
 
 const {API_URL, ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
@@ -206,7 +207,7 @@ const Library = React.createClass({
                 onChange={this._onUploadChange}
                 type="file"/>
           </Button>
-          <Button>Preset assets</Button>
+          <Presets/>
         </div>
       </div>
     );
