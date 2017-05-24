@@ -6,7 +6,7 @@ const classNames = require('classnames');
 const ViewportLayer = require('./viewport-layer');
 
 const {addImageLayer, setLayerProperties, selectLayer} = require('../actions');
-const {ASSET_DRAG_TYPE} = require('../constants');
+const {ASSET_DRAG_TYPE, PRESET_DRAG_TYPE} = require('../constants');
 const getParents = require('../util/get-parents');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const isDragTypeFound = require('../util/is-drag-type-found');
@@ -100,14 +100,14 @@ const Viewport = React.createClass({
 
   _onDragEnter: function(event) {
     event.preventDefault();
-    if (isDragTypeFound(event, ASSET_DRAG_TYPE)) {
+    if (isDragTypeFound(event, ASSET_DRAG_TYPE, PRESET_DRAG_TYPE)) {
       this._dragCounter++;
       this.setState({dragging: true});
     }
   },
 
   _onDragLeave: function(event) {
-    if (isDragTypeFound(event, ASSET_DRAG_TYPE)) {
+    if (isDragTypeFound(event, ASSET_DRAG_TYPE, PRESET_DRAG_TYPE)) {
       this._dragCounter--;
       if (!this._dragCounter) {
         this.setState({dragging: false});
@@ -121,12 +121,16 @@ const Viewport = React.createClass({
 
   _onDrop: function(event) {
     event.preventDefault();
-    const id = event.dataTransfer.getData(ASSET_DRAG_TYPE);
-    if (id) {
-      const idInt = parseInt(id);
-      const asset = this.props.assets.find(asset => asset.id === idInt);
+    const asset = event.dataTransfer.getData(ASSET_DRAG_TYPE);
+    const preset = event.dataTransfer.getData(PRESET_DRAG_TYPE);
+    if (asset || preset) {
       if (asset) {
-        this.props.dispatch(addImageLayer(asset));
+        const found = this.props.assets.find(({id}) => id === parseInt(asset));
+        if (found) {
+          this.props.dispatch(addImageLayer(found));
+        }
+      } else {
+        // handle preset
       }
       this._dragCounter = 0;
       this.setState({dragging: false});

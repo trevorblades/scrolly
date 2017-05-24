@@ -4,6 +4,21 @@ const {findDOMNode} = require('react-dom');
 const Button = require('./button');
 const Icon = require('./icon');
 
+const {PRESET_DRAG_TYPE} = require('../constants');
+
+const presets = {
+  circle: (
+    <svg fill="none" stroke="black" strokeWidth={2} viewBox="0 0 102 102">
+      <circle cx={51} cy={51} r={50}/>
+    </svg>
+  ),
+  square: (
+    <svg fill="none" stroke="black" strokeWidth={2} viewBox="0 0 102 102">
+      <rect height={100} width={100} x={1} y={1}/>
+    </svg>
+  )
+};
+
 const Presets = React.createClass({
   getInitialState: function() {
     return {
@@ -29,6 +44,10 @@ const Presets = React.createClass({
     this.setState(prevState => ({panelShown: !prevState.panelShown}));
   },
 
+  _onDragStart: function(id, event) {
+    event.dataTransfer.setData(PRESET_DRAG_TYPE, id);
+  },
+
   _closePanel: function() {
     this.setState({panelShown: false});
   },
@@ -45,20 +64,13 @@ const Presets = React.createClass({
             </a>
           </h5>
           <div className="sv-library-presets-panel-scroll">
-            <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset" draggable>
-                <svg fill="none" stroke="black" strokeWidth={2} viewBox="0 0 102 102">
-                  <circle cx={51} cy={51} r={50}/>
-                </svg>
+            {Object.keys(presets).map(key => (
+              <div className="sv-library-presets-panel-item" key={key}>
+                <div className="sv-library-presets-panel-item-asset" draggable onDragStart={event => this._onDragStart(key, event)}>
+                  {presets[key]}
+                </div>
               </div>
-            </div>
-            <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset" draggable>
-                <svg fill="none" stroke="black" strokeWidth={2} viewBox="0 0 102 102">
-                  <rect height={100} width={100} x={1} y={1}/>
-                </svg>
-              </div>
-            </div>
+            ))}
           </div>
         </div>}
       </div>
