@@ -21,34 +21,18 @@ const Presets = React.createClass({
           <h5>Preset assets</h5>
           <div className="sv-library-presets-panel-scroll">
             <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset"/>
+              <div className="sv-library-presets-panel-item-asset">
+                <svg fill="none" stroke="black" strokeWidth={2} viewBox="0 0 102 102">
+                  <circle cx={51} cy={51} r={50}/>
+                </svg>
+              </div>
             </div>
             <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset"/>
-            </div>
-            <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset"/>
-            </div>
-            <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset"/>
-            </div>
-            <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset"/>
-            </div>
-            <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset"/>
-            </div>
-            <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset"/>
-            </div>
-            <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset"/>
-            </div>
-            <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset"/>
-            </div>
-            <div className="sv-library-presets-panel-item">
-              <div className="sv-library-presets-panel-item-asset"/>
+              <div className="sv-library-presets-panel-item-asset">
+                <svg fill="none" stroke="black" strokeWidth={2} viewBox="0 0 102 102">
+                  <rect height={100} width={100} x={1} y={1}/>
+                </svg>
+              </div>
             </div>
           </div>
         </div>}
