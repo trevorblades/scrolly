@@ -3,6 +3,7 @@ const {findDOMNode} = require('react-dom');
 
 const Button = require('./button');
 const Icon = require('./icon');
+const Shape = require('./shape');
 
 const {SHAPES, SHAPE_DRAG_TYPE} = require('../constants');
 
@@ -61,7 +62,9 @@ const Presets = React.createClass({
           <div className="sv-library-presets-panel-scroll">
             {Object.keys(SHAPES).map(key => (
               <div className="sv-library-presets-panel-item" key={key}>
-                <div className="sv-library-presets-panel-item-asset" draggable onDragStart={event => this._onDragStart(key, event)}/>
+                <div className="sv-library-presets-panel-item-asset" draggable onDragStart={event => this._onDragStart(key, event)}>
+                  <Shape shape={SHAPES[key]} size={100} strokeWidth={2}/>
+                </div>
               </div>
             ))}
           </div>
