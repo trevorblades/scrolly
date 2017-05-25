@@ -1,13 +1,13 @@
 const React = require('react');
 
-const Shape = ({fill, shape, size, stroke, strokeWidth}) => {
-  const Shape = shape;
+const Shape = props => {
+  const Shape = props.shape;
   return (
-    <svg fill={fill} stroke={stroke} strokeWidth={strokeWidth} style={{
-      width: size,
-      height: size
-    }} viewBox={`0 0 ${size} ${size}`}>
-      <Shape size={size} strokeWidth={strokeWidth}/>
+    <svg fill={props.fill} stroke={props.stroke} strokeWidth={props.strokeWidth} style={Object.assign({
+      width: props.size,
+      height: props.size
+    }, props.style)} viewBox={`0 0 ${props.size} ${props.size}`}>
+      <Shape size={props.size} strokeWidth={props.strokeWidth}/>
     </svg>
   );
 };
@@ -17,7 +17,8 @@ Shape.propTypes = {
   shape: React.PropTypes.func.isRequired,
   size: React.PropTypes.number,
   stroke: React.PropTypes.string,
-  strokeWidth: React.PropTypes.number
+  strokeWidth: React.PropTypes.number,
+  style: React.PropTypes.object
 };
 
 Shape.defaultProps = {
