@@ -42,6 +42,9 @@ module.exports = function(state, action) {
         }
         case 'shape':
           layer.shape = action.shape;
+          layer.fill = properties.fill.default;
+          layer.stroke = properties.stroke.default;
+          layer.strokeWidth = properties.strokeWidth.default;
           break;
         default:
       }

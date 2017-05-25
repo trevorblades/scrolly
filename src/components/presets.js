@@ -63,7 +63,7 @@ const Presets = React.createClass({
             {Object.keys(SHAPES).map(key => (
               <div className="sv-library-presets-panel-item" key={key}>
                 <div className="sv-library-presets-panel-item-asset" draggable onDragStart={event => this._onDragStart(key, event)}>
-                  <Shape shape={SHAPES[key]} size={100} strokeWidth={2}/>
+                  <Shape shape={SHAPES[key]}/>
                 </div>
               </div>
             ))}

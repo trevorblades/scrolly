@@ -106,5 +106,22 @@ module.exports = {
     type: 'text',
     default: 'transparent',
     mutable: true
+  },
+  fill: {
+    type: 'text',
+    default: 'none',
+    mutable: true
+  },
+  stroke: {
+    type: 'text',
+    default: 'black',
+    mutable: true
+  },
+  strokeWidth: {
+    type: 'number',
+    step: 1,
+    min: 0,
+    default: 2,
+    mutable: true
   }
 };

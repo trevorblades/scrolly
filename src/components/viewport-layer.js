@@ -273,8 +273,7 @@ const ViewportLayer = React.createClass({
         break;
       case 'shape': {
         const size = 100 * this.props.viewportScale * layerScale;
-        const strokeWidth = 2;
-        content = <Shape shape={SHAPES[this.props.layer.shape]} size={size} strokeWidth={strokeWidth}/>;
+        content = <Shape fill={this.props.layer.fill} shape={SHAPES[this.props.layer.shape]} size={size} stroke={this.props.layer.stroke} strokeWidth={this.props.layer.strokeWidth}/>;
         break;
       }
       default:
