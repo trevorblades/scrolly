@@ -9,6 +9,10 @@ function addImageLayer(asset) {
   return Object.assign(addLayer('image'), {asset});
 }
 
+function addShapeLayer(shape) {
+  return Object.assign(addLayer('shape'), {shape});
+}
+
 function removeLayer(id) {
   return {
     type: 'REMOVE_LAYER',
@@ -91,6 +95,7 @@ function loadProject(project) {
 module.exports = {
   addLayer,
   addImageLayer,
+  addShapeLayer,
   removeLayer,
   copyLayer,
   orderLayers,

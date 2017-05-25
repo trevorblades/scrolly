@@ -22,6 +22,9 @@
       &[type="image"] {
         background-color: mix(@image-layer-color, @gray-lightest, 75%);
       }
+      &[type="shape"] {
+        background-color: mix(@shape-layer-color, @gray-lightest, 75%);
+      }
     }
   }
   &.sv-hidden .sv-timeline-layer-top .sv-control {
@@ -142,6 +145,9 @@
       }
       &[type="image"] {
         background-color: mix(@gray-light, @image-layer-color, 75%);
+      }
+      &[type="shape"] {
+        background-color: mix(@gray-light, @shape-layer-color, 75%);
       }
 
       .sv-timeline-layer-bar-handle {

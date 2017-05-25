@@ -4,20 +4,7 @@ const {findDOMNode} = require('react-dom');
 const Button = require('./button');
 const Icon = require('./icon');
 
-const {PRESET_DRAG_TYPE} = require('../constants');
-
-const presets = {
-  circle: (
-    <svg fill="none" stroke="black" strokeWidth={2} viewBox="0 0 102 102">
-      <circle cx={51} cy={51} r={50}/>
-    </svg>
-  ),
-  square: (
-    <svg fill="none" stroke="black" strokeWidth={2} viewBox="0 0 102 102">
-      <rect height={100} width={100} x={1} y={1}/>
-    </svg>
-  )
-};
+const {SHAPES, SHAPE_DRAG_TYPE} = require('../constants');
 
 const Presets = React.createClass({
   getInitialState: function() {
@@ -53,7 +40,7 @@ const Presets = React.createClass({
   },
 
   _onDragStart: function(id, event) {
-    event.dataTransfer.setData(PRESET_DRAG_TYPE, id);
+    event.dataTransfer.setData(SHAPE_DRAG_TYPE, id);
   },
 
   _closePanel: function() {
@@ -72,10 +59,10 @@ const Presets = React.createClass({
             </a>
           </h5>
           <div className="sv-library-presets-panel-scroll">
-            {Object.keys(presets).map(key => (
+            {Object.keys(SHAPES).map(key => (
               <div className="sv-library-presets-panel-item" key={key}>
                 <div className="sv-library-presets-panel-item-asset" draggable onDragStart={event => this._onDragStart(key, event)}>
-                  {presets[key]}
+                  {SHAPES[key]}
                 </div>
               </div>
             ))}

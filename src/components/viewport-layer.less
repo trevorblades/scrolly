@@ -57,10 +57,26 @@
       background-color: @image-layer-color;
     }
   }
+  &[type="shape"] {
+    .sv-viewport-layer-anchor {
+      border-color: @shape-layer-color;
+      &:before, &:after {
+        background-color: @shape-layer-color;
+      }
+    }
+    .sv-viewport-layer-borders .sv-viewport-layer-border,
+    .sv-viewport-layer-handles .sv-viewport-layer-handle {
+      background-color: @shape-layer-color;
+    }
+  }
 
-  img {
+  img, svg {
     display: block;
     pointer-events: none;
+  }
+  svg {
+    width: 100px;
+    height: 100px;
   }
   .sv-viewport-layer-borders {
     pointer-events: none;

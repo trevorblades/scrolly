@@ -40,6 +40,9 @@ module.exports = function(state, action) {
           }
           break;
         }
+        case 'shape':
+          layer.shape = action.shape;
+          break;
         default:
       }
 

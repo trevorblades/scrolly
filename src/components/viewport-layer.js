@@ -4,6 +4,7 @@ const classNames = require('classnames');
 
 const TextField = require('./text-field');
 
+const {SHAPES} = require('../constants');
 const {selectLayer} = require('../actions');
 const getParentProperties = require('../util/get-parent-properties');
 const getUnlinkedPosition = require('../util/get-unlinked-position');
@@ -268,6 +269,14 @@ const ViewportLayer = React.createClass({
               style={{opacity: layerOpacity}}
               width={this.state.asset.width * this.props.viewportScale * layerScale}/>
         );
+        break;
+      case 'shape':
+        content = React.cloneElement(SHAPES[this.props.layer.shape], {
+          style: {
+            width: 100 * this.props.viewportScale * layerScale,
+            height: 100 * this.props.viewportScale * layerScale
+          }
+        });
         break;
       default:
         break;
