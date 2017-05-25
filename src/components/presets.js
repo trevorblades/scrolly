@@ -61,9 +61,7 @@ const Presets = React.createClass({
           <div className="sv-library-presets-panel-scroll">
             {Object.keys(SHAPES).map(key => (
               <div className="sv-library-presets-panel-item" key={key}>
-                <div className="sv-library-presets-panel-item-asset" draggable onDragStart={event => this._onDragStart(key, event)}>
-                  {SHAPES[key]}
-                </div>
+                <div className="sv-library-presets-panel-item-asset" draggable onDragStart={event => this._onDragStart(key, event)}/>
               </div>
             ))}
           </div>

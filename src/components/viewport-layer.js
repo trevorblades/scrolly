@@ -2,6 +2,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const classNames = require('classnames');
 
+const Shape = require('./shape');
 const TextField = require('./text-field');
 
 const {SHAPES} = require('../constants');
@@ -270,14 +271,12 @@ const ViewportLayer = React.createClass({
               width={this.state.asset.width * this.props.viewportScale * layerScale}/>
         );
         break;
-      case 'shape':
-        content = React.cloneElement(SHAPES[this.props.layer.shape], {
-          style: {
-            width: 100 * this.props.viewportScale * layerScale,
-            height: 100 * this.props.viewportScale * layerScale
-          }
-        });
+      case 'shape': {
+        const size = 100 * this.props.viewportScale * layerScale;
+        const strokeWidth = 2;
+        content = <Shape shape={SHAPES[this.props.layer.shape]} size={size} strokeWidth={strokeWidth}/>;
         break;
+      }
       default:
         break;
     }

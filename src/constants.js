@@ -1,4 +1,5 @@
-const React = require('react');
+const Circle = require('./components/circle');
+const Rect = require('./components/rect');
 
 module.exports = {
   API_URL: process.env.API_URL ||
@@ -13,15 +14,7 @@ module.exports = {
     'Content-Type': 'application/json'
   },
   SHAPES: {
-    circle: (
-      <svg fill="none" stroke="black" strokeWidth={2} viewBox="0 0 102 102">
-        <circle cx={51} cy={51} r={50}/>
-      </svg>
-    ),
-    square: (
-      <svg fill="none" stroke="black" strokeWidth={2} viewBox="0 0 102 102">
-        <rect height={100} width={100} x={1} y={1}/>
-      </svg>
-    )
+    circle: Circle,
+    rect: Rect
   }
 };
