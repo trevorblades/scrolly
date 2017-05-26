@@ -7,7 +7,7 @@ import Control from './control';
 import Icon from './icon';
 import TextField from './text-field';
 
-const {
+import {
   copyLayer,
   removeLayer,
   setLayerProperties,
@@ -15,7 +15,7 @@ const {
   linkLayers,
   selectLayer,
   setPercentPlayed
-} = require('../actions');
+} from '../actions';
 import getInterpolatedValue from '../util/get-interpolated-value';
 import layerPropType from '../util/layer-prop-type';
 import properties from '../util/properties';

@@ -5,12 +5,12 @@ import classNames from 'classnames';
 
 import ViewportLayer from './viewport-layer';
 
-const {
+import {
   addImageLayer,
   addShapeLayer,
   setLayerProperties,
   selectLayer
-} = require('../actions');
+} from '../actions';
 import {ASSET_DRAG_TYPE, SHAPE_DRAG_TYPE} from '../constants';
 import getParents from '../util/get-parents';
 import getInterpolatedValue from '../util/get-interpolated-value';

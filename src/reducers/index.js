@@ -1,6 +1,5 @@
 import {combineReducers} from 'redux';
-const undoable = require('redux-undo').default;
-import {excludeAction} from 'redux-undo';
+import undoable, {excludeAction} from 'redux-undo';
 
 import assetsReducer from './assets';
 import layersReducer from './layers';

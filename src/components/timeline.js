@@ -9,13 +9,13 @@ import Icon from './icon';
 import TextField from './text-field';
 import TimelineLayer from './timeline-layer';
 
-const {
+import {
   addLayer,
   linkLayers,
   orderLayers,
   setPercentPlayed,
   selectLayer
-} = require('../actions');
+} from '../actions';
 import getInterpolatedValue from '../util/get-interpolated-value';
 import getParentProperties from '../util/get-parent-properties';
 import getParents from '../util/get-parents';
