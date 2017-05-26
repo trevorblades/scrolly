@@ -1,5 +1,6 @@
-import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const icons = {
   add: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19,13H13v6H11V13H5V11h6V5h2v6h6v2Z"/><path d="M0,0H24V24H0V0Z" fill="none"/></svg>',
@@ -32,8 +33,8 @@ const parser = new DOMParser();
 
 const Icon = React.createClass({
   propTypes: {
-    className: React.PropTypes.string,
-    name: React.PropTypes.string.isRequired
+    className: PropTypes.string,
+    name: PropTypes.string.isRequired
   },
 
   render() {

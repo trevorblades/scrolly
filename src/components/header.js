@@ -1,6 +1,7 @@
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-import classNames from 'classnames';
 
 import Button from './button';
 import Logo from '../assets/logo.svg';
@@ -9,17 +10,17 @@ import formatDate from '../util/format-date';
 
 const Header = React.createClass({
   propTypes: {
-    changedAt: React.PropTypes.string,
-    dispatch: React.PropTypes.func.isRequired,
-    name: React.PropTypes.string.isRequired,
-    onEditClick: React.PropTypes.func.isRequired,
-    onLogOutClick: React.PropTypes.func.isRequired,
-    onNewClick: React.PropTypes.func.isRequired,
-    onOpenClick: React.PropTypes.func.isRequired,
-    onSaveClick: React.PropTypes.func.isRequired,
-    onShareClick: React.PropTypes.func.isRequired,
-    saving: React.PropTypes.bool.isRequired,
-    updatedAt: React.PropTypes.string
+    changedAt: PropTypes.string,
+    dispatch: PropTypes.func.isRequired,
+    name: PropTypes.string.isRequired,
+    onEditClick: PropTypes.func.isRequired,
+    onLogOutClick: PropTypes.func.isRequired,
+    onNewClick: PropTypes.func.isRequired,
+    onOpenClick: PropTypes.func.isRequired,
+    onSaveClick: PropTypes.func.isRequired,
+    onShareClick: PropTypes.func.isRequired,
+    saving: PropTypes.bool.isRequired,
+    updatedAt: PropTypes.string
   },
 
   render() {

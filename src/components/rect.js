@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const Rect = ({size, strokeWidth}) => (
@@ -10,8 +11,8 @@ const Rect = ({size, strokeWidth}) => (
 );
 
 Rect.propTypes = {
-  size: React.PropTypes.number.isRequired,
-  strokeWidth: React.PropTypes.number.isRequired
+  size: PropTypes.number.isRequired,
+  strokeWidth: PropTypes.number.isRequired
 };
 
 export default Rect;

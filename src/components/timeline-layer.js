@@ -1,6 +1,7 @@
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-import classNames from 'classnames';
 import sentenceCase from 'sentence-case';
 
 import Control from './control';
@@ -35,28 +36,28 @@ function clamp(key, value) {
 
 const TimelineLayer = React.createClass({
   propTypes: {
-    dispatch: React.PropTypes.func.isRequired,
-    getInterpolatedValue: React.PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
+    getInterpolatedValue: PropTypes.func.isRequired,
     layer: layerPropType.isRequired,
-    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
-    linkable: React.PropTypes.bool.isRequired,
-    onCopyClick: React.PropTypes.func.isRequired,
-    onDragEnd: React.PropTypes.func.isRequired,
-    onDragOver: React.PropTypes.func.isRequired,
-    onDragStart: React.PropTypes.func.isRequired,
-    onLinkClick: React.PropTypes.func.isRequired,
-    onLinkTargetClick: React.PropTypes.func.isRequired,
-    onPropertiesChange: React.PropTypes.func.isRequired,
-    onRemoveClick: React.PropTypes.func.isRequired,
-    onVisiblityToggle: React.PropTypes.func.isRequired,
-    parent: React.PropTypes.object,
-    percentPlayed: React.PropTypes.number.isRequired,
-    selected: React.PropTypes.bool.isRequired,
-    selectLayer: React.PropTypes.func.isRequired,
-    setPercentPlayed: React.PropTypes.func.isRequired,
-    sticky: React.PropTypes.bool.isRequired,
-    stuck: React.PropTypes.bool.isRequired,
-    unlinkable: React.PropTypes.bool
+    layers: PropTypes.arrayOf(layerPropType).isRequired,
+    linkable: PropTypes.bool.isRequired,
+    onCopyClick: PropTypes.func.isRequired,
+    onDragEnd: PropTypes.func.isRequired,
+    onDragOver: PropTypes.func.isRequired,
+    onDragStart: PropTypes.func.isRequired,
+    onLinkClick: PropTypes.func.isRequired,
+    onLinkTargetClick: PropTypes.func.isRequired,
+    onPropertiesChange: PropTypes.func.isRequired,
+    onRemoveClick: PropTypes.func.isRequired,
+    onVisiblityToggle: PropTypes.func.isRequired,
+    parent: PropTypes.object,
+    percentPlayed: PropTypes.number.isRequired,
+    selected: PropTypes.bool.isRequired,
+    selectLayer: PropTypes.func.isRequired,
+    setPercentPlayed: PropTypes.func.isRequired,
+    sticky: PropTypes.bool.isRequired,
+    stuck: PropTypes.bool.isRequired,
+    unlinkable: PropTypes.bool
   },
 
   getInitialState() {

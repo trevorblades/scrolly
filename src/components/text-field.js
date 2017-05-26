@@ -1,4 +1,5 @@
 /* eslint-disable react/no-danger */
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const resetCaret = node => {
@@ -13,18 +14,15 @@ const resetCaret = node => {
 
 const TextField = React.createClass({
   propTypes: {
-    max: React.PropTypes.number,
-    min: React.PropTypes.number,
-    multiline: React.PropTypes.bool,
-    onChange: React.PropTypes.func.isRequired,
-    step: React.PropTypes.number,
-    style: React.PropTypes.object,
-    title: React.PropTypes.string,
-    type: React.PropTypes.oneOf(['text', 'number']),
-    value: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number
-    ]).isRequired
+    max: PropTypes.number,
+    min: PropTypes.number,
+    multiline: PropTypes.bool,
+    onChange: PropTypes.func.isRequired,
+    step: PropTypes.number,
+    style: PropTypes.object,
+    title: PropTypes.string,
+    type: PropTypes.oneOf(['text', 'number']),
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
   },
 
   getDefaultProps() {

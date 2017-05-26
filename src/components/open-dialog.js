@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 
@@ -8,9 +9,9 @@ import formatDate from '../util/format-date';
 
 const OpenDialog = React.createClass({
   propTypes: {
-    dispatch: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    user: React.PropTypes.object.isRequired
+    dispatch: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired
   },
 
   getInitialState() {

@@ -1,8 +1,9 @@
-import React from 'react';
-import {connect} from 'react-redux';
 import bytes from 'bytes';
 import classNames from 'classnames';
 import mime from 'mime';
+import PropTypes from 'prop-types';
+import React from 'react';
+import {connect} from 'react-redux';
 
 import Button from './button';
 import Icon from './icon';
@@ -29,9 +30,9 @@ const allowedFiletypesString = allowedFiletypes
 
 const Library = React.createClass({
   propTypes: {
-    assets: React.PropTypes.array.isRequired,
-    dispatch: React.PropTypes.func.isRequired,
-    dragging: React.PropTypes.bool
+    assets: PropTypes.array.isRequired,
+    dispatch: PropTypes.func.isRequired,
+    dragging: PropTypes.bool
   },
 
   getInitialState() {

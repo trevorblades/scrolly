@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import Button from './button';
@@ -7,7 +8,7 @@ import {JSON_HEADERS} from '../constants';
 
 const Login = React.createClass({
   propTypes: {
-    onSuccess: React.PropTypes.func.isRequired
+    onSuccess: PropTypes.func.isRequired
   },
 
   getInitialState() {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 
@@ -10,12 +11,12 @@ import getAspectRatio from '../util/get-aspect-ratio';
 
 const EditDialog = React.createClass({
   propTypes: {
-    dispatch: React.PropTypes.func.isRequired,
-    height: React.PropTypes.number.isRequired,
-    name: React.PropTypes.string.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    reset: React.PropTypes.bool,
-    width: React.PropTypes.number.isRequired
+    dispatch: PropTypes.func.isRequired,
+    height: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired,
+    reset: PropTypes.bool,
+    width: PropTypes.number.isRequired
   },
 
   getInitialState() {

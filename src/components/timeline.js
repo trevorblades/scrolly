@@ -1,6 +1,7 @@
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-import classNames from 'classnames';
 import upperCaseFirst from 'upper-case-first';
 
 import Button from './button';
@@ -33,17 +34,17 @@ for (let i = 0; i < numTicks; i += 1) {
 
 const Timeline = React.createClass({
   propTypes: {
-    dispatch: React.PropTypes.func.isRequired,
-    getInterpolatedValue: React.PropTypes.func.isRequired,
-    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
-    maxHeight: React.PropTypes.number.isRequired,
-    onResize: React.PropTypes.func.isRequired,
-    onStepChange: React.PropTypes.func.isRequired,
-    percentPlayed: React.PropTypes.number.isRequired,
-    selectedLayer: React.PropTypes.number,
-    selectLayer: React.PropTypes.func.isRequired,
-    setPercentPlayed: React.PropTypes.func.isRequired,
-    step: React.PropTypes.number.isRequired
+    dispatch: PropTypes.func.isRequired,
+    getInterpolatedValue: PropTypes.func.isRequired,
+    layers: PropTypes.arrayOf(layerPropType).isRequired,
+    maxHeight: PropTypes.number.isRequired,
+    onResize: PropTypes.func.isRequired,
+    onStepChange: PropTypes.func.isRequired,
+    percentPlayed: PropTypes.number.isRequired,
+    selectedLayer: PropTypes.number,
+    selectLayer: PropTypes.func.isRequired,
+    setPercentPlayed: PropTypes.func.isRequired,
+    step: PropTypes.number.isRequired
   },
 
   getInitialState() {

@@ -1,5 +1,6 @@
-import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 import {SHAPES} from './presets';
 import Shape from './shape';
@@ -14,22 +15,22 @@ const DUMMY_LAYER_SIZE = 16;
 
 const ViewportLayer = React.createClass({
   propTypes: {
-    assets: React.PropTypes.array.isRequired,
-    dispatch: React.PropTypes.func,
-    getInterpolatedValue: React.PropTypes.func.isRequired,
-    hidden: React.PropTypes.bool,
+    assets: PropTypes.array.isRequired,
+    dispatch: PropTypes.func,
+    getInterpolatedValue: PropTypes.func.isRequired,
+    hidden: PropTypes.bool,
     layer: layerPropType.isRequired,
-    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
-    onPropertiesChange: React.PropTypes.func.isRequired,
-    parents: React.PropTypes.array.isRequired,
-    percentPlayed: React.PropTypes.number.isRequired,
-    readOnly: React.PropTypes.bool,
-    selected: React.PropTypes.bool.isRequired,
-    viewportHeight: React.PropTypes.number.isRequired,
-    viewportOffsetLeft: React.PropTypes.number.isRequired,
-    viewportOffsetTop: React.PropTypes.number.isRequired,
-    viewportScale: React.PropTypes.number.isRequired,
-    viewportWidth: React.PropTypes.number.isRequired
+    layers: PropTypes.arrayOf(layerPropType).isRequired,
+    onPropertiesChange: PropTypes.func.isRequired,
+    parents: PropTypes.array.isRequired,
+    percentPlayed: PropTypes.number.isRequired,
+    readOnly: PropTypes.bool,
+    selected: PropTypes.bool.isRequired,
+    viewportHeight: PropTypes.number.isRequired,
+    viewportOffsetLeft: PropTypes.number.isRequired,
+    viewportOffsetTop: PropTypes.number.isRequired,
+    viewportScale: PropTypes.number.isRequired,
+    viewportWidth: PropTypes.number.isRequired
   },
 
   getInitialState() {

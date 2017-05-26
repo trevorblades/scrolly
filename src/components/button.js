@@ -1,16 +1,17 @@
-import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const Button = React.createClass({
   propTypes: {
-    children: React.PropTypes.node,
-    className: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    large: React.PropTypes.bool,
-    onClick: React.PropTypes.func,
-    secondary: React.PropTypes.bool,
-    title: React.PropTypes.string,
-    type: React.PropTypes.string
+    children: PropTypes.node,
+    className: PropTypes.string,
+    disabled: PropTypes.bool,
+    large: PropTypes.bool,
+    onClick: PropTypes.func,
+    secondary: PropTypes.bool,
+    title: PropTypes.string,
+    type: PropTypes.string
   },
 
   getDefaultProps() {

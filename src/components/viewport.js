@@ -1,7 +1,8 @@
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {findDOMNode} from 'react-dom';
 import {connect} from 'react-redux';
-import classNames from 'classnames';
 
 import ViewportLayer from './viewport-layer';
 
@@ -46,18 +47,18 @@ function propsToDimensions(props) {
 
 const Viewport = React.createClass({
   propTypes: {
-    assets: React.PropTypes.array.isRequired,
-    compositionHeight: React.PropTypes.number.isRequired,
-    compositionWidth: React.PropTypes.number.isRequired,
-    dispatch: React.PropTypes.func,
-    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
-    percentPlayed: React.PropTypes.number.isRequired,
-    readOnly: React.PropTypes.bool,
-    selectedLayer: React.PropTypes.number,
-    wrapperHeight: React.PropTypes.number.isRequired,
-    wrapperOffsetLeft: React.PropTypes.number.isRequired,
-    wrapperOffsetTop: React.PropTypes.number.isRequired,
-    wrapperWidth: React.PropTypes.number.isRequired
+    assets: PropTypes.array.isRequired,
+    compositionHeight: PropTypes.number.isRequired,
+    compositionWidth: PropTypes.number.isRequired,
+    dispatch: PropTypes.func,
+    layers: PropTypes.arrayOf(layerPropType).isRequired,
+    percentPlayed: PropTypes.number.isRequired,
+    readOnly: PropTypes.bool,
+    selectedLayer: PropTypes.number,
+    wrapperHeight: PropTypes.number.isRequired,
+    wrapperOffsetLeft: PropTypes.number.isRequired,
+    wrapperOffsetTop: PropTypes.number.isRequired,
+    wrapperWidth: PropTypes.number.isRequired
   },
 
   getDefaultProps() {

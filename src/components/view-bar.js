@@ -1,6 +1,7 @@
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-import classNames from 'classnames';
 import upperCaseFirst from 'upper-case-first';
 
 import Button from './button';
@@ -20,14 +21,14 @@ const alignOptions = {
 
 const ViewBar = React.createClass({
   propTypes: {
-    compositionHeight: React.PropTypes.number.isRequired,
-    compositionWidth: React.PropTypes.number.isRequired,
-    dispatch: React.PropTypes.func.isRequired,
-    getLayerDimensions: React.PropTypes.func.isRequired,
+    compositionHeight: PropTypes.number.isRequired,
+    compositionWidth: PropTypes.number.isRequired,
+    dispatch: PropTypes.func.isRequired,
+    getLayerDimensions: PropTypes.func.isRequired,
     layer: layerPropType,
-    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
-    percentPlayed: React.PropTypes.number.isRequired,
-    viewportScale: React.PropTypes.number.isRequired
+    layers: PropTypes.arrayOf(layerPropType).isRequired,
+    percentPlayed: PropTypes.number.isRequired,
+    viewportScale: PropTypes.number.isRequired
   },
 
   onAlignOptionClick(axis, amount) {

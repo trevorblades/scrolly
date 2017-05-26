@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const Circle = ({size, strokeWidth}) => (
@@ -5,8 +6,8 @@ const Circle = ({size, strokeWidth}) => (
 );
 
 Circle.propTypes = {
-  size: React.PropTypes.number.isRequired,
-  strokeWidth: React.PropTypes.number.isRequired
+  size: PropTypes.number.isRequired,
+  strokeWidth: PropTypes.number.isRequired
 };
 
 export default Circle;

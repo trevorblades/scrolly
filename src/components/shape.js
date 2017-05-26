@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const Shape = props => {
@@ -22,12 +23,12 @@ const Shape = props => {
 };
 
 Shape.propTypes = {
-  fill: React.PropTypes.string,
-  shape: React.PropTypes.func.isRequired,
-  size: React.PropTypes.number,
-  stroke: React.PropTypes.string,
-  strokeWidth: React.PropTypes.number,
-  style: React.PropTypes.object
+  fill: PropTypes.string,
+  shape: PropTypes.func.isRequired,
+  size: PropTypes.number,
+  stroke: PropTypes.string,
+  strokeWidth: PropTypes.number,
+  style: PropTypes.object
 };
 
 Shape.defaultProps = {

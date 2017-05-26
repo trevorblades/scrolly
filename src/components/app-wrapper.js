@@ -1,6 +1,7 @@
+import jwtDecode from 'jwt-decode';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-import jwtDecode from 'jwt-decode';
 
 import App from './app';
 import Login from './login';
@@ -11,7 +12,7 @@ const TOKEN_KEY = 'sv-token';
 
 const AppWrapper = React.createClass({
   propTypes: {
-    dispatch: React.PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired
   },
 
   getInitialState() {

@@ -1,12 +1,13 @@
-import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 import shortid from 'shortid';
 
 const Checkbox = React.createClass({
   propTypes: {
-    checked: React.PropTypes.bool.isRequired,
-    label: React.PropTypes.node,
-    onChange: React.PropTypes.func.isRequired
+    checked: PropTypes.bool.isRequired,
+    label: PropTypes.node,
+    onChange: PropTypes.func.isRequired
   },
 
   componentWillMount() {

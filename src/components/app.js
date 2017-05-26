@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import {ActionCreators} from 'redux-undo';
@@ -23,19 +24,19 @@ function setTitle(name) {
 
 const App = React.createClass({
   propTypes: {
-    assets: React.PropTypes.array.isRequired,
-    changed: React.PropTypes.bool.isRequired,
-    compositionHeight: React.PropTypes.number.isRequired,
-    compositionWidth: React.PropTypes.number.isRequired,
-    dispatch: React.PropTypes.func.isRequired,
-    id: React.PropTypes.number,
-    layers: React.PropTypes.arrayOf(layerPropType).isRequired,
-    name: React.PropTypes.string.isRequired,
-    onLogOutClick: React.PropTypes.func.isRequired,
-    selectedLayer: React.PropTypes.number,
-    slug: React.PropTypes.string,
-    step: React.PropTypes.number.isRequired,
-    user: React.PropTypes.object.isRequired
+    assets: PropTypes.array.isRequired,
+    changed: PropTypes.bool.isRequired,
+    compositionHeight: PropTypes.number.isRequired,
+    compositionWidth: PropTypes.number.isRequired,
+    dispatch: PropTypes.func.isRequired,
+    id: PropTypes.number,
+    layers: PropTypes.arrayOf(layerPropType).isRequired,
+    name: PropTypes.string.isRequired,
+    onLogOutClick: PropTypes.func.isRequired,
+    selectedLayer: PropTypes.number,
+    slug: PropTypes.string,
+    step: PropTypes.number.isRequired,
+    user: PropTypes.object.isRequired
   },
 
   getInitialState() {

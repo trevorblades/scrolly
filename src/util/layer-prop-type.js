@@ -1,34 +1,28 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
-const Animatable = React.PropTypes.oneOfType([
-  React.PropTypes.number,
-  React.PropTypes.object
-]);
+const Animatable = PropTypes.oneOfType([PropTypes.number, PropTypes.object]);
 
-export default React.PropTypes.shape({
-  id: React.PropTypes.number.isRequired,
-  type: React.PropTypes.string.isRequired,
-  name: React.PropTypes.string.isRequired,
-  in: React.PropTypes.number.isRequired,
-  out: React.PropTypes.number.isRequired,
+export default PropTypes.shape({
+  id: PropTypes.number.isRequired,
+  type: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  in: PropTypes.number.isRequired,
+  out: PropTypes.number.isRequired,
   x: Animatable.isRequired,
   y: Animatable.isRequired,
   scale: Animatable.isRequired,
   opacity: Animatable.isRequired,
-  visible: React.PropTypes.bool.isRequired,
+  visible: PropTypes.bool.isRequired,
 
   // text props
-  value: React.PropTypes.string,
-  fontSize: React.PropTypes.number,
-  fontStyle: React.PropTypes.string,
-  fontWeight: React.PropTypes.oneOfType([
-    React.PropTypes.number,
-    React.PropTypes.string
-  ]),
+  value: PropTypes.string,
+  fontSize: PropTypes.number,
+  fontStyle: PropTypes.string,
+  fontWeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
   // image props
-  src: React.PropTypes.string,
-  width: React.PropTypes.number,
-  height: React.PropTypes.number,
-  aspectRatio: React.PropTypes.number
+  src: PropTypes.string,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  aspectRatio: PropTypes.number
 });

@@ -1,11 +1,12 @@
-import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const Dialog = React.createClass({
   propTypes: {
-    children: React.PropTypes.node,
-    className: React.PropTypes.string,
-    onClose: React.PropTypes.func.isRequired
+    children: PropTypes.node,
+    className: PropTypes.string,
+    onClose: PropTypes.func.isRequired
   },
 
   componentWillMount() {

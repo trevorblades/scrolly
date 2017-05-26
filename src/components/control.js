@@ -1,22 +1,23 @@
-import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const Control = React.createClass({
   propTypes: {
-    actions: React.PropTypes.arrayOf(
-      React.PropTypes.shape({
-        className: React.PropTypes.string,
-        content: React.PropTypes.node.isRequired,
-        onClick: React.PropTypes.func,
-        title: React.PropTypes.string
+    actions: PropTypes.arrayOf(
+      PropTypes.shape({
+        className: PropTypes.string,
+        content: PropTypes.node.isRequired,
+        onClick: PropTypes.func,
+        title: PropTypes.string
       })
     ),
-    children: React.PropTypes.node,
-    className: React.PropTypes.string,
-    draggable: React.PropTypes.bool,
-    onClick: React.PropTypes.func,
-    onDragEnd: React.PropTypes.func,
-    onDragStart: React.PropTypes.func
+    children: PropTypes.node,
+    className: PropTypes.string,
+    draggable: PropTypes.bool,
+    onClick: PropTypes.func,
+    onDragEnd: PropTypes.func,
+    onDragStart: PropTypes.func
   },
 
   render() {
