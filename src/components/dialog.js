@@ -1,5 +1,5 @@
-const React = require('react');
-const classNames = require('classnames');
+import React from 'react';
+import classNames from 'classnames';
 
 const Dialog = React.createClass({
   propTypes: {
@@ -36,4 +36,4 @@ const Dialog = React.createClass({
   }
 });
 
-module.exports = Dialog;
+export default Dialog;

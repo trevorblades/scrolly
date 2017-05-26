@@ -1,6 +1,6 @@
-const properties = require('../util/properties');
+import properties from '../util/properties';
 
-module.exports = (state, action) => {
+export default (state, action) => {
   switch (action.type) {
     case 'ADD_LAYER': {
       const layer = {

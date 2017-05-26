@@ -2100,9 +2100,9 @@ eslint-config-airbnb@^15.0.1:
   dependencies:
     eslint-config-airbnb-base "^11.2.0"
 
-eslint-config-knoword@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-knoword/-/eslint-config-knoword-1.8.0.tgz#7735da905ed9f45a95cc006ff05930eed293d0e7"
+eslint-config-knoword@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-knoword/-/eslint-config-knoword-1.9.0.tgz#0273fae3e0662f776ecbaec0adfd943bcbbd886d"
   dependencies:
     babel-eslint "^7.2.3"
     eslint-config-airbnb "^15.0.1"

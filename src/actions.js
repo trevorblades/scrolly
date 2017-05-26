@@ -94,7 +94,7 @@ function loadProject(project) {
   };
 }
 
-module.exports = {
+export default {
   addLayer,
   addImageLayer,
   addShapeLayer,

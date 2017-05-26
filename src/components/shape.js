@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 const Shape = props => {
   const Component = props.shape;
@@ -37,4 +37,4 @@ Shape.defaultProps = {
   strokeWidth: 2
 };
 
-module.exports = Shape;
+export default Shape;

@@ -1,12 +1,12 @@
-const React = require('react');
-const {render} = require('react-dom');
-const url = require('url');
-require('core-js/fn/array/find');
-require('whatwg-fetch');
+import React from 'react';
+import {render} from 'react-dom';
+import url from 'url';
+import 'core-js/fn/array/find';
+import 'whatwg-fetch';
 
-const Viewport = require('../components/viewport');
+import Viewport from '../components/viewport';
 
-const {API_URL} = require('../constants');
+import {API_URL} from '../constants';
 
 const Viewer = React.createClass({
   getInitialState() {

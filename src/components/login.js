@@ -1,8 +1,8 @@
-const React = require('react');
+import React from 'react';
 
-const Button = require('./button');
+import Button from './button';
 
-const {API_URL, JSON_HEADERS} = require('../constants');
+import {API_URL, JSON_HEADERS} from '../constants';
 
 const Login = React.createClass({
   propTypes: {
@@ -121,4 +121,4 @@ const Login = React.createClass({
   }
 });
 
-module.exports = Login;
+export default Login;

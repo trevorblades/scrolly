@@ -1,4 +1,4 @@
-module.exports = (value, position) => {
+export default (value, position) => {
   if (typeof value !== 'object') {
     return value;
   } else if (position in value) {

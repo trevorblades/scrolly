@@ -1,7 +1,7 @@
-const Circle = require('./components/circle');
-const Rect = require('./components/rect');
+import Circle from './components/circle';
+import Rect from './components/rect';
 
-module.exports = {
+export default {
   API_URL: process.env.API_URL ||
     (process.env.NODE_ENV === 'production'
       ? 'https://api.scrol.ly'

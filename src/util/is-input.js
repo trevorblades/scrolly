@@ -1,4 +1,4 @@
-module.exports = node => {
+export default node => {
   if (node.contentEditable === 'true') {
     return true;
   }

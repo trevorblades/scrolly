@@ -1,11 +1,11 @@
-const React = require('react');
-const {connect} = require('react-redux');
-const classNames = require('classnames');
-const sentenceCase = require('sentence-case');
+import React from 'react';
+import {connect} from 'react-redux';
+import classNames from 'classnames';
+import sentenceCase from 'sentence-case';
 
-const Control = require('./control');
-const Icon = require('./icon');
-const TextField = require('./text-field');
+import Control from './control';
+import Icon from './icon';
+import TextField from './text-field';
 
 const {
   copyLayer,
@@ -16,10 +16,10 @@ const {
   selectLayer,
   setPercentPlayed
 } = require('../actions');
-const getInterpolatedValue = require('../util/get-interpolated-value');
-const layerPropType = require('../util/layer-prop-type');
-const properties = require('../util/properties');
-const shouldSnap = require('../util/should-snap');
+import getInterpolatedValue from '../util/get-interpolated-value';
+import layerPropType from '../util/layer-prop-type';
+import properties from '../util/properties';
+import shouldSnap from '../util/should-snap';
 
 const KEYFRAME_CLASS_NAME = 'sv-timeline-layer-property-keyframe';
 
@@ -616,7 +616,7 @@ const TimelineLayer = React.createClass({
   }
 });
 
-module.exports = connect(null, (dispatch, props) => ({
+export default connect(null, (dispatch, props) => ({
   dispatch,
   getInterpolatedValue(value) {
     return getInterpolatedValue(value, props.percentPlayed);

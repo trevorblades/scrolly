@@ -1,5 +1,5 @@
-const React = require('react');
-const classNames = require('classnames');
+import React from 'react';
+import classNames from 'classnames';
 
 const Control = React.createClass({
   propTypes: {
@@ -53,4 +53,4 @@ const Control = React.createClass({
   }
 });
 
-module.exports = Control;
+export default Control;

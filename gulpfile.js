@@ -41,7 +41,7 @@ function bundle(bundler, file) {
     return bundler
       .bundle()
       .on('error', err => {
-        gutil.log('Error Bundling:', err.stack);
+        gutil.log('Error bundling:', err.stack);
       })
       .pipe(source(file))
       .pipe(gulp.dest(DEV_DIR));
@@ -49,13 +49,14 @@ function bundle(bundler, file) {
 }
 
 gulp.task('dev-scripts', () => {
-  const bundlerOptions = {
-    ...{
+  // eslint-disable-next-line prefer-object-spread/prefer-object-spread
+  const bundlerOptions = Object.assign(
+    {
       debug: true,
       transform: browserifyTransforms
     },
-    ...watchify.args
-  };
+    watchify.args
+  );
   const streams = scripts.map((script, index) => {
     const bundler = watchify(
       browserify(script, bundlerOptions).plugin(livereactload, {

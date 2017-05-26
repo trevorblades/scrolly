@@ -1,6 +1,6 @@
-const moment = require('moment');
+import moment from 'moment';
 
-module.exports = date =>
+export default date =>
   moment()
     .calendar(new Date(date), {
       lastDay: '[yesterday at] LT',

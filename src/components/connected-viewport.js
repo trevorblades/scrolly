@@ -1,7 +1,7 @@
-const {connect} = require('react-redux');
-const Viewport = require('./viewport');
+import {connect} from 'react-redux';
+import Viewport from './viewport';
 
-module.exports = connect(
+export default connect(
   state => ({
     assets: state.assets.present,
     layers: state.layers.present,

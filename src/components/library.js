@@ -1,15 +1,15 @@
-const React = require('react');
-const {connect} = require('react-redux');
-const bytes = require('bytes');
-const classNames = require('classnames');
-const mime = require('mime');
+import React from 'react';
+import {connect} from 'react-redux';
+import bytes from 'bytes';
+import classNames from 'classnames';
+import mime from 'mime';
 
-const Button = require('./button');
-const Icon = require('./icon');
-const Presets = require('./presets');
+import Button from './button';
+import Icon from './icon';
+import Presets from './presets';
 
-const {API_URL, ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
-const isDragTypeFound = require('../util/is-drag-type-found');
+import {API_URL, ASSET_DRAG_TYPE, FILE_DRAG_TYPE} from '../constants';
+import isDragTypeFound from '../util/is-drag-type-found';
 
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -240,6 +240,6 @@ const Library = React.createClass({
   }
 });
 
-module.exports = connect(state => ({
+export default connect(state => ({
   assets: state.assets.present
 }))(Library);

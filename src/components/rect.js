@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 const Rect = ({size, strokeWidth}) => (
   <rect
@@ -14,4 +14,4 @@ Rect.propTypes = {
   strokeWidth: React.PropTypes.number.isRequired
 };
 
-module.exports = Rect;
+export default Rect;

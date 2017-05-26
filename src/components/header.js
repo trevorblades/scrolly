@@ -1,10 +1,10 @@
-const React = require('react');
-const {connect} = require('react-redux');
-const classNames = require('classnames');
+import React from 'react';
+import {connect} from 'react-redux';
+import classNames from 'classnames';
 
-const Button = require('./button');
+import Button from './button';
 
-const formatDate = require('../util/format-date');
+import formatDate from '../util/format-date';
 
 const Header = React.createClass({
   propTypes: {
@@ -100,7 +100,7 @@ const Header = React.createClass({
   }
 });
 
-module.exports = connect(
+export default connect(
   state => ({
     changedAt: state.changedAt.present,
     name: state.name.present,

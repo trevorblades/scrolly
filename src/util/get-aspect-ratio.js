@@ -2,7 +2,7 @@ function getGCD(a, b) {
   return b === 0 ? a : getGCD(b, a % b);
 }
 
-module.exports = (width, height) => {
+export default (width, height) => {
   if (!width || !height) {
     return null;
   }

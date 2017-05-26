@@ -1,9 +1,9 @@
-const React = require('react');
-const {findDOMNode} = require('react-dom');
-const {connect} = require('react-redux');
-const classNames = require('classnames');
+import React from 'react';
+import {findDOMNode} from 'react-dom';
+import {connect} from 'react-redux';
+import classNames from 'classnames';
 
-const ViewportLayer = require('./viewport-layer');
+import ViewportLayer from './viewport-layer';
 
 const {
   addImageLayer,
@@ -11,11 +11,11 @@ const {
   setLayerProperties,
   selectLayer
 } = require('../actions');
-const {ASSET_DRAG_TYPE, SHAPE_DRAG_TYPE} = require('../constants');
-const getParents = require('../util/get-parents');
-const getInterpolatedValue = require('../util/get-interpolated-value');
-const isDragTypeFound = require('../util/is-drag-type-found');
-const layerPropType = require('../util/layer-prop-type');
+import {ASSET_DRAG_TYPE, SHAPE_DRAG_TYPE} from '../constants';
+import getParents from '../util/get-parents';
+import getInterpolatedValue from '../util/get-interpolated-value';
+import isDragTypeFound from '../util/is-drag-type-found';
+import layerPropType from '../util/layer-prop-type';
 
 const ConnectedViewportLayer = connect(state => ({
   assets: state.assets.present
@@ -219,4 +219,4 @@ const Viewport = React.createClass({
   }
 });
 
-module.exports = Viewport;
+export default Viewport;

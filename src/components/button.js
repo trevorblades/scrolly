@@ -1,5 +1,5 @@
-const React = require('react');
-const classNames = require('classnames');
+import React from 'react';
+import classNames from 'classnames';
 
 const Button = React.createClass({
   propTypes: {
@@ -44,4 +44,4 @@ const Button = React.createClass({
   }
 });
 
-module.exports = Button;
+export default Button;

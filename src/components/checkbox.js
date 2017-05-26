@@ -1,6 +1,6 @@
-const React = require('react');
-const classNames = require('classnames');
-const shortid = require('shortid');
+import React from 'react';
+import classNames from 'classnames';
+import shortid from 'shortid';
 
 const Checkbox = React.createClass({
   propTypes: {
@@ -31,4 +31,4 @@ const Checkbox = React.createClass({
   }
 });
 
-module.exports = Checkbox;
+export default Checkbox;

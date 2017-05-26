@@ -1,20 +1,18 @@
-const React = require('react');
-const {render} = require('react-dom');
-const {createStore} = require('redux');
-const {Provider, connect} = require('react-redux');
-const {
-  devToolsEnhancer
-} = require('redux-devtools-extension/logOnlyInProduction');
-const jwtDecode = require('jwt-decode');
-require('core-js/fn/array/find');
-require('whatwg-fetch');
+import React from 'react';
+import {render} from 'react-dom';
+import {createStore} from 'redux';
+import {Provider, connect} from 'react-redux';
+import {devToolsEnhancer} from 'redux-devtools-extension/logOnlyInProduction';
+import jwtDecode from 'jwt-decode';
+import 'core-js/fn/array/find';
+import 'whatwg-fetch';
 
-const App = require('./components/app');
-const Login = require('./components/login');
+import App from './components/app';
+import Login from './components/login';
 
-const {loadProject} = require('./actions');
-const {API_URL} = require('./constants');
-const reducer = require('./reducers');
+import {loadProject} from './actions';
+import {API_URL} from './constants';
+import reducer from './reducers';
 
 const TOKEN_KEY = 'sv-token';
 

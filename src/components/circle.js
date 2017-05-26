@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 const Circle = ({size, strokeWidth}) => (
   <circle cx={size / 2} cy={size / 2} r={(size - strokeWidth) / 2} />
@@ -9,4 +9,4 @@ Circle.propTypes = {
   strokeWidth: React.PropTypes.number.isRequired
 };
 
-module.exports = Circle;
+export default Circle;

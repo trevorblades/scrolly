@@ -1,12 +1,12 @@
-const React = require('react');
-const {connect} = require('react-redux');
+import React from 'react';
+import {connect} from 'react-redux';
 
-const Button = require('./button');
-const Checkbox = require('./checkbox');
-const Dialog = require('./dialog');
+import Button from './button';
+import Checkbox from './checkbox';
+import Dialog from './dialog';
 
-const {DEFAULT_NAME} = require('../constants');
-const getAspectRatio = require('../util/get-aspect-ratio');
+import {DEFAULT_NAME} from '../constants';
+import getAspectRatio from '../util/get-aspect-ratio';
 
 const EditDialog = React.createClass({
   propTypes: {
@@ -145,7 +145,7 @@ const EditDialog = React.createClass({
   }
 });
 
-module.exports = connect(state => ({
+export default connect(state => ({
   name: state.name.present,
   width: state.width,
   height: state.height

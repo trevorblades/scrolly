@@ -1,21 +1,21 @@
-const React = require('react');
-const {connect} = require('react-redux');
-const {ActionCreators} = require('redux-undo');
+import React from 'react';
+import {connect} from 'react-redux';
+import {ActionCreators} from 'redux-undo';
 
-const ConnectedViewport = require('./connected-viewport');
-const Dialog = require('./dialog');
-const EditDialog = require('./edit-dialog');
-const Header = require('./header');
-const Library = require('./library');
-const OpenDialog = require('./open-dialog');
-const Timeline = require('./timeline');
-const ViewBar = require('./view-bar');
+import ConnectedViewport from './connected-viewport';
+import Dialog from './dialog';
+import EditDialog from './edit-dialog';
+import Header from './header';
+import Library from './library';
+import OpenDialog from './open-dialog';
+import Timeline from './timeline';
+import ViewBar from './view-bar';
 
-const {copyLayer, selectLayer, loadProject} = require('../actions');
-const {API_URL, FILE_DRAG_TYPE, JSON_HEADERS} = require('../constants');
-const isDragTypeFound = require('../util/is-drag-type-found');
-const isInput = require('../util/is-input');
-const layerPropType = require('../util/layer-prop-type');
+import {copyLayer, selectLayer, loadProject} from '../actions';
+import {API_URL, FILE_DRAG_TYPE, JSON_HEADERS} from '../constants';
+import isDragTypeFound from '../util/is-drag-type-found';
+import isInput from '../util/is-input';
+import layerPropType from '../util/layer-prop-type';
 
 function setTitle(name) {
   document.title = `${name} - Scrolly`;
@@ -321,7 +321,7 @@ const App = React.createClass({
   }
 });
 
-module.exports = connect(state => {
+export default connect(state => {
   const changedAt = new Date(state.changedAt && state.changedAt.present);
   return {
     id: state.id,

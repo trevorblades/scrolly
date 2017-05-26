@@ -1,8 +1,8 @@
-const layerReducer = require('./layer');
-const {linkLayers} = require('../actions');
-const getNextId = require('../util/get-next-id');
+import layerReducer from './layer';
+import {linkLayers} from '../actions';
+import getNextId from '../util/get-next-id';
 
-module.exports = (state = [], action) => {
+export default (state = [], action) => {
   switch (action.type) {
     case 'ADD_LAYER':
       return [

@@ -1,5 +1,5 @@
 /* eslint-disable react/no-danger */
-const React = require('react');
+import React from 'react';
 
 const resetCaret = node => {
   const range = document.createRange();
@@ -142,4 +142,4 @@ const TextField = React.createClass({
   }
 });
 
-module.exports = TextField;
+export default TextField;

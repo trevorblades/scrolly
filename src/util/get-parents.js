@@ -1,4 +1,4 @@
-module.exports = (layer, layers) => {
+export default (layer, layers) => {
   let current = layer;
   const parents = [];
   while (current && current.parent) {

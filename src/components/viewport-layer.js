@@ -1,14 +1,14 @@
-const React = require('react');
-const classNames = require('classnames');
+import React from 'react';
+import classNames from 'classnames';
 
-const Shape = require('./shape');
-const TextField = require('./text-field');
+import Shape from './shape';
+import TextField from './text-field';
 
-const {SHAPES} = require('../constants');
-const {selectLayer} = require('../actions');
-const getParentProperties = require('../util/get-parent-properties');
-const getUnlinkedPosition = require('../util/get-unlinked-position');
-const layerPropType = require('../util/layer-prop-type');
+import {SHAPES} from '../constants';
+import {selectLayer} from '../actions';
+import getParentProperties from '../util/get-parent-properties';
+import getUnlinkedPosition from '../util/get-unlinked-position';
+import layerPropType from '../util/layer-prop-type';
 
 const DUMMY_LAYER_SIZE = 16;
 
@@ -411,4 +411,4 @@ const ViewportLayer = React.createClass({
   }
 });
 
-module.exports = ViewportLayer;
+export default ViewportLayer;

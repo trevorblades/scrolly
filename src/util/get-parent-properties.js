@@ -1,6 +1,6 @@
-const getInterpolatedValue = require('./get-interpolated-value');
+import getInterpolatedValue from './get-interpolated-value';
 
-module.exports = (parents, percentPlayed) => {
+export default (parents, percentPlayed) => {
   const parent = parents[0];
   let x = getInterpolatedValue(parent.x, percentPlayed);
   let y = getInterpolatedValue(parent.y, percentPlayed);

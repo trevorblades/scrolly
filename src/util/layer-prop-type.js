@@ -1,11 +1,11 @@
-const React = require('react');
+import React from 'react';
 
 const Animatable = React.PropTypes.oneOfType([
   React.PropTypes.number,
   React.PropTypes.object
 ]);
 
-module.exports = React.PropTypes.shape({
+export default React.PropTypes.shape({
   id: React.PropTypes.number.isRequired,
   type: React.PropTypes.string.isRequired,
   name: React.PropTypes.string.isRequired,

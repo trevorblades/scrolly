@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   in: {
     type: 'number',
     step: 0.01,

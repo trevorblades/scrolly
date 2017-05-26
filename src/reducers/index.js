@@ -1,11 +1,11 @@
-const {combineReducers} = require('redux');
+import {combineReducers} from 'redux';
 const undoable = require('redux-undo').default;
-const {excludeAction} = require('redux-undo');
+import {excludeAction} from 'redux-undo';
 
-const assetsReducer = require('./assets');
-const layersReducer = require('./layers');
+import assetsReducer from './assets';
+import layersReducer from './layers';
 
-const {DEFAULT_NAME} = require('../constants');
+import {DEFAULT_NAME} from '../constants';
 
 const undoConfig = {
   filter: excludeAction(['SET_PERCENT_PLAYED', 'SELECT_LAYER'])
@@ -83,7 +83,7 @@ const combinedReducer = combineReducers({
   }
 });
 
-module.exports = (state, action) => {
+export default (state, action) => {
   if (action.type === 'RESET_PROJECT') {
     return combinedReducer(undefined, action);
   }

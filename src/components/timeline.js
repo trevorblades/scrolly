@@ -1,13 +1,13 @@
-const React = require('react');
-const {connect} = require('react-redux');
-const classNames = require('classnames');
-const upperCaseFirst = require('upper-case-first');
+import React from 'react';
+import {connect} from 'react-redux';
+import classNames from 'classnames';
+import upperCaseFirst from 'upper-case-first';
 
-const Button = require('./button');
-const Control = require('./control');
-const Icon = require('./icon');
-const TextField = require('./text-field');
-const TimelineLayer = require('./timeline-layer');
+import Button from './button';
+import Control from './control';
+import Icon from './icon';
+import TextField from './text-field';
+import TimelineLayer from './timeline-layer';
 
 const {
   addLayer,
@@ -16,12 +16,12 @@ const {
   setPercentPlayed,
   selectLayer
 } = require('../actions');
-const getInterpolatedValue = require('../util/get-interpolated-value');
-const getParentProperties = require('../util/get-parent-properties');
-const getParents = require('../util/get-parents');
-const isInput = require('../util/is-input');
-const layerPropType = require('../util/layer-prop-type');
-const shouldSnap = require('../util/should-snap');
+import getInterpolatedValue from '../util/get-interpolated-value';
+import getParentProperties from '../util/get-parent-properties';
+import getParents from '../util/get-parents';
+import isInput from '../util/is-input';
+import layerPropType from '../util/layer-prop-type';
+import shouldSnap from '../util/should-snap';
 
 const MIN_HEIGHT = 200;
 
@@ -514,4 +514,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-module.exports = connect(mapStateToProps, mapDispatchToProps)(Timeline);
+export default connect(mapStateToProps, mapDispatchToProps)(Timeline);

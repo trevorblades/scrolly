@@ -1,10 +1,10 @@
-const React = require('react');
+import React from 'react';
 
-const Button = require('./button');
-const Icon = require('./icon');
-const Shape = require('./shape');
+import Button from './button';
+import Icon from './icon';
+import Shape from './shape';
 
-const {SHAPES, SHAPE_DRAG_TYPE} = require('../constants');
+import {SHAPES, SHAPE_DRAG_TYPE} from '../constants';
 
 const Presets = React.createClass({
   getInitialState() {
@@ -84,4 +84,4 @@ const Presets = React.createClass({
   }
 });
 
-module.exports = Presets;
+export default Presets;

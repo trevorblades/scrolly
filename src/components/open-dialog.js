@@ -1,11 +1,11 @@
-const React = require('react');
-const {connect} = require('react-redux');
+import React from 'react';
+import {connect} from 'react-redux';
 
-const Dialog = require('./dialog');
+import Dialog from './dialog';
 
-const {loadProject} = require('../actions');
-const {API_URL} = require('../constants');
-const formatDate = require('../util/format-date');
+import {loadProject} from '../actions';
+import {API_URL} from '../constants';
+import formatDate from '../util/format-date';
 
 const OpenDialog = React.createClass({
   propTypes: {
@@ -75,4 +75,4 @@ const OpenDialog = React.createClass({
   }
 });
 
-module.exports = connect()(OpenDialog);
+export default connect()(OpenDialog);

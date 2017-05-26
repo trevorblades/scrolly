@@ -1,2 +1,2 @@
-module.exports = (layer, parent, scale, offset) =>
+export default (layer, parent, scale, offset) =>
   (layer - parent) / scale + offset;

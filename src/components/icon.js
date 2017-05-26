@@ -1,5 +1,5 @@
-const React = require('react');
-const classNames = require('classnames');
+import React from 'react';
+import classNames from 'classnames';
 
 const icons = {
   add: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19,13H13v6H11V13H5V11h6V5h2v6h6v2Z"/><path d="M0,0H24V24H0V0Z" fill="none"/></svg>',
@@ -75,4 +75,4 @@ const Icon = React.createClass({
   }
 });
 
-module.exports = Icon;
+export default Icon;

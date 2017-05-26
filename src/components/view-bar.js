@@ -1,17 +1,17 @@
-const React = require('react');
-const {connect} = require('react-redux');
-const classNames = require('classnames');
-const upperCaseFirst = require('upper-case-first');
+import React from 'react';
+import {connect} from 'react-redux';
+import classNames from 'classnames';
+import upperCaseFirst from 'upper-case-first';
 
-const Button = require('./button');
-const Icon = require('./icon');
+import Button from './button';
+import Icon from './icon';
 
-const {setLayerProperties} = require('../actions');
-const getAspectRatio = require('../util/get-aspect-ratio');
-const getParentProperties = require('../util/get-parent-properties');
-const getParents = require('../util/get-parents');
-const getUnlinkedPosition = require('../util/get-unlinked-position');
-const layerPropType = require('../util/layer-prop-type');
+import {setLayerProperties} from '../actions';
+import getAspectRatio from '../util/get-aspect-ratio';
+import getParentProperties from '../util/get-parent-properties';
+import getParents from '../util/get-parents';
+import getUnlinkedPosition from '../util/get-unlinked-position';
+import layerPropType from '../util/layer-prop-type';
 
 const alignOptions = {
   x: ['left', 'center', 'right'],
@@ -118,7 +118,7 @@ const ViewBar = React.createClass({
   }
 });
 
-module.exports = connect(state => ({
+export default connect(state => ({
   layer: state.layers.present.find(layer => layer.id === state.selectedLayer),
   layers: state.layers.present,
   percentPlayed: state.percentPlayed

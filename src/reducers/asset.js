@@ -1,4 +1,4 @@
-module.exports = (state, action) => {
+export default (state, action) => {
   switch (action.type) {
     case 'ADD_ASSET':
       return {
