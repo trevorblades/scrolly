@@ -6,8 +6,11 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import Button from './button';
-import Icon from './icon';
 import Presets from './presets';
+import AddIcon from '../assets/icons/add.svg';
+import ImageIcon from '../assets/icons/image.svg';
+import TrashIcon from '../assets/icons/trash.svg';
+import UploadIcon from '../assets/icons/upload.svg';
 
 import {ASSET_DRAG_TYPE, FILE_DRAG_TYPE} from '../constants';
 import isDragTypeFound from '../util/is-drag-type-found';
@@ -165,7 +168,7 @@ const Library = React.createClass({
           <div className="sv-library-preview-thumb">
             {selectedAsset
               ? <img alt={selectedAsset.name} src={selectedAsset.src} />
-              : <Icon name="image" />}
+              : <ImageIcon />}
           </div>
           <div className="sv-library-preview-info">
             {selectedAsset &&
@@ -189,7 +192,7 @@ const Library = React.createClass({
           {!this.props.assets.length
             ? <div className="sv-library-assets-empty">
                 <div style={{width: '25%'}}>
-                  <Icon name="upload" />
+                  <UploadIcon />
                 </div>
                 <h5>Upload images</h5>
                 <p>
@@ -217,7 +220,7 @@ const Library = React.createClass({
                       onClick={() => this.onRemoveClick(asset.id)}
                       title="Remove asset"
                     >
-                      <Icon name="trash" />
+                      <TrashIcon />
                     </span>
                   </div>
                 );
@@ -225,7 +228,7 @@ const Library = React.createClass({
         </div>
         <div className="sv-library-footer">
           <Button onClick={this.onUploadClick}>
-            <Icon name="add" />
+            <AddIcon />
             <span>Upload asset</span>
             <input
               accept={allowedFiletypes.join(',')}

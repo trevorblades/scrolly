@@ -2,9 +2,9 @@ import React from 'react';
 
 import Button from './button';
 import Circle from './circle';
-import Icon from './icon';
 import Shape from './shape';
 import Rect from './rect';
+import CloseIcon from '../assets/icons/close.svg';
 
 import {SHAPE_DRAG_TYPE} from '../constants';
 
@@ -69,7 +69,7 @@ const Presets = React.createClass({
             <h5>
               <span>Preset assets</span>
               <a onClick={this.closePanel}>
-                <Icon name="close" />
+                <CloseIcon />
               </a>
             </h5>
             <div className="sv-library-presets-panel-scroll">

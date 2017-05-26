@@ -7,6 +7,8 @@ import sentenceCase from 'sentence-case';
 import Control from './control';
 import Icon from './icon';
 import TextField from './text-field';
+import LinkIcon from '../assets/icons/link.svg';
+import TargetIcon from '../assets/icons/target.svg';
 
 import {
   copyLayer,
@@ -394,11 +396,11 @@ const TimelineLayer = React.createClass({
       })
     };
     if (linkable) {
-      linkAction.content = <Icon name="target" />;
+      linkAction.content = <TargetIcon />;
       linkAction.onClick = this.props.onLinkTargetClick;
       linkAction.title = 'Link to this layer';
     } else if (!this.props.layer.parent) {
-      linkAction.content = <Icon name="link" />;
+      linkAction.content = <LinkIcon />;
       if (this.props.layers.length > 1) {
         linkAction.onClick = this.props.onLinkClick;
         linkAction.title = 'Link Layer';
@@ -407,7 +409,7 @@ const TimelineLayer = React.createClass({
       linkAction.content = (
         <div>
           <span>{this.props.parent.name}</span>
-          <Icon className="sv-active" name="link" />
+          <LinkIcon className="sv-active" />
         </div>
       );
       if (!this.props.unlinkable) {

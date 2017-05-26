@@ -8,7 +8,7 @@ import Login from './login';
 
 import {loadProject} from '../actions';
 
-const TOKEN_KEY = 'sv-token';
+const TOKEN_KEY = 'sv_token';
 
 const AppWrapper = React.createClass({
   propTypes: {
