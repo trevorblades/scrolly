@@ -9,6 +9,9 @@
     "react",
     "stage-2"
   ],
+  "plugins": [
+    "transform-object-rest-spread"
+  ],
   "env": {
     "development": {
       "plugins": [
