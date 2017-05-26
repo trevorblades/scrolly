@@ -1,12 +1,8 @@
 import React from 'react';
 import {render} from 'react-dom';
 import url from 'url';
-import 'core-js/fn/array/find';
-import 'whatwg-fetch';
 
 import Viewport from '../components/viewport';
-
-import {API_URL} from '../constants';
 
 const Viewer = React.createClass({
   getInitialState() {

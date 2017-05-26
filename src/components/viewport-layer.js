@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import {SHAPES} from './presets';
 import Shape from './shape';
 import TextField from './text-field';
 
-import {SHAPES} from '../constants';
 import {selectLayer} from '../actions';
 import getParentProperties from '../util/get-parent-properties';
 import getUnlinkedPosition from '../util/get-unlinked-position';
@@ -239,12 +239,12 @@ const ViewportLayer = React.createClass({
     });
   },
 
-  _onTextChange(value) {
+  onTextChange(value) {
     this.props.onPropertiesChange({value});
     this.props.dispatch(selectLayer(null));
   },
 
-  _getAsset(id) {
+  getAsset(id) {
     if (typeof id === 'undefined') {
       return null;
     }

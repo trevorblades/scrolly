@@ -86,7 +86,7 @@ const TimelineLayer = React.createClass({
     document.body.removeEventListener('click', this.onBodyClick);
   },
 
-  _onKeyDown(event) {
+  onKeyDown(event) {
     // backspace or delete key pressed when a keyframe is selected
     if (
       (event.keyCode === 8 || event.keyCode === 46) &&
@@ -97,7 +97,7 @@ const TimelineLayer = React.createClass({
     }
   },
 
-  _onBodyClick(event) {
+  onBodyClick(event) {
     if (event.target.classList[0] !== KEYFRAME_CLASS_NAME) {
       this.setState({
         selectedKeyframeKey: null,
@@ -106,7 +106,7 @@ const TimelineLayer = React.createClass({
     }
   },
 
-  _onBarMouseDown(event) {
+  onBarMouseDown(event) {
     if (event.button === 0) {
       if (!this.props.selected) {
         this.props.selectLayer(event);
@@ -126,7 +126,7 @@ const TimelineLayer = React.createClass({
     }
   },
 
-  _onBarMouseMove(offsetX, event) {
+  onBarMouseMove(offsetX, event) {
     const barSize = this.state.dragOut - this.state.dragIn;
     let dragIn = this.getTrackPosition(event.clientX - offsetX, event.shiftKey);
     let dragOut = dragIn + barSize;

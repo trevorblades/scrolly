@@ -12,7 +12,7 @@ import Timeline from './timeline';
 import ViewBar from './view-bar';
 
 import {copyLayer, selectLayer, loadProject} from '../actions';
-import {API_URL, FILE_DRAG_TYPE, JSON_HEADERS} from '../constants';
+import {FILE_DRAG_TYPE, JSON_HEADERS} from '../constants';
 import isDragTypeFound from '../util/is-drag-type-found';
 import isInput from '../util/is-input';
 import layerPropType from '../util/layer-prop-type';
@@ -116,7 +116,7 @@ const App = React.createClass({
         viewportWrapperWidth: parseFloat(viewportWrapperStyle.width)
       },
       () => {
-        const viewport = this.viewport.getWrappedInstance();
+        const viewport = this.viewport;
         this.setState({viewportScale: viewport.getScale()});
       }
     );
@@ -226,7 +226,7 @@ const App = React.createClass({
   },
 
   getLayerDimensions(id) {
-    return this.viewport.getWrappedInstance().getLayerDimensions(id);
+    return this.viewport.getLayerDimensions(id);
   },
 
   render() {
@@ -240,7 +240,7 @@ const App = React.createClass({
       >
         <Header
           ref={node => {
-            this.header = node.getWrappedInstance();
+            this.header = node && node.getWrappedInstance();
           }}
           onEditClick={this.onEditClick}
           onLogOutClick={this.props.onLogOutClick}
@@ -267,7 +267,7 @@ const App = React.createClass({
             >
               <ConnectedViewport
                 ref={node => {
-                  this.viewport = node;
+                  this.viewport = node && node.getWrappedInstance();
                 }}
                 compositionHeight={this.props.compositionHeight}
                 compositionWidth={this.props.compositionWidth}

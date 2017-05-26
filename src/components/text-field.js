@@ -84,7 +84,7 @@ const TextField = React.createClass({
     this.setState({value});
   },
 
-  _onKeyDown(event) {
+  onKeyDown(event) {
     if ([9, 27, 13].indexOf(event.keyCode) !== -1) {
       // tab, esc, or return key pressed
       if (

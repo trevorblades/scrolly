@@ -1,10 +1,17 @@
 import React from 'react';
 
 import Button from './button';
+import Circle from './circle';
 import Icon from './icon';
 import Shape from './shape';
+import Rect from './rect';
 
-import {SHAPES, SHAPE_DRAG_TYPE} from '../constants';
+import {SHAPE_DRAG_TYPE} from '../constants';
+
+export const SHAPES = {
+  circle: Circle,
+  rect: Rect
+};
 
 const Presets = React.createClass({
   getInitialState() {

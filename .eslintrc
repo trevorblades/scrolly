@@ -1,0 +1,3 @@
+extends: knoword/react
+globals:
+  API_URL: true

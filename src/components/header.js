@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import classNames from 'classnames';
 
 import Button from './button';
+import Logo from '../assets/logo.svg';
 
 import formatDate from '../util/format-date';
 
@@ -53,11 +54,7 @@ const Header = React.createClass({
 
     return (
       <div className="sv-header">
-        <img
-          alt="Scrolly logo"
-          className="sv-header-logo"
-          src="/assets/logo.svg"
-        />
+        <Logo />
         <div className="sv-header-navs">
           {Object.keys(navs).map(nav => (
             <div key={nav} className="sv-header-nav">

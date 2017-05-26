@@ -33,7 +33,7 @@ const EditDialog = React.createClass({
     this.name.select();
   },
 
-  _onSubmit(event) {
+  onSubmit(event) {
     event.preventDefault();
     history.replaceState(null, null, '/');
     this.props.dispatch({

@@ -1,8 +1,9 @@
 import React from 'react';
 
 import Button from './button';
+import Logo from '../assets/logo.svg';
 
-import {API_URL, JSON_HEADERS} from '../constants';
+import {JSON_HEADERS} from '../constants';
 
 const Login = React.createClass({
   propTypes: {
@@ -74,7 +75,7 @@ const Login = React.createClass({
     return (
       <div className="sv-login">
         <div className="sv-login-content">
-          <img alt="Scrolly logo" src="/assets/logo.svg" title="Scrolly" />
+          <Logo />
           <form
             className={this.state.error ? 'sv-error' : null}
             onSubmit={this.onSubmit}

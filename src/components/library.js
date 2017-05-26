@@ -8,7 +8,7 @@ import Button from './button';
 import Icon from './icon';
 import Presets from './presets';
 
-import {API_URL, ASSET_DRAG_TYPE, FILE_DRAG_TYPE} from '../constants';
+import {ASSET_DRAG_TYPE, FILE_DRAG_TYPE} from '../constants';
 import isDragTypeFound from '../util/is-drag-type-found';
 
 const ALLOWED_MIME_TYPES = [
@@ -73,7 +73,7 @@ const Library = React.createClass({
     }
   },
 
-  _onUploadClick(event) {
+  onUploadClick(event) {
     event.currentTarget.getElementsByTagName('input')[0].click();
   },
 

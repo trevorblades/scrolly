@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import Dialog from './dialog';
 
 import {loadProject} from '../actions';
-import {API_URL} from '../constants';
 import formatDate from '../util/format-date';
 
 const OpenDialog = React.createClass({
