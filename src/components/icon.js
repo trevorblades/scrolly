@@ -31,41 +31,45 @@ const icons = {
 const parser = new DOMParser();
 
 const Icon = React.createClass({
-
   propTypes: {
     className: React.PropTypes.string,
     name: React.PropTypes.string.isRequired
   },
 
-  render: function() {
+  render() {
     if (!icons[this.props.name]) {
       return null;
     }
 
     const shapes = [];
-    const icon = parser.parseFromString(icons[this.props.name], 'image/svg+xml').childNodes[0];
-    for (let i = 0; i < icon.childNodes.length; i++) {
+    const icon = parser.parseFromString(icons[this.props.name], 'image/svg+xml')
+      .childNodes[0];
+    for (let i = 0; i < icon.childNodes.length; i += 1) {
       const childNode = icon.childNodes.item(i);
       if (childNode.nodeType === 1 && childNode.tagName !== 'title') {
         const attributes = Array.prototype.slice.call(childNode.attributes, 0);
         shapes.push({
           tagName: childNode.tagName,
-          attributes: attributes.reduce(function(obj, attr) {
-            obj[attr.name] = attr.value;
-            return obj;
-          }, {})
+          attributes: attributes.reduce(
+            (obj, attr) => ({...obj, ...{[attr.name]: attr.value}}),
+            {}
+          )
         });
       }
     }
 
     return (
-      <svg className={classNames('sv-icon', this.props.className)}
-          viewBox={icon.attributes.viewBox.value}
-          xmlns="http://www.w3.org/2000/svg">
-        {shapes.map(function(shape, index) {
-          return React.createElement(shape.tagName,
-              Object.assign({key: index}, shape.attributes));
-        })}
+      <svg
+        className={classNames('sv-icon', this.props.className)}
+        viewBox={icon.attributes.viewBox.value}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {shapes.map((shape, index) =>
+          React.createElement(shape.tagName, {
+            ...{key: index},
+            ...shape.attributes
+          })
+        )}
       </svg>
     );
   }

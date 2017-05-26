@@ -1,4 +1,4 @@
-module.exports = function(node) {
+module.exports = node => {
   if (node.contentEditable === 'true') {
     return true;
   }

@@ -1,25 +1,29 @@
 const React = require('react');
-const ReactDOM = require('react-dom');
+const {findDOMNode} = require('react-dom');
 const {connect} = require('react-redux');
 const classNames = require('classnames');
 
 const ViewportLayer = require('./viewport-layer');
 
-const {addImageLayer, addShapeLayer, setLayerProperties, selectLayer} = require('../actions');
+const {
+  addImageLayer,
+  addShapeLayer,
+  setLayerProperties,
+  selectLayer
+} = require('../actions');
 const {ASSET_DRAG_TYPE, SHAPE_DRAG_TYPE} = require('../constants');
 const getParents = require('../util/get-parents');
 const getInterpolatedValue = require('../util/get-interpolated-value');
 const isDragTypeFound = require('../util/is-drag-type-found');
 const layerPropType = require('../util/layer-prop-type');
 
-const ConnectedViewportLayer = connect(function(state) {
-  return {
-    assets: state.assets.present
-  };
-})(ViewportLayer);
+const ConnectedViewportLayer = connect(state => ({
+  assets: state.assets.present
+}))(ViewportLayer);
 
 function propsToDimensions(props) {
-  const compositionAspectRatio = props.compositionWidth / props.compositionHeight;
+  const compositionAspectRatio =
+    props.compositionWidth / props.compositionHeight;
   const outerAspectRatio = props.wrapperWidth / props.wrapperHeight;
 
   let height = props.wrapperHeight;
@@ -33,15 +37,14 @@ function propsToDimensions(props) {
   const offsetLeft = props.wrapperOffsetLeft + (props.wrapperWidth - width) / 2;
   const offsetTop = props.wrapperOffsetTop + (props.wrapperHeight - height) / 2;
   return {
-    height: height,
-    offsetLeft: offsetLeft,
-    offsetTop: offsetTop,
-    width: width
+    height,
+    offsetLeft,
+    offsetTop,
+    width
   };
 }
 
 const Viewport = React.createClass({
-
   propTypes: {
     assets: React.PropTypes.array.isRequired,
     compositionHeight: React.PropTypes.number.isRequired,
@@ -57,100 +60,109 @@ const Viewport = React.createClass({
     wrapperWidth: React.PropTypes.number.isRequired
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       wrapperOffsetLeft: 0,
       wrapperOffsetTop: 0
     };
   },
 
-  getInitialState: function() {
+  getInitialState() {
     const initialState = propsToDimensions(this.props);
     initialState.selectedLayer = null;
     return initialState;
   },
 
-  componentWillMount: function() {
-    this._dragCounter = 0;
+  componentWillMount() {
+    this.dragCounter = 0;
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    if (nextProps.compositionHeight !== this.props.compositionHeight ||
-        nextProps.compositionWidth !== this.props.compositionWidth ||
-        nextProps.wrapperHeight !== this.props.wrapperHeight ||
-        nextProps.wrapperOffsetLeft !== this.props.wrapperOffsetLeft ||
-        nextProps.wrapperOffsetTop !== this.props.wrapperOffsetTop ||
-        nextProps.wrapperWidth !== this.props.wrapperWidth) {
+  componentWillReceiveProps(nextProps) {
+    if (
+      nextProps.compositionHeight !== this.props.compositionHeight ||
+      nextProps.compositionWidth !== this.props.compositionWidth ||
+      nextProps.wrapperHeight !== this.props.wrapperHeight ||
+      nextProps.wrapperOffsetLeft !== this.props.wrapperOffsetLeft ||
+      nextProps.wrapperOffsetTop !== this.props.wrapperOffsetTop ||
+      nextProps.wrapperWidth !== this.props.wrapperWidth
+    ) {
       this.setState(propsToDimensions(nextProps));
-    } else if (nextProps.layers !== this.props.layers ||
-        nextProps.selectedLayer !== this.props.selectedLayer) {
+    } else if (
+      nextProps.layers !== this.props.layers ||
+      nextProps.selectedLayer !== this.props.selectedLayer
+    ) {
       let selectedLayer;
       if (nextProps.selectedLayer !== null) {
-        selectedLayer = nextProps.layers.find(layer => layer.id === nextProps.selectedLayer);
+        selectedLayer = nextProps.layers.find(
+          layer => layer.id === nextProps.selectedLayer
+        );
       }
       this.setState({selectedLayer: selectedLayer || null});
     }
   },
 
-  _onMouseDown: function() {
+  onMouseDown() {
     if (this.props.selectedLayer !== null) {
       this.props.dispatch(selectLayer(null));
     }
   },
 
-  _onDragEnter: function(event) {
+  onDragEnter(event) {
     event.preventDefault();
     if (isDragTypeFound(event, ASSET_DRAG_TYPE, SHAPE_DRAG_TYPE)) {
-      this._dragCounter++;
+      this.dragCounter += 1;
       this.setState({dragging: true});
     }
   },
 
-  _onDragLeave: function(event) {
+  onDragLeave(event) {
     if (isDragTypeFound(event, ASSET_DRAG_TYPE, SHAPE_DRAG_TYPE)) {
-      this._dragCounter--;
-      if (!this._dragCounter) {
+      this.dragCounter -= 1;
+      if (!this.dragCounter) {
         this.setState({dragging: false});
       }
     }
   },
 
-  _onDragOver: function(event) {
+  onDragOver(event) {
     event.preventDefault();
   },
 
-  _onDrop: function(event) {
+  onDrop(event) {
     event.preventDefault();
     const asset = event.dataTransfer.getData(ASSET_DRAG_TYPE);
     const shape = event.dataTransfer.getData(SHAPE_DRAG_TYPE);
     if (asset || shape) {
       if (asset) {
-        const found = this.props.assets.find(({id}) => id === parseInt(asset));
+        const found = this.props.assets.find(
+          ({id}) => id === parseInt(asset, 10)
+        );
         if (found) {
           this.props.dispatch(addImageLayer(found));
         }
       } else {
         this.props.dispatch(addShapeLayer(shape));
       }
-      this._dragCounter = 0;
+      this.dragCounter = 0;
       this.setState({dragging: false});
     }
   },
 
-  _renderLayer: function(layer) {
-    const hidden = !layer.visible ||
-        layer.in > this.props.percentPlayed ||
-        layer.out < this.props.percentPlayed;
-    const component = this.props.readOnly ?
-        ViewportLayer : ConnectedViewportLayer;
+  renderLayer(layer) {
+    const hidden =
+      !layer.visible ||
+      layer.in > this.props.percentPlayed ||
+      layer.out < this.props.percentPlayed;
+    const component = this.props.readOnly
+      ? ViewportLayer
+      : ConnectedViewportLayer;
     return React.createElement(component, {
       assets: this.props.assets,
-      getInterpolatedValue: value => {
-        return getInterpolatedValue(value, this.props.percentPlayed);
-      },
-      hidden: hidden,
+      getInterpolatedValue: value =>
+        getInterpolatedValue(value, this.props.percentPlayed),
+      hidden,
       key: layer.id,
-      layer: layer,
+      layer,
       layers: this.props.layers,
       onPropertiesChange: properties => {
         this.props.dispatch(setLayerProperties(layer.id, properties));
@@ -168,35 +180,37 @@ const Viewport = React.createClass({
     });
   },
 
-  render: function() {
+  render() {
     const viewportClassName = classNames('sv-viewport', {
       'sv-dragging': this.state.dragging
     });
     return (
-      <div className={viewportClassName}
-          onDragEnter={this._onDragEnter}
-          onDragLeave={this._onDragLeave}
-          onDragOver={this._onDragOver}
-          onDrop={this._onDrop}
-          onMouseDown={this._onMouseDown}
-          style={{
-            width: this.state.width,
-            height: this.state.height
-          }}>
-        {this.state.selectedLayer && this._renderLayer(this.state.selectedLayer)}
+      <div
+        className={viewportClassName}
+        onDragEnter={this.onDragEnter}
+        onDragLeave={this.onDragLeave}
+        onDragOver={this.onDragOver}
+        onDrop={this.onDrop}
+        onMouseDown={this.onMouseDown}
+        style={{
+          width: this.state.width,
+          height: this.state.height
+        }}
+      >
+        {this.state.selectedLayer && this.renderLayer(this.state.selectedLayer)}
         <div className="sv-viewport-layers">
-          {this.props.layers.map(this._renderLayer)}
+          {this.props.layers.map(this.renderLayer)}
         </div>
       </div>
     );
   },
 
-  getScale: function() {
+  getScale() {
     return this.state.width / this.props.compositionWidth;
   },
 
-  getLayerDimensions: function(id) {
-    const layer = ReactDOM.findDOMNode(this.refs[`layer${id}`]);
+  getLayerDimensions(id) {
+    const layer = findDOMNode(this.refs[`layer${id}`]);
     const scale = this.getScale();
     return {
       width: layer.offsetWidth / scale,

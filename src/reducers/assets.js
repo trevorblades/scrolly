@@ -1,7 +1,7 @@
 const assetReducer = require('./asset');
 const getNextId = require('../util/get-next-id');
 
-module.exports = function(state = [], action) {
+module.exports = (state = [], action) => {
   switch (action.type) {
     case 'ADD_ASSET':
       return [
@@ -10,7 +10,7 @@ module.exports = function(state = [], action) {
       ];
     case 'REMOVE_ASSET': {
       let index = -1;
-      for (let i = 0; i < state.length; i++) {
+      for (let i = 0; i < state.length; i += 1) {
         if (state[i].id === action.id) {
           index = i;
           break;

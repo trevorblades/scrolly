@@ -1,5 +1,4 @@
 const React = require('react');
-const {findDOMNode} = require('react-dom');
 
 const Button = require('./button');
 const Icon = require('./icon');
@@ -8,67 +7,78 @@ const Shape = require('./shape');
 const {SHAPES, SHAPE_DRAG_TYPE} = require('../constants');
 
 const Presets = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       panelShown: false
     };
   },
 
-  componentWillMount: function() {
-    window.addEventListener('keydown', this._onKeyDown);
-    document.body.addEventListener('click', this._onBodyClick);
+  componentWillMount() {
+    window.addEventListener('keydown', this.onKeyDown);
+    document.body.addEventListener('click', this.onBodyClick);
   },
 
-  componentWillUnmount: function() {
-    window.removeEventListener('keydown', this._onKeyDown);
-    document.body.removeEventListener('click', this._onBodyClick);
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown);
+    document.body.removeEventListener('click', this.onBodyClick);
   },
 
-  _onKeyDown: function(event) {
-    if (this.state.panelShown && event.keyCode === 27) { // esc key pressed
-      this._closePanel();
+  onKeyDown(event) {
+    if (this.state.panelShown && event.keyCode === 27) {
+      // esc key pressed
+      this.closePanel();
     }
   },
 
-  _onBodyClick: function(event) {
-    if (this.state.panelShown && !findDOMNode(this).contains(event.target)) {
-      this._closePanel();
+  onBodyClick(event) {
+    if (this.state.panelShown && !this.presets.contains(event.target)) {
+      this.closePanel();
     }
   },
 
-  _onButtonClick: function() {
+  onButtonClick() {
     this.setState(prevState => ({panelShown: !prevState.panelShown}));
   },
 
-  _onDragStart: function(id, event) {
+  onDragStart(id, event) {
     event.dataTransfer.setData(SHAPE_DRAG_TYPE, id);
   },
 
-  _closePanel: function() {
+  closePanel() {
     this.setState({panelShown: false});
   },
 
-  render: function() {
+  render() {
     return (
-      <div className="sv-library-presets">
-        <Button onClick={this._onButtonClick}>Preset assets</Button>
-        {this.state.panelShown && <div className="sv-library-presets-panel">
-          <h5>
-            <span>Preset assets</span>
-            <a onClick={this._closePanel}>
-              <Icon name="close"/>
-            </a>
-          </h5>
-          <div className="sv-library-presets-panel-scroll">
-            {Object.keys(SHAPES).map(key => (
-              <div className="sv-library-presets-panel-item" key={key}>
-                <div className="sv-library-presets-panel-item-asset" draggable onDragStart={event => this._onDragStart(key, event)}>
-                  <Shape shape={SHAPES[key]}/>
+      <div
+        ref={node => {
+          this.presets = node;
+        }}
+        className="sv-library-presets"
+      >
+        <Button onClick={this.onButtonClick}>Preset assets</Button>
+        {this.state.panelShown &&
+          <div className="sv-library-presets-panel">
+            <h5>
+              <span>Preset assets</span>
+              <a onClick={this.closePanel}>
+                <Icon name="close" />
+              </a>
+            </h5>
+            <div className="sv-library-presets-panel-scroll">
+              {Object.keys(SHAPES).map(key => (
+                <div key={key} className="sv-library-presets-panel-item">
+                  <div
+                    className="sv-library-presets-panel-item-asset"
+                    draggable
+                    onDragStart={event => this.onDragStart(key, event)}
+                  >
+                    <Shape shape={SHAPES[key]} />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>}
+              ))}
+            </div>
+          </div>}
       </div>
     );
   }

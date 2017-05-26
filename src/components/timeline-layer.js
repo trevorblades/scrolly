@@ -34,7 +34,6 @@ function clamp(key, value) {
 }
 
 const TimelineLayer = React.createClass({
-
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
     getInterpolatedValue: React.PropTypes.func.isRequired,
@@ -52,15 +51,15 @@ const TimelineLayer = React.createClass({
     onVisiblityToggle: React.PropTypes.func.isRequired,
     parent: React.PropTypes.object,
     percentPlayed: React.PropTypes.number.isRequired,
-    selectLayer: React.PropTypes.func.isRequired,
     selected: React.PropTypes.bool.isRequired,
+    selectLayer: React.PropTypes.func.isRequired,
     setPercentPlayed: React.PropTypes.func.isRequired,
     sticky: React.PropTypes.bool.isRequired,
     stuck: React.PropTypes.bool.isRequired,
     unlinkable: React.PropTypes.bool
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       dragIn: null,
       dragOut: null,
@@ -74,29 +73,31 @@ const TimelineLayer = React.createClass({
     };
   },
 
-  componentWillMount: function() {
-    this._keys = Object.keys(properties).filter(key => {
-      return typeof this.props.layer[key] !== 'undefined';
-    });
-    window.addEventListener('keydown', this._onKeyDown);
-    document.body.addEventListener('click', this._onBodyClick);
+  componentWillMount() {
+    this.keys = Object.keys(properties).filter(
+      key => typeof this.props.layer[key] !== 'undefined'
+    );
+    window.addEventListener('keydown', this.onKeyDown);
+    document.body.addEventListener('click', this.onBodyClick);
   },
 
-  componentWillUnmount: function() {
-    window.removeEventListener('keydown', this._onKeyDown);
-    document.body.removeEventListener('click', this._onBodyClick);
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown);
+    document.body.removeEventListener('click', this.onBodyClick);
   },
 
-  _onKeyDown: function(event) {
-     // backspace or delete key pressed when a keyframe is selected
-    if ((event.keyCode === 8 || event.keyCode === 46) &&
-        this.state.selectedKeyframeKey &&
-        this.state.selectedKeyframeProperty) {
-      this._removeKeyframe(this.state.selectedKeyframeProperty);
+  _onKeyDown(event) {
+    // backspace or delete key pressed when a keyframe is selected
+    if (
+      (event.keyCode === 8 || event.keyCode === 46) &&
+      this.state.selectedKeyframeKey &&
+      this.state.selectedKeyframeProperty
+    ) {
+      this.removeKeyframe(this.state.selectedKeyframeProperty);
     }
   },
 
-  _onBodyClick: function(event) {
+  _onBodyClick(event) {
     if (event.target.classList[0] !== KEYFRAME_CLASS_NAME) {
       this.setState({
         selectedKeyframeKey: null,
@@ -105,7 +106,7 @@ const TimelineLayer = React.createClass({
     }
   },
 
-  _onBarMouseDown: function(event) {
+  _onBarMouseDown(event) {
     if (event.button === 0) {
       if (!this.props.selected) {
         this.props.selectLayer(event);
@@ -117,17 +118,17 @@ const TimelineLayer = React.createClass({
         dragging: true
       });
 
-      const offsetX = event.clientX -
-          (event.target.offsetLeft + this.refs.track.offsetLeft);
-      this._boundBarMouseMove = this._onBarMouseMove.bind(null, offsetX);
-      document.addEventListener('mousemove', this._boundBarMouseMove);
-      document.addEventListener('mouseup', this._onBarMouseUp);
+      const offsetX =
+        event.clientX - (event.target.offsetLeft + this.refs.track.offsetLeft);
+      this.boundBarMouseMove = this.onBarMouseMove.bind(null, offsetX);
+      document.addEventListener('mousemove', this.boundBarMouseMove);
+      document.addEventListener('mouseup', this.onBarMouseUp);
     }
   },
 
-  _onBarMouseMove: function(offsetX, event) {
+  _onBarMouseMove(offsetX, event) {
     const barSize = this.state.dragOut - this.state.dragIn;
-    let dragIn = this._getTrackPosition(event.clientX - offsetX, event.shiftKey);
+    let dragIn = this.getTrackPosition(event.clientX - offsetX, event.shiftKey);
     let dragOut = dragIn + barSize;
 
     let changed = false;
@@ -144,40 +145,45 @@ const TimelineLayer = React.createClass({
     }
 
     this.setState({
-      dragIn: dragIn,
-      dragOut: dragOut
+      dragIn,
+      dragOut
     });
   },
 
-  _onBarMouseUp: function() {
-    if (this.props.layer.in !== this.state.dragIn ||
-        this.props.layer.out !== this.state.dragOut) {
-      const properties = {
+  onBarMouseUp() {
+    if (
+      this.props.layer.in !== this.state.dragIn ||
+      this.props.layer.out !== this.state.dragOut
+    ) {
+      const nextProperties = {
         in: this.state.dragIn,
         out: this.state.dragOut
       };
       const delta = this.state.dragIn - this.props.layer.in;
-      Object.keys(this.props.layer).forEach((key) => {
+      Object.keys(this.props.layer).forEach(key => {
         if (key !== 'parent') {
           const property = this.props.layer[key];
           if (property && typeof property === 'object') {
             const keyframes = Object.keys(property);
-            properties[key] = keyframes.reduce((obj, keyframe) => {
-              obj[parseFloat(keyframe) + delta] = property[keyframe];
-              return obj;
-            }, {});
+            nextProperties[key] = keyframes.reduce(
+              (obj, keyframe) => ({
+                ...obj,
+                [parseFloat(keyframe) + delta]: property[keyframe]
+              }),
+              {}
+            );
           }
         }
       });
-      this.props.onPropertiesChange(properties);
+      this.props.onPropertiesChange(nextProperties);
     }
     this.setState({dragging: false});
-    document.removeEventListener('mousemove', this._boundBarMouseMove);
-    document.removeEventListener('mouseup', this._onBarMouseUp);
-    delete this._boundBarMouseMove;
+    document.removeEventListener('mousemove', this.boundBarMouseMove);
+    document.removeEventListener('mouseup', this.onBarMouseUp);
+    delete this.boundBarMouseMove;
   },
 
-  _onBarHandleMouseDown: function(index, event) {
+  onBarHandleMouseDown(event, index) {
     if (event.button === 0) {
       event.stopPropagation();
       this.setState({
@@ -185,32 +191,34 @@ const TimelineLayer = React.createClass({
         dragOut: this.props.layer.out,
         dragging: true
       });
-      this._boundBarHandleMouseMove = this._onBarHandleMouseMove.bind(null, index);
-      document.addEventListener('mousemove', this._boundBarHandleMouseMove);
-      document.addEventListener('mouseup', this._onBarHandleMouseUp);
+      this.boundBarHandleMouseMove = ev => this.onBarHandleMouseMove(ev, index);
+      document.addEventListener('mousemove', this.boundBarHandleMouseMove);
+      document.addEventListener('mouseup', this.onBarHandleMouseUp);
     }
   },
 
-  _onBarHandleMouseMove: function(index, event) {
-    const position = this._getTrackPosition(event.clientX, event.shiftKey);
+  onBarHandleMouseMove(event, index) {
+    const position = this.getTrackPosition(event.clientX, event.shiftKey);
     this.setState({[`drag${index ? 'Out' : 'In'}`]: position});
   },
 
-  _onBarHandleMouseUp: function() {
-    if (this.props.layer.in !== this.state.dragIn ||
-        this.props.layer.out !== this.state.dragOut) {
+  onBarHandleMouseUp() {
+    if (
+      this.props.layer.in !== this.state.dragIn ||
+      this.props.layer.out !== this.state.dragOut
+    ) {
       this.props.onPropertiesChange({
         in: this.state.dragIn,
         out: this.state.dragOut
       });
     }
     this.setState({dragging: false});
-    document.removeEventListener('mousemove', this._boundBarHandleMouseMove);
-    document.removeEventListener('mouseup', this._onBarHandleMouseUp);
-    delete this._boundBarHandleMouseMove;
+    document.removeEventListener('mousemove', this.boundBarHandleMouseMove);
+    document.removeEventListener('mouseup', this.onBarHandleMouseUp);
+    delete this.boundBarHandleMouseMove;
   },
 
-  _onKeyframeMouseDown: function(property, position, event) {
+  onKeyframeMouseDown(event, property, position) {
     if (event.button === 0) {
       const nextState = {
         keyframeDragKey: position,
@@ -218,34 +226,42 @@ const TimelineLayer = React.createClass({
         keyframeDragPosition: position
       };
 
-      if (position !== this.state.selectedKeyframeKey || property !== this.state.selectedKeyframeProperty) {
+      if (
+        position !== this.state.selectedKeyframeKey ||
+        property !== this.state.selectedKeyframeProperty
+      ) {
         nextState.selectedKeyframeKey = null;
         nextState.selectedKeyframeProperty = null;
       }
 
       this.setState(nextState);
-      document.addEventListener('mousemove', this._onKeyframeMouseMove);
-      document.addEventListener('mouseup', this._onKeyframeMouseUp);
+      document.addEventListener('mousemove', this.onKeyframeMouseMove);
+      document.addEventListener('mouseup', this.onKeyframeMouseUp);
     }
   },
 
-  _onKeyframeMouseMove: function(event) {
-    const position = this._getTrackPosition(event.clientX, event.shiftKey);
+  onKeyframeMouseMove(event) {
+    const position = this.getTrackPosition(event.clientX, event.shiftKey);
     this.setState({keyframeDragPosition: position});
   },
 
-  _onKeyframeMouseUp: function(event) {
+  onKeyframeMouseUp() {
     const nextState = {
       keyframeDragKey: null,
       keyframeDragProperty: null,
       keyframeDragPosition: null
     };
 
-    if (this.state.keyframeDragKey !== this.state.keyframeDragPosition.toString()) {
+    if (
+      this.state.keyframeDragKey !== this.state.keyframeDragPosition.toString()
+    ) {
       const value = this.props.layer[this.state.keyframeDragProperty];
-      const nextValue = Object.assign({}, value, {
-        [this.state.keyframeDragPosition]: value[this.state.keyframeDragKey]
-      });
+      const nextValue = {
+        ...value,
+        ...{
+          [this.state.keyframeDragPosition]: value[this.state.keyframeDragKey]
+        }
+      };
       delete nextValue[this.state.keyframeDragKey];
 
       this.props.onPropertiesChange({
@@ -258,70 +274,78 @@ const TimelineLayer = React.createClass({
     }
 
     this.setState(nextState);
-    document.removeEventListener('mousemove', this._onKeyframeMouseMove);
-    document.removeEventListener('mouseup', this._onKeyframeMouseUp);
+    document.removeEventListener('mousemove', this.onKeyframeMouseMove);
+    document.removeEventListener('mouseup', this.onKeyframeMouseUp);
   },
 
-  _onMoreClick: function() {
+  onMoreClick() {
     this.setState({expanded: !this.state.expanded});
   },
 
-  _onNameChange: function(value) {
+  onNameChange(value) {
     this.props.onPropertiesChange({name: value});
   },
 
-  _onPropertyChange: function(key, value) {
+  onPropertyChange(key, value) {
     const currentValue = this.props.layer[key];
     const clampedValue = clamp(key, value);
-    const nextValue = typeof currentValue === 'object' ?
-        Object.assign({}, currentValue, {
-          [this.props.percentPlayed]: clampedValue
-        }) : clampedValue;
+    const nextValue = typeof currentValue === 'object'
+      ? {
+          ...currentValue,
+          ...{
+            [this.props.percentPlayed]: clampedValue
+          }
+        }
+      : clampedValue;
     this.props.onPropertiesChange({[key]: nextValue});
   },
 
-  _onUnlinkClick: function(event) {
+  onUnlinkClick(event) {
     event.stopPropagation();
     this.props.dispatch(linkLayers(this.props.layer.id, null));
   },
 
-  _addKeyframe: function(property) {
+  addKeyframe(property) {
     let nextValue;
     const value = this.props.layer[property];
     if (typeof value === 'object') {
       const interpolatedValue = this.props.getInterpolatedValue(value);
-      nextValue = Object.assign({}, value, {
-        [this.props.percentPlayed]: interpolatedValue
-      });
+      nextValue = {
+        ...value,
+        ...{
+          [this.props.percentPlayed]: interpolatedValue
+        }
+      };
     } else {
       nextValue = {[this.props.percentPlayed]: value};
     }
     this.props.onPropertiesChange({[property]: nextValue});
   },
 
-  _removeKeyframe: function(property) {
+  removeKeyframe(property) {
     const value = this.props.layer[property];
     if (this.props.percentPlayed in value) {
       let nextValue;
       if (Object.keys(value).length === 1) {
         nextValue = value[this.props.percentPlayed];
       } else {
-        nextValue = Object.assign({}, value);
+        nextValue = {...value};
         delete nextValue[this.props.percentPlayed];
       }
       this.props.onPropertiesChange({[property]: nextValue});
     }
   },
 
-  _removeKeyframes: function(property) {
+  removeKeyframes(property) {
     const value = this.props.layer[property];
     this.props.onPropertiesChange({
       [property]: this.props.getInterpolatedValue(value)
     });
   },
 
-  _getTrackPosition: function(pos, snap) {
-    let position = (pos - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
+  getTrackPosition(pos, snap) {
+    let position =
+      (pos - this.refs.track.offsetLeft) / this.refs.track.offsetWidth;
     if (position < 0) {
       position = 0;
     } else if (position > 1) {
@@ -335,7 +359,7 @@ const TimelineLayer = React.createClass({
     return position;
   },
 
-  render: function() {
+  render() {
     const layerClassName = classNames('sv-timeline-layer', {
       'sv-hidden': !this.props.layer.visible,
       'sv-selected': this.props.selected,
@@ -344,11 +368,13 @@ const TimelineLayer = React.createClass({
     });
 
     const handles = [];
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 2; i += 1) {
       handles.push(
-        <div className="sv-timeline-layer-bar-handle"
-            key={i}
-            onMouseDown={this._onBarHandleMouseDown.bind(null, i)}/>
+        <div
+          key={i.toString()}
+          className="sv-timeline-layer-bar-handle"
+          onMouseDown={this.onBarHandleMouseDown(event, i)}
+        />
       );
     }
 
@@ -367,27 +393,25 @@ const TimelineLayer = React.createClass({
       })
     };
     if (linkable) {
-      linkAction.content = <Icon name="target"/>;
+      linkAction.content = <Icon name="target" />;
       linkAction.onClick = this.props.onLinkTargetClick;
       linkAction.title = 'Link to this layer';
+    } else if (!this.props.layer.parent) {
+      linkAction.content = <Icon name="link" />;
+      if (this.props.layers.length > 1) {
+        linkAction.onClick = this.props.onLinkClick;
+        linkAction.title = 'Link Layer';
+      }
     } else {
-      if (!this.props.layer.parent) {
-        linkAction.content = <Icon name="link"/>;
-        if (this.props.layers.length > 1) {
-          linkAction.onClick = this.props.onLinkClick;
-          linkAction.title = 'Link Layer';
-        }
-      } else {
-        linkAction.content = (
-          <div>
-            <span>{this.props.parent.name}</span>
-            <Icon className="sv-active" name="link"/>
-          </div>
-        );
-        if (!this.props.unlinkable) {
-          linkAction.onClick = this._onUnlinkClick;
-          linkAction.title = `Linked to ${this.props.parent.name}`;
-        }
+      linkAction.content = (
+        <div>
+          <span>{this.props.parent.name}</span>
+          <Icon className="sv-active" name="link" />
+        </div>
+      );
+      if (!this.props.unlinkable) {
+        linkAction.onClick = this.onUnlinkClick;
+        linkAction.title = `Linked to ${this.props.parent.name}`;
       }
     }
 
@@ -395,58 +419,75 @@ const TimelineLayer = React.createClass({
       linkAction,
       {
         content: (
-          <Icon className={this.state.expanded ? 'sv-active' : null}
-              name="more"/>
+          <Icon
+            className={this.state.expanded ? 'sv-active' : null}
+            name="more"
+          />
         ),
-        onClick: this._onMoreClick,
+        onClick: this.onMoreClick,
         title: `${this.state.expanded ? 'Hide' : 'Show'} properties`
       },
       {
-        content: <Icon name={this.props.layer.visible ? 'visible' : 'invisible'}/>,
+        content: (
+          <Icon name={this.props.layer.visible ? 'visible' : 'invisible'} />
+        ),
         onClick: this.props.onVisiblityToggle,
         title: `${this.props.layer.visible ? 'Hide' : 'Show'} layer`
       },
       {
-        content: <Icon name="copy"/>,
+        content: <Icon name="copy" />,
         onClick: this.props.onCopyClick,
         title: 'Duplicate layer'
       },
       {
-        content: <Icon name="trash"/>,
+        content: <Icon name="trash" />,
         onClick: this.props.onRemoveClick,
         title: 'Remove layer'
       }
     ];
 
     return (
-      <div className={layerClassName}
-          onDragOver={this.props.onDragOver}
-          onMouseDown={event => event.stopPropagation()}>
+      <div
+        className={layerClassName}
+        onDragOver={this.props.onDragOver}
+        onMouseDown={event => event.stopPropagation()}
+      >
         <div className="sv-timeline-layer-top">
-          <Control actions={topActions}
-              draggable
-              onClick={this.props.selectLayer}
-              onDragEnd={this.props.onDragEnd}
-              onDragStart={this.props.onDragStart}>
-            <TextField onChange={this._onNameChange}
-                title={this.props.layer.name}
-                value={this.props.layer.name}/>
+          <Control
+            actions={topActions}
+            draggable
+            onClick={this.props.selectLayer}
+            onDragEnd={this.props.onDragEnd}
+            onDragStart={this.props.onDragStart}
+          >
+            <TextField
+              onChange={this.onNameChange}
+              title={this.props.layer.name}
+              value={this.props.layer.name}
+            />
           </Control>
-          <div className="sv-timeline-layer-track" ref="track">
-            <div className="sv-timeline-layer-top-bar"
-                onMouseDown={this._onBarMouseDown}
-                style={{
-                  left: `${layerIn * 100}%`,
-                  right: `${100 - layerOut * 100}%`
-                }}
-                type={this.props.layer.type}>
+          <div
+            ref={node => {
+              this.track = node;
+            }}
+            className="sv-timeline-layer-track"
+          >
+            <div
+              className="sv-timeline-layer-top-bar"
+              onMouseDown={this.onBarMouseDown}
+              style={{
+                left: `${layerIn * 100}%`,
+                right: `${100 - layerOut * 100}%`
+              }}
+              type={this.props.layer.type}
+            >
               {handles}
             </div>
           </div>
         </div>
         {this.state.expanded &&
           <div className="sv-timeline-layer-properties">
-            {this._keys.map(key => {
+            {this.keys.map(key => {
               const property = properties[key];
 
               let propertyTrack;
@@ -455,56 +496,77 @@ const TimelineLayer = React.createClass({
 
               if (property.animatable) {
                 const animating = typeof value === 'object';
-                const highlighted = animating && this.props.percentPlayed in value;
+                const highlighted =
+                  animating && this.props.percentPlayed in value;
                 value = this.props.getInterpolatedValue(value);
 
-                const addKeyframe = this._addKeyframe.bind(null, key);
+                const addKeyframe = () => this.addKeyframe(key);
                 propertyActions.push(
                   {
                     content: (
-                      <Icon className={animating ? 'sv-active' : null}
-                          name="timer"/>
+                      <Icon
+                        className={animating ? 'sv-active' : null}
+                        name="timer"
+                      />
                     ),
-                    onClick: animating ?
-                        this._removeKeyframes.bind(null, key) : addKeyframe,
+                    onClick: animating
+                      ? () => this.removeKeyframes(key)
+                      : addKeyframe,
                     title: `${animating ? 'Disable' : 'Enable'} animation`
                   },
                   {
                     content: (
-                      <Icon className={highlighted ? 'sv-active' : null}
-                          name={highlighted ? 'remove' : 'add'}/>
+                      <Icon
+                        className={highlighted ? 'sv-active' : null}
+                        name={highlighted ? 'remove' : 'add'}
+                      />
                     ),
-                    onClick: highlighted ?
-                        this._removeKeyframe.bind(null, key) : addKeyframe,
+                    onClick: highlighted
+                      ? () => this.removeKeyframe(key)
+                      : addKeyframe,
                     title: `${highlighted ? 'Remove' : 'Add'} keyframe`
                   }
                 );
 
-                const keyframes = animating ? Object.keys(this.props.layer[key]) : [];
+                const keyframes = animating
+                  ? Object.keys(this.props.layer[key])
+                  : [];
                 propertyTrack = (
                   <div className="sv-timeline-layer-track">
-                    {keyframes.map((keyframe, index) => {
-                      const dragging = key === this.state.keyframeDragProperty &&
-                          keyframe === this.state.keyframeDragKey;
-                      const position = dragging ?
-                          this.state.keyframeDragPosition : keyframe;
+                    {keyframes.map(keyframe => {
+                      const dragging =
+                        key === this.state.keyframeDragProperty &&
+                        keyframe === this.state.keyframeDragKey;
+                      const position = dragging
+                        ? this.state.keyframeDragPosition
+                        : keyframe;
 
-                      const keyframeClassName = classNames(KEYFRAME_CLASS_NAME, {
-                        'sv-selected': this.state.selectedKeyframeKey === keyframe && this.state.selectedKeyframeProperty === key
-                      });
+                      const keyframeClassName = classNames(
+                        KEYFRAME_CLASS_NAME,
+                        {
+                          'sv-selected': this.state.selectedKeyframeKey ===
+                            keyframe &&
+                            this.state.selectedKeyframeProperty === key
+                        }
+                      );
 
                       return (
-                        <div className={keyframeClassName}
-                            key={index}
-                            onMouseDown={this._onKeyframeMouseDown.bind(null, key, keyframe)}
-                            style={{left: `${position * 100}%`}}/>
+                        <div
+                          key={keyframe}
+                          className={keyframeClassName}
+                          onMouseDown={event =>
+                            this.onKeyframeMouseDown(event, key, keyframe)}
+                          style={{left: `${position * 100}%`}}
+                        />
                       );
                     })}
                   </div>
                 );
               } else {
-                propertyActions.push({content: <Icon name="timer"/>},
-                    {content: <Icon name="add"/>});
+                propertyActions.push(
+                  {content: <Icon name="timer" />},
+                  {content: <Icon name="add" />}
+                );
               }
 
               if (typeof value === 'number') {
@@ -516,12 +578,14 @@ const TimelineLayer = React.createClass({
                 propertyField = <span>{value}</span>;
               } else {
                 propertyField = (
-                  <TextField max={property.max}
-                      min={property.min}
-                      onChange={this._onPropertyChange.bind(null, key)}
-                      step={property.step}
-                      type={property.type}
-                      value={value}/>
+                  <TextField
+                    max={property.max}
+                    min={property.min}
+                    onChange={val => this.onPropertyChange(key, val)}
+                    step={property.step}
+                    type={property.type}
+                    value={value}
+                  />
                 );
               }
               propertyActions.unshift({
@@ -529,9 +593,10 @@ const TimelineLayer = React.createClass({
               });
 
               return (
-                <div className="sv-timeline-layer-property"
-                    key={key}>
-                  <Control actions={propertyActions}>{sentenceCase(key)}</Control>
+                <div key={key} className="sv-timeline-layer-property">
+                  <Control actions={propertyActions}>
+                    {sentenceCase(key)}
+                  </Control>
                   {propertyTrack}
                 </div>
               );
@@ -542,33 +607,31 @@ const TimelineLayer = React.createClass({
   }
 });
 
-module.exports = connect(null, function(dispatch, props) {
-  return {
-    dispatch,
-    getInterpolatedValue: function(value) {
-      return getInterpolatedValue(value, props.percentPlayed);
-    },
-    onRemoveClick: function(event) {
-      event.stopPropagation();
-      dispatch(removeLayer(props.layer.id));
-    },
-    onCopyClick: function(event) {
-      event.stopPropagation();
-      dispatch(copyLayer(props.layer.id));
-    },
-    onVisiblityToggle: function(event) {
-      event.stopPropagation();
-      dispatch(toggleLayerVisibility(props.layer.id));
-    },
-    onPropertiesChange: function(properties) {
-      dispatch(setLayerProperties(props.layer.id, properties));
-    },
-    selectLayer: function(event) {
-      event.stopPropagation();
-      dispatch(selectLayer(props.layer.id));
-    },
-    setPercentPlayed: function(value) {
-      dispatch(setPercentPlayed(value));
-    }
-  };
-})(TimelineLayer);
+module.exports = connect(null, (dispatch, props) => ({
+  dispatch,
+  getInterpolatedValue(value) {
+    return getInterpolatedValue(value, props.percentPlayed);
+  },
+  onRemoveClick(event) {
+    event.stopPropagation();
+    dispatch(removeLayer(props.layer.id));
+  },
+  onCopyClick(event) {
+    event.stopPropagation();
+    dispatch(copyLayer(props.layer.id));
+  },
+  onVisiblityToggle(event) {
+    event.stopPropagation();
+    dispatch(toggleLayerVisibility(props.layer.id));
+  },
+  onPropertiesChange(nextProperties) {
+    dispatch(setLayerProperties(props.layer.id, nextProperties));
+  },
+  selectLayer(event) {
+    event.stopPropagation();
+    dispatch(selectLayer(props.layer.id));
+  },
+  setPercentPlayed(value) {
+    dispatch(setPercentPlayed(value));
+  }
+}))(TimelineLayer);

@@ -1,5 +1,4 @@
 const React = require('react');
-const ReactDOM = require('react-dom');
 const classNames = require('classnames');
 
 const Shape = require('./shape');
@@ -14,7 +13,6 @@ const layerPropType = require('../util/layer-prop-type');
 const DUMMY_LAYER_SIZE = 16;
 
 const ViewportLayer = React.createClass({
-
   propTypes: {
     assets: React.PropTypes.array.isRequired,
     dispatch: React.PropTypes.func,
@@ -34,9 +32,9 @@ const ViewportLayer = React.createClass({
     viewportWidth: React.PropTypes.number.isRequired
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
-      asset: this._getAsset(this.props.layer.asset),
+      asset: this.getAsset(this.props.layer.asset),
       moveX: null,
       moveY: null,
       moving: false,
@@ -45,18 +43,20 @@ const ViewportLayer = React.createClass({
     };
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    if (nextProps.assets !== this.props.assets ||
-        nextProps.layer.asset !== this.props.layer.asset) {
-      this.setState({asset: this._getAsset(nextProps.layer.asset)});
+  componentWillReceiveProps(nextProps) {
+    if (
+      nextProps.assets !== this.props.assets ||
+      nextProps.layer.asset !== this.props.layer.asset
+    ) {
+      this.setState({asset: this.getAsset(nextProps.layer.asset)});
     }
   },
 
-  _onClick: function(event) {
+  onClick(event) {
     event.stopPropagation();
   },
 
-  _onMouseDown: function(event) {
+  onMouseDown(event) {
     if (event.button === 0) {
       event.stopPropagation();
 
@@ -64,11 +64,17 @@ const ViewportLayer = React.createClass({
         this.props.dispatch(selectLayer(this.props.layer.id));
       }
 
-      const offsetX = event.clientX - this.props.viewportOffsetLeft - event.currentTarget.offsetLeft;
-      const offsetY = event.clientY - this.props.viewportOffsetTop - event.currentTarget.offsetTop;
-      this._boundMouseMove = this._onMouseMove.bind(null, offsetX, offsetY);
-      document.addEventListener('mousemove', this._boundMouseMove);
-      document.addEventListener('mouseup', this._onMouseUp);
+      const offsetX =
+        event.clientX -
+        this.props.viewportOffsetLeft -
+        event.currentTarget.offsetLeft;
+      const offsetY =
+        event.clientY -
+        this.props.viewportOffsetTop -
+        event.currentTarget.offsetTop;
+      this.boundMouseMove = ev => this.onMouseMove(ev, offsetX, offsetY);
+      document.addEventListener('mousemove', this.boundMouseMove);
+      document.addEventListener('mouseup', this.onMouseUp);
 
       this.setState({
         moveX: event.currentTarget.offsetLeft / this.props.viewportScale,
@@ -78,7 +84,7 @@ const ViewportLayer = React.createClass({
     }
   },
 
-  _onMouseMove: function(offsetX, offsetY, event) {
+  onMouseMove(event, offsetX, offsetY) {
     let layerX = event.clientX - this.props.viewportOffsetLeft - offsetX;
     const minX = offsetX * -1;
     const maxX = this.props.viewportWidth - offsetX;
@@ -103,30 +109,51 @@ const ViewportLayer = React.createClass({
     });
   },
 
-  _onMouseUp: function() {
+  onMouseUp() {
     let layerX = this.state.moveX;
     let layerY = this.state.moveY;
     if (this.props.parents.length) {
-      const parent = getParentProperties(this.props.parents, this.props.percentPlayed);
+      const parent = getParentProperties(
+        this.props.parents,
+        this.props.percentPlayed
+      );
       const parentScale = parent.scale / this.props.layer.parent.offsetScale;
-      layerX = getUnlinkedPosition(layerX, parent.x, parentScale, this.props.layer.parent.offsetX);
-      layerY = getUnlinkedPosition(layerY, parent.y, parentScale, this.props.layer.parent.offsetY);
+      layerX = getUnlinkedPosition(
+        layerX,
+        parent.x,
+        parentScale,
+        this.props.layer.parent.offsetX
+      );
+      layerY = getUnlinkedPosition(
+        layerY,
+        parent.y,
+        parentScale,
+        this.props.layer.parent.offsetY
+      );
     }
 
     this.props.onPropertiesChange({
-      x: typeof this.props.layer.x === 'object' ?
-          Object.assign({}, this.props.layer.x, {
-            [this.props.percentPlayed]: layerX
-          }) : layerX,
-      y: typeof this.props.layer.y === 'object' ?
-          Object.assign({}, this.props.layer.y, {
-            [this.props.percentPlayed]: layerY
-          }) : layerY
+      x: typeof this.props.layer.x === 'object'
+        ? {
+            ...this.props.layer.x,
+            ...{
+              [this.props.percentPlayed]: layerX
+            }
+          }
+        : layerX,
+      y: typeof this.props.layer.y === 'object'
+        ? {
+            ...this.props.layer.y,
+            ...{
+              [this.props.percentPlayed]: layerY
+            }
+          }
+        : layerY
     });
 
-    document.removeEventListener('mousemove', this._boundMouseMove);
-    document.removeEventListener('mouseup', this._onMouseUp);
-    delete this._boundMouseMove;
+    document.removeEventListener('mousemove', this.boundMouseMove);
+    document.removeEventListener('mouseup', this.onMouseUp);
+    delete this.boundMouseMove;
 
     this.setState({
       moveX: null,
@@ -135,24 +162,27 @@ const ViewportLayer = React.createClass({
     });
   },
 
-  _onHandleMouseDown: function(index, event) {
+  onHandleMouseDown(event, index) {
     event.preventDefault();
     if (event.button === 0) {
       event.stopPropagation();
 
-      const node = ReactDOM.findDOMNode(this);
       const scale = this.props.getInterpolatedValue(this.props.layer.scale);
-      const width = node.offsetWidth / scale;
-      const height = node.offsetHeight / scale;
+      const width = this.viewportLayer.offsetWidth / scale;
+      const height = this.viewportLayer.offsetHeight / scale;
       const handleX = Number(index === 1 || index === 2);
       const handleY = Number(index > 1);
-      const originX = this.props.viewportOffsetLeft + node.offsetLeft -
-          width * this.props.layer.anchorX +
-          width * handleX;
-      const originY = this.props.viewportOffsetTop + node.offsetTop -
-          height * this.props.layer.anchorY +
-          height * handleY;
-      this._boundHandleMouseMove = this._onHandleMouseMove.bind(
+      const originX =
+        this.props.viewportOffsetLeft +
+        this.viewportLayer.offsetLeft -
+        width * this.props.layer.anchorX +
+        width * handleX;
+      const originY =
+        this.props.viewportOffsetTop +
+        this.viewportLayer.offsetTop -
+        height * this.props.layer.anchorY +
+        height * handleY;
+      this.boundHandleMouseMove = this.onHandleMouseMove.bind(
         null,
         width,
         height,
@@ -161,8 +191,8 @@ const ViewportLayer = React.createClass({
         handleX - this.props.layer.anchorX,
         handleY - this.props.layer.anchorY
       );
-      document.addEventListener('mousemove', this._boundHandleMouseMove);
-      document.addEventListener('mouseup', this._onHandleMouseUp);
+      document.addEventListener('mousemove', this.boundHandleMouseMove);
+      document.addEventListener('mouseup', this.onHandleMouseUp);
 
       this.setState({
         resizeScale: scale,
@@ -171,7 +201,15 @@ const ViewportLayer = React.createClass({
     }
   },
 
-  _onHandleMouseMove: function(width, height, originX, originY, scaleFactorX, scaleFactorY, event) {
+  onHandleMouseMove(
+    width,
+    height,
+    originX,
+    originY,
+    scaleFactorX,
+    scaleFactorY,
+    event
+  ) {
     if (scaleFactorX || scaleFactorY) {
       const deltaX = event.clientX - originX;
       const deltaY = event.clientY - originY;
@@ -181,18 +219,19 @@ const ViewportLayer = React.createClass({
     }
   },
 
-  _onHandleMouseUp: function() {
-    this.props.onPropertiesChange({
-      scale: typeof this.props.layer.scale === 'object' ?
-          Object.assign({}, this.props.layer.scale, {
-            [this.props.percentPlayed]: this.state.resizeScale
-          }) :
-          this.state.resizeScale
-    });
+  onHandleMouseUp() {
+    let scale = this.state.resizeScale;
+    if (typeof this.props.layer.scale === 'object') {
+      scale = {
+        ...this.props.layer.scale,
+        [this.props.percentPlayed]: this.state.resizeScale
+      };
+    }
+    this.props.onPropertiesChange({scale});
 
-    document.removeEventListener('mousemove', this._boundHandleMouseMove);
-    document.removeEventListener('mouseup', this._onHandleMouseUp);
-    delete this._boundHandleMouseMove;
+    document.removeEventListener('mousemove', this.boundHandleMouseMove);
+    document.removeEventListener('mouseup', this.onHandleMouseUp);
+    delete this.boundHandleMouseMove;
 
     this.setState({
       resizeScale: null,
@@ -200,33 +239,45 @@ const ViewportLayer = React.createClass({
     });
   },
 
-  _onTextChange: function(value) {
-    this.props.onPropertiesChange({value: value});
+  _onTextChange(value) {
+    this.props.onPropertiesChange({value});
     this.props.dispatch(selectLayer(null));
   },
 
-  _getAsset: function(id) {
+  _getAsset(id) {
     if (typeof id === 'undefined') {
       return null;
     }
     return this.props.assets.find(asset => asset.id === id) || null;
   },
 
-  render: function() {
-    let layerX = this.state.moving ? this.state.moveX :
-        this.props.getInterpolatedValue(this.props.layer.x);
-    let layerY = this.state.moving ? this.state.moveY :
-        this.props.getInterpolatedValue(this.props.layer.y);
-    let layerScale = this.state.resizing ? this.state.resizeScale :
-        this.props.getInterpolatedValue(this.props.layer.scale);
-    let layerRotation = this.props.getInterpolatedValue(this.props.layer.rotation);
-    let layerOpacity = this.props.getInterpolatedValue(this.props.layer.opacity);
+  render() {
+    let layerX = this.state.moving
+      ? this.state.moveX
+      : this.props.getInterpolatedValue(this.props.layer.x);
+    let layerY = this.state.moving
+      ? this.state.moveY
+      : this.props.getInterpolatedValue(this.props.layer.y);
+    let layerScale = this.state.resizing
+      ? this.state.resizeScale
+      : this.props.getInterpolatedValue(this.props.layer.scale);
+    const layerRotation = this.props.getInterpolatedValue(
+      this.props.layer.rotation
+    );
+    let layerOpacity = this.props.getInterpolatedValue(
+      this.props.layer.opacity
+    );
     if (this.props.parents.length) {
-      const parent = getParentProperties(this.props.parents, this.props.percentPlayed);
+      const parent = getParentProperties(
+        this.props.parents,
+        this.props.percentPlayed
+      );
       const parentScale = parent.scale / this.props.layer.parent.offsetScale;
       if (!this.state.moving) {
-        layerX = parent.x + (layerX - this.props.layer.parent.offsetX) * parentScale;
-        layerY = parent.y + (layerY - this.props.layer.parent.offsetY) * parentScale;
+        layerX =
+          parent.x + (layerX - this.props.layer.parent.offsetX) * parentScale;
+        layerY =
+          parent.y + (layerY - this.props.layer.parent.offsetY) * parentScale;
       }
       layerScale *= parentScale;
       layerOpacity *= parent.opacity;
@@ -248,32 +299,50 @@ const ViewportLayer = React.createClass({
         break;
       case 'text':
         content = (
-          <TextField multiline
-              onChange={this._onTextChange}
-              style={{
-                padding: `${this.props.layer.paddingY * layerScale}px
+          <TextField
+            multiline
+            onChange={this.onTextChange}
+            style={{
+              padding: `${this.props.layer.paddingY * layerScale}px
                     ${this.props.layer.paddingX * layerScale}px`,
-                fontSize: `${this.props.layer.fontSize * this.props.viewportScale * layerScale}px`,
-                fontWeight: this.props.layer.fontWeight,
-                fontStyle: this.props.layer.fontStyle,
-                color: this.props.layer.fontColor,
-                backgroundColor: this.props.layer.backgroundColor,
-                opacity: layerOpacity
-              }}
-              value={this.props.layer.value}/>
+              fontSize: `${this.props.layer.fontSize * this.props.viewportScale * layerScale}px`,
+              fontWeight: this.props.layer.fontWeight,
+              fontStyle: this.props.layer.fontStyle,
+              color: this.props.layer.fontColor,
+              backgroundColor: this.props.layer.backgroundColor,
+              opacity: layerOpacity
+            }}
+            value={this.props.layer.value}
+          />
         );
         break;
       case 'image':
         content = (
-          <img height={this.state.asset.height * this.props.viewportScale * layerScale}
-              src={this.state.asset.src}
-              style={{opacity: layerOpacity}}
-              width={this.state.asset.width * this.props.viewportScale * layerScale}/>
+          <img
+            alt={this.props.layer.name}
+            height={
+              this.state.asset.height * this.props.viewportScale * layerScale
+            }
+            src={this.state.asset.src}
+            style={{opacity: layerOpacity}}
+            width={
+              this.state.asset.width * this.props.viewportScale * layerScale
+            }
+          />
         );
         break;
       case 'shape': {
         const size = 100 * this.props.viewportScale * layerScale;
-        content = <Shape fill={this.props.layer.fill} shape={SHAPES[this.props.layer.shape]} size={size} stroke={this.props.layer.stroke} strokeWidth={this.props.layer.strokeWidth} style={{opacity: layerOpacity}}/>;
+        content = (
+          <Shape
+            fill={this.props.layer.fill}
+            shape={SHAPES[this.props.layer.shape]}
+            size={size}
+            stroke={this.props.layer.stroke}
+            strokeWidth={this.props.layer.strokeWidth}
+            style={{opacity: layerOpacity}}
+          />
+        );
         break;
       }
       default:
@@ -285,27 +354,32 @@ const ViewportLayer = React.createClass({
     let handles;
     if (!this.props.readOnly) {
       anchor = (
-        <div className="sv-viewport-layer-anchor" style={{
-          top: `${this.props.layer.anchorY * 100}%`,
-          left: `${this.props.layer.anchorX * 100}%`
-        }}/>
+        <div
+          className="sv-viewport-layer-anchor"
+          style={{
+            top: `${this.props.layer.anchorY * 100}%`,
+            left: `${this.props.layer.anchorX * 100}%`
+          }}
+        />
       );
 
       const sides = [0, 1, 2, 3];
       borders = (
         <div className="sv-viewport-layer-borders">
-          {sides.map(side => <div className="sv-viewport-layer-border" key={side}/>)}
+          {sides.map(side => (
+            <div key={side} className="sv-viewport-layer-border" />
+          ))}
         </div>
       );
       handles = (
         <div className="sv-viewport-layer-handles">
-          {sides.map(side => {
-            return (
-              <div className="sv-viewport-layer-handle"
-                  key={side}
-                  onMouseDown={this._onHandleMouseDown.bind(null, side)}/>
-            );
-          })}
+          {sides.map(side => (
+            <div
+              key={side}
+              className="sv-viewport-layer-handle"
+              onMouseDown={event => this.onHandleMouseDown(event, side)}
+            />
+          ))}
         </div>
       );
     }
@@ -316,11 +390,16 @@ const ViewportLayer = React.createClass({
     });
 
     return (
-      <div className={layerClassName}
-          onClick={this._onClick}
-          onMouseDown={this._onMouseDown}
-          style={style}
-          type={this.props.layer.type}>
+      <div
+        ref={node => {
+          this.ViewportLayer = node;
+        }}
+        className={layerClassName}
+        onClick={this.onClick}
+        onMouseDown={this.onMouseDown}
+        style={style}
+        type={this.props.layer.type}
+      >
         <div className="sv-viewport-layer-content">
           {content}
         </div>

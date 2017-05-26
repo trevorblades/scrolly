@@ -1,6 +1,6 @@
 const properties = require('../util/properties');
 
-module.exports = function(state, action) {
+module.exports = (state, action) => {
   switch (action.type) {
     case 'ADD_LAYER': {
       const layer = {
@@ -34,7 +34,9 @@ module.exports = function(state, action) {
         case 'image': {
           layer.asset = action.asset.id;
           layer.name = action.asset.name;
-          const duplicateCount = action.layers.filter(({asset}) => asset === action.asset.id).length;
+          const duplicateCount = action.layers.filter(
+            ({asset}) => asset === action.asset.id
+          ).length;
           if (duplicateCount) {
             layer.name += ` (${duplicateCount + 1})`;
           }
@@ -55,17 +57,17 @@ module.exports = function(state, action) {
       if (state.id !== action.id) {
         return state;
       }
-      return Object.assign({}, state, action.properties);
+      return {...state, ...action.properties};
     case 'TOGGLE_LAYER_VISIBILITY':
       if (state.id !== action.id) {
         return state;
       }
-      return Object.assign({}, state, {visible: !state.visible});
+      return {...state, ...{visible: !state.visible}};
     case 'LINK_LAYERS':
       if (state.id !== action.child) {
         return state;
       }
-      return Object.assign({}, state, {parent: action.parent});
+      return {...state, ...{parent: action.parent}};
     default:
       return state;
   }

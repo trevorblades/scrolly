@@ -1,6 +1,6 @@
-module.exports = function(event, ...types) {
+module.exports = (event, ...types) => {
   let dragTypeFound = false;
-  for (let i = 0; i < event.dataTransfer.types.length; ++i) {
+  for (let i = 0; i < event.dataTransfer.types.length; i += 1) {
     if (types.includes(event.dataTransfer.types[i])) {
       dragTypeFound = true;
       break;

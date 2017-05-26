@@ -11,21 +11,30 @@ const Presets = require('./presets');
 const {API_URL, ASSET_DRAG_TYPE, FILE_DRAG_TYPE} = require('../constants');
 const isDragTypeFound = require('../util/is-drag-type-found');
 
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
-const allowedFiletypes = ALLOWED_MIME_TYPES.map(mimeType => `.${mime.extension(mimeType)}`);
-const allowedFiletypesString = allowedFiletypes.map(function(filetype, index, array) {
-  return index === array.length - 1 ? `and ${filetype}` : filetype;
-}).join(', ');
+const ALLOWED_MIME_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/svg+xml'
+];
+const allowedFiletypes = ALLOWED_MIME_TYPES.map(
+  mimeType => `.${mime.extension(mimeType)}`
+);
+const allowedFiletypesString = allowedFiletypes
+  .map(
+    (filetype, index, array) =>
+      index === array.length - 1 ? `and ${filetype}` : filetype
+  )
+  .join(', ');
 
 const Library = React.createClass({
-
   propTypes: {
     assets: React.PropTypes.array.isRequired,
     dispatch: React.PropTypes.func.isRequired,
     dragging: React.PropTypes.bool
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       dragging: false,
       selectedAssetId: null,
@@ -33,80 +42,81 @@ const Library = React.createClass({
     };
   },
 
-  componentWillMount: function() {
-    this._filesToUpload = 0;
+  componentWillMount() {
+    this.filesToUpload = 0;
   },
 
-  _onDragEnter: function(event) {
+  onDragEnter(event) {
     event.preventDefault();
     if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
       this.setState({dragging: true});
     }
   },
 
-  _onDragLeave: function(event) {
+  onDragLeave(event) {
     if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
       this.setState({dragging: false});
     }
   },
 
-  _onDragOver: function(event) {
+  onDragOver(event) {
     event.preventDefault();
   },
 
-  _onDrop: function(event) {
+  onDrop(event) {
     event.preventDefault();
     if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
-      for (let i = 0; i < event.dataTransfer.files.length; i++) {
-        this._onFileUpload(event.dataTransfer.files[i]);
+      for (let i = 0; i < event.dataTransfer.files.length; i += 1) {
+        this.onFileUpload(event.dataTransfer.files[i]);
       }
       this.setState({dragging: false});
     }
   },
 
-  _onUploadClick: function(event) {
+  _onUploadClick(event) {
     event.currentTarget.getElementsByTagName('input')[0].click();
   },
 
-  _onUploadChange: function(event) {
-    if (event.target.files.length) {
-      for (let i = 0; i < event.dataTransfer.files.length; i++) {
-        this._onFileUpload(event.dataTransfer.files[i]);
+  onUploadChange(event) {
+    const target = event.target;
+    if (target.files.length) {
+      for (let i = 0; i < event.dataTransfer.files.length; i += 1) {
+        this.onFileUpload(event.dataTransfer.files[i]);
       }
-      event.target.value = null;
+      target.value = null;
     }
   },
 
-  _onFileUpload: function(file) {
+  onFileUpload(file) {
     if (!file || ALLOWED_MIME_TYPES.indexOf(file.type) === -1) {
       return;
     }
 
     const reader = new FileReader();
-    reader.onload = this._onReaderLoad.bind(null, file);
+    reader.onload = this.onReaderLoad.bind(null, file);
     reader.readAsDataURL(file);
 
-    this._filesToUpload++;
+    this.filesToUpload += 1;
     if (!this.state.uploading) {
       this.setState({uploading: true});
     }
   },
 
-  _onReaderLoad: function(file, event) {
+  onReaderLoad(file, event) {
     const img = new Image();
     const data = event.target.result;
-    img.onload = this._onImageLoad.bind(null, file);
+    img.onload = this.onImageLoad.bind(null, file);
     img.src = data;
   },
 
-  _onImageLoad: function(file, event) {
+  onImageLoad(file, event) {
     const {width, height} = event.target;
 
     const body = new FormData();
     body.append('file', file, file.name);
     fetch(`${API_URL}/asset`, {method: 'POST', body})
       .then(res => res.text())
-      .then((src) => {
+      .then(src => {
         this.props.dispatch({
           type: 'ADD_ASSET',
           name: file.name,
@@ -116,32 +126,34 @@ const Library = React.createClass({
           width,
           height
         });
-        this._filesToUpload--;
-        if (!this._filesToUpload) {
+        this.filesToUpload -= 1;
+        if (!this.filesToUpload) {
           this.setState({uploading: false});
         }
       });
   },
 
-  _onAssetsClick: function() {
+  onAssetsClick() {
     this.setState({selectedAssetId: null});
   },
 
-  _onAssetClick: function(id, event) {
+  onAssetClick(event, id) {
     event.stopPropagation();
     this.setState({selectedAssetId: id});
   },
 
-  _onAssetDragStart: function(id, event) {
+  onAssetDragStart(event, id) {
     event.dataTransfer.setData(ASSET_DRAG_TYPE, id);
   },
 
-  _onRemoveClick: function(id) {
+  onRemoveClick(id) {
     this.props.dispatch({type: 'REMOVE_ASSET', id});
   },
 
-  render: function() {
-    const selectedAsset = this.props.assets.find(asset => asset.id === this.state.selectedAssetId);
+  render() {
+    const selectedAsset = this.props.assets.find(
+      asset => asset.id === this.state.selectedAssetId
+    );
     const assetsClassName = classNames('sv-library-assets', {
       'sv-highlighted': this.props.dragging,
       'sv-dragging': this.state.dragging
@@ -150,72 +162,84 @@ const Library = React.createClass({
       <div className="sv-library">
         <div className="sv-library-preview">
           <div className="sv-library-preview-thumb">
-            {selectedAsset ?
-              <img src={selectedAsset.src}/> :
-              <Icon name="image"/>}
+            {selectedAsset
+              ? <img alt={selectedAsset.name} src={selectedAsset.src} />
+              : <Icon name="image" />}
           </div>
           <div className="sv-library-preview-info">
-            {selectedAsset && <div>
-              <h5 title={selectedAsset.name}>{selectedAsset.name}</h5>
-              <h6>{`${selectedAsset.width} x ${selectedAsset.height}`}</h6>
-              <h6>{bytes(selectedAsset.size)}</h6>
-            </div>}
+            {selectedAsset &&
+              <div>
+                <h5 title={selectedAsset.name}>{selectedAsset.name}</h5>
+                <h6>{`${selectedAsset.width} x ${selectedAsset.height}`}</h6>
+                <h6>{bytes(selectedAsset.size)}</h6>
+              </div>}
           </div>
         </div>
-        <div className={assetsClassName}
-            onClick={this._onAssetsClick}
-            onDragEnter={this._onDragEnter}
-            onDragLeave={this._onDragLeave}
-            onDragOver={this._onDragOver}
-            onDrop={this._onDrop}>
-          {this.state.uploading && <div className="sv-library-assets-loading"/>}
-          {!this.props.assets.length ?
-            <div className="sv-library-assets-empty">
-              <div style={{width: '25%'}}>
-                <Icon name="upload"/>
-              </div>
-              <h5>Upload images</h5>
-              <p>Drag and drop images from your computer into this panel to use them in your composition.</p>
-              <p>{`Accepted file types include ${allowedFiletypesString.replace(/\./g, '')}.`}</p>
-            </div> :
-            this.props.assets.map((asset, index) => {
-              const assetClassName = classNames('sv-library-asset', {
-                'sv-selected': asset.id === this.state.selectedAssetId
-              });
-              return (
-                <div className={assetClassName}
-                    draggable
-                    key={index}
-                    onClick={this._onAssetClick.bind(null, asset.id)}
-                    onDragStart={this._onAssetDragStart.bind(null, asset.id)}>
-                  <span title={asset.name}>{asset.name}</span>
-                  <span>{bytes(asset.size)}</span>
-                  <span onClick={this._onRemoveClick.bind(null, asset.id)}
-                      title="Remove asset">
-                    <Icon name="trash"/>
-                  </span>
+        <div
+          className={assetsClassName}
+          onClick={this.onAssetsClick}
+          onDragEnter={this.onDragEnter}
+          onDragLeave={this.onDragLeave}
+          onDragOver={this.onDragOver}
+          onDrop={this.onDrop}
+        >
+          {this.state.uploading &&
+            <div className="sv-library-assets-loading" />}
+          {!this.props.assets.length
+            ? <div className="sv-library-assets-empty">
+                <div style={{width: '25%'}}>
+                  <Icon name="upload" />
                 </div>
-              );
-            })}
+                <h5>Upload images</h5>
+                <p>
+                  Drag and drop images from your computer into this panel to use them in your composition.
+                </p>
+                <p
+                >{`Accepted file types include ${allowedFiletypesString.replace(/\./g, '')}.`}</p>
+              </div>
+            : this.props.assets.map(asset => {
+                const assetClassName = classNames('sv-library-asset', {
+                  'sv-selected': asset.id === this.state.selectedAssetId
+                });
+                return (
+                  <div
+                    key={asset.id}
+                    className={assetClassName}
+                    draggable
+                    onClick={event => this.onAssetClick(event, asset.id)}
+                    onDragStart={event =>
+                      this.onAssetDragStart(event, asset.id)}
+                  >
+                    <span title={asset.name}>{asset.name}</span>
+                    <span>{bytes(asset.size)}</span>
+                    <span
+                      onClick={() => this.onRemoveClick(asset.id)}
+                      title="Remove asset"
+                    >
+                      <Icon name="trash" />
+                    </span>
+                  </div>
+                );
+              })}
         </div>
         <div className="sv-library-footer">
-          <Button onClick={this._onUploadClick}>
-            <Icon name="add"/>
+          <Button onClick={this.onUploadClick}>
+            <Icon name="add" />
             <span>Upload asset</span>
-            <input accept={allowedFiletypes.join(',')}
-                multiple
-                onChange={this._onUploadChange}
-                type="file"/>
+            <input
+              accept={allowedFiletypes.join(',')}
+              multiple
+              onChange={this.onUploadChange}
+              type="file"
+            />
           </Button>
-          <Presets/>
+          <Presets />
         </div>
       </div>
     );
   }
 });
 
-module.exports = connect(function(state) {
-  return {
-    assets: state.assets.present
-  };
-})(Library);
+module.exports = connect(state => ({
+  assets: state.assets.present
+}))(Library);

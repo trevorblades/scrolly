@@ -1,4 +1,4 @@
-module.exports = function(value, position) {
+module.exports = (value, position) => {
   if (typeof value !== 'object') {
     return value;
   } else if (position in value) {
@@ -8,7 +8,7 @@ module.exports = function(value, position) {
   const bounds = Object.keys(value).sort();
   let lowerBound = bounds[0];
   let upperBound = bounds[bounds.length - 1];
-  bounds.forEach(function(bound) {
+  bounds.forEach(bound => {
     if (bound < position && bound > lowerBound) {
       lowerBound = bound;
     } else if (bound > position && bound < upperBound) {

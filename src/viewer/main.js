@@ -9,8 +9,7 @@ const Viewport = require('../components/viewport');
 const {API_URL} = require('../constants');
 
 const Viewer = React.createClass({
-
-  getInitialState: function() {
+  getInitialState() {
     let loading = false;
     const parsed = url.parse(window.location.href, true);
     const slug = parsed.query.project || parsed.query.p;
@@ -48,15 +47,17 @@ const Viewer = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-    window.addEventListener('wheel', this._onWheel);
-    window.addEventListener('resize', this._onResize);
-    this._onResize();
+  componentDidMount() {
+    window.addEventListener('wheel', this.onWheel);
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
   },
 
-  _onWheel: function(event) {
+  onWheel(event) {
     const movementY = event.deltaY / this.state.step;
-    let percentPlayed = (this.state.windowWidth * this.state.percentPlayed + movementY) / this.state.windowWidth;
+    let percentPlayed =
+      (this.state.windowWidth * this.state.percentPlayed + movementY) /
+      this.state.windowWidth;
     if (percentPlayed < 0) {
       percentPlayed = 0;
     } else if (percentPlayed > 1) {
@@ -65,30 +66,32 @@ const Viewer = React.createClass({
     this.setState({percentPlayed});
   },
 
-  _onResize: function() {
+  onResize() {
     this.setState({
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth
     });
   },
 
-  render: function() {
+  render() {
     if (this.state.loading) {
       return null;
     }
     return (
       <div className="sv-viewer">
-        <Viewport assets={this.state.assets}
-            compositionHeight={this.state.height}
-            compositionWidth={this.state.width}
-            layers={this.state.layers}
-            percentPlayed={this.state.percentPlayed}
-            readOnly
-            wrapperHeight={this.state.windowHeight}
-            wrapperWidth={this.state.windowWidth}/>
+        <Viewport
+          assets={this.state.assets}
+          compositionHeight={this.state.height}
+          compositionWidth={this.state.width}
+          layers={this.state.layers}
+          percentPlayed={this.state.percentPlayed}
+          readOnly
+          wrapperHeight={this.state.windowHeight}
+          wrapperWidth={this.state.windowWidth}
+        />
       </div>
     );
   }
 });
 
-render(<Viewer/>, document.getElementById('sv-root'));
+render(<Viewer />, document.getElementById('sv-root'));

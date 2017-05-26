@@ -1,5 +1,4 @@
 const React = require('react');
-const ReactDOM = require('react-dom');
 const {connect} = require('react-redux');
 const {ActionCreators} = require('redux-undo');
 
@@ -23,7 +22,6 @@ function setTitle(name) {
 }
 
 const App = React.createClass({
-
   propTypes: {
     assets: React.PropTypes.array.isRequired,
     changed: React.PropTypes.bool.isRequired,
@@ -40,7 +38,7 @@ const App = React.createClass({
     user: React.PropTypes.object.isRequired
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       dragging: false,
       newDialogShown: false,
@@ -56,128 +54,136 @@ const App = React.createClass({
     };
   },
 
-  componentWillMount: function() {
-    this._dragCounter = 0;
+  componentWillMount() {
+    this.dragCounter = 0;
     setTitle(this.props.name);
   },
 
-  componentDidMount: function() {
-    window.addEventListener('keydown', this._onKeyDown);
-    window.addEventListener('resize', this._onResize);
-    this._onResize();
+  componentDidMount() {
+    window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.name !== this.props.name) {
       setTitle(nextProps.name);
     }
   },
 
-  componentWillUnmount: function() {
-    window.removeEventListener('keydown', this._onKeyDown);
-    window.removeEventListener('resize', this._onResize);
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('resize', this.onResize);
   },
 
-  _onKeyDown: function(event) {
+  onKeyDown(event) {
     const modifier = event.metaKey || event.ctrlKey;
     if (event.keyCode === 68 && modifier) {
       event.preventDefault();
       if (this.props.selectedLayer) {
         this.props.dispatch(copyLayer(this.props.selectedLayer));
       }
-    } else if (event.keyCode === 90 && modifier) { // cmd/ctrl + z pressed
+    } else if (event.keyCode === 90 && modifier) {
+      // cmd/ctrl + z pressed
       this.props.dispatch(ActionCreators[event.shiftKey ? 'redo' : 'undo']());
-    } else if (event.keyCode === 83 && modifier) { // cmd/ctrl + s pressed
+    } else if (event.keyCode === 83 && modifier) {
+      // cmd/ctrl + s pressed
       event.preventDefault();
       if (this.props.changed) {
-        this._saveProject();
+        this.saveProject();
       }
-    } else if (this.props.selectedLayer !== null && event.keyCode === 27) { // esc key pressed
+    } else if (this.props.selectedLayer !== null && event.keyCode === 27) {
+      // esc key pressed
       if (isInput(event.target)) {
         return event.target.blur();
       }
-      this._deselectLayer();
+      this.deselectLayer();
     }
+    return true;
   },
 
-  _onResize: function() {
-    const header = ReactDOM.findDOMNode(this.refs.header);
-    const viewportWrapperStyle = getComputedStyle(this.refs.viewportWrapper, null);
-    const viewportWrapperPadding = parseInt(viewportWrapperStyle.padding);
-    this.setState({
-      timelineMaxHeight: (window.innerHeight - header.offsetHeight) / 2,
-      viewportWrapperHeight: parseFloat(viewportWrapperStyle.height),
-      viewportWrapperOffsetLeft: this.refs.viewportWrapper.offsetLeft + viewportWrapperPadding,
-      viewportWrapperOffsetTop: this.refs.viewportWrapper.offsetTop + viewportWrapperPadding,
-      viewportWrapperWidth: parseFloat(viewportWrapperStyle.width)
-    }, function() {
-      const viewport = this.refs.viewport.getWrappedInstance();
-      this.setState({viewportScale: viewport.getScale()});
-    });
+  onResize() {
+    const viewportWrapperStyle = getComputedStyle(this.viewportWrapper, null);
+    const viewportWrapperPadding = parseInt(viewportWrapperStyle.padding, 10);
+    this.setState(
+      {
+        timelineMaxHeight: (window.innerHeight - this.header.offsetHeight) / 2,
+        viewportWrapperHeight: parseFloat(viewportWrapperStyle.height),
+        viewportWrapperOffsetLeft: this.viewportWrapper.offsetLeft +
+          viewportWrapperPadding,
+        viewportWrapperOffsetTop: this.viewportWrapper.offsetTop +
+          viewportWrapperPadding,
+        viewportWrapperWidth: parseFloat(viewportWrapperStyle.width)
+      },
+      () => {
+        const viewport = this.viewport.getWrappedInstance();
+        this.setState({viewportScale: viewport.getScale()});
+      }
+    );
   },
 
-  _onDragEnter: function(event) {
+  onDragEnter(event) {
     event.preventDefault();
     if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
-      this._dragCounter++;
+      this.dragCounter += 1;
       this.setState({dragging: true});
     }
   },
 
-  _onDragLeave: function(event) {
+  onDragLeave(event) {
     event.preventDefault();
     if (isDragTypeFound(event, FILE_DRAG_TYPE)) {
-      this._dragCounter--;
-      if (!this._dragCounter) {
+      this.dragCounter -= 1;
+      if (!this.dragCounter) {
         this.setState({dragging: false});
       }
     }
   },
 
-  _onDragOver: function(event) {
+  onDragOver(event) {
     event.preventDefault();
   },
 
-  _onNewClick: function() {
+  onNewClick() {
     this.setState({newDialogShown: true});
   },
 
-  _onEditClick: function() {
+  onEditClick() {
     this.setState({editDialogShown: true});
   },
 
-  _onEditDialogClose: function() {
+  onEditDialogClose() {
     this.setState({
       newDialogShown: false,
       editDialogShown: false
     });
   },
 
-  _onOpenClick: function() {
+  onOpenClick() {
     this.setState({openDialogShown: true});
   },
 
-  _onOpenDialogClose: function() {
+  onOpenDialogClose() {
     this.setState({openDialogShown: false});
   },
 
-  _onShareClick: function() {
+  onShareClick() {
     this.setState({shareDialogShown: true});
   },
 
-  _onShareInputClick: function(event) {
+  onShareInputClick(event) {
     event.target.select();
   },
 
-  _onShareDialogClose: function() {
+  onShareDialogClose() {
     this.setState({shareDialogShown: false});
   },
 
-  _deselectLayer: function() {
+  deselectLayer() {
     this.props.dispatch(selectLayer(null));
   },
 
-  _saveProject: function() {
+  saveProject() {
     if (this.props.changed) {
       let url = `${API_URL}/projects`;
       if (this.props.id) {
@@ -185,9 +191,10 @@ const App = React.createClass({
       }
       const options = {
         method: this.props.id ? 'PUT' : 'POST',
-        headers: Object.assign({
-          'Authorization': `Bearer ${this.props.user.token}`
-        }, JSON_HEADERS),
+        headers: {
+          Authorization: `Bearer ${this.props.user.token}`,
+          ...JSON_HEADERS
+        },
         body: JSON.stringify({
           name: this.props.name,
           width: this.props.compositionWidth,
@@ -198,7 +205,7 @@ const App = React.createClass({
         })
       };
       fetch(url, options)
-        .then(function(res) {
+        .then(res => {
           if (!res.ok) {
             throw new Error();
           }
@@ -218,71 +225,103 @@ const App = React.createClass({
     }
   },
 
-  _getLayerDimensions: function(id) {
-    return this.refs.viewport.getWrappedInstance().getLayerDimensions(id);
+  getLayerDimensions(id) {
+    return this.viewport.getWrappedInstance().getLayerDimensions(id);
   },
 
-  render: function() {
+  render() {
     return (
-      <div className="sv-app"
-          onDragEnter={this._onDragEnter}
-          onDragLeave={this._onDragLeave}
-          onDragOver={this._onDragOver}
-          onDrop={this._onDragLeave}>
-        <Header onEditClick={this._onEditClick}
-            onLogOutClick={this.props.onLogOutClick}
-            onNewClick={this._onNewClick}
-            onOpenClick={this._onOpenClick}
-            onSaveClick={this._saveProject}
-            onShareClick={this._onShareClick}
-            ref="header"
-            saving={this.state.saving}/>
+      <div
+        className="sv-app"
+        onDragEnter={this.onDragEnter}
+        onDragLeave={this.onDragLeave}
+        onDragOver={this.onDragOver}
+        onDrop={this.onDragLeave}
+      >
+        <Header
+          ref={node => {
+            this.header = node.getWrappedInstance();
+          }}
+          onEditClick={this.onEditClick}
+          onLogOutClick={this.props.onLogOutClick}
+          onNewClick={this.onNewClick}
+          onOpenClick={this.onOpenClick}
+          onSaveClick={this.saveProject}
+          onShareClick={this.onShareClick}
+          saving={this.state.saving}
+        />
         <div className="sv-app-content">
-          <Library assets={this.state.assets}
-              dragging={this.state.dragging}
-              onDragEnter={this._onDragEnter}
-              onDrop={this._onLibraryDrop}/>
+          <Library
+            assets={this.state.assets}
+            dragging={this.state.dragging}
+            onDragEnter={this.onDragEnter}
+            onDrop={this.onLibraryDrop}
+          />
           <div className="sv-app-content-viewport">
-            <div className="sv-app-content-viewport-wrapper"
-                onClick={this._deselectLayer}
-                ref="viewportWrapper">
-              <ConnectedViewport compositionHeight={this.props.compositionHeight}
-                  compositionWidth={this.props.compositionWidth}
-                  ref="viewport"
-                  wrapperHeight={this.state.viewportWrapperHeight}
-                  wrapperOffsetLeft={this.state.viewportWrapperOffsetLeft}
-                  wrapperOffsetTop={this.state.viewportWrapperOffsetTop}
-                  wrapperWidth={this.state.viewportWrapperWidth}/>
-            </div>
-            <ViewBar compositionHeight={this.props.compositionHeight}
+            <div
+              ref={node => {
+                this.viewportWrapper = node;
+              }}
+              className="sv-app-content-viewport-wrapper"
+              onClick={this.deselectLayer}
+            >
+              <ConnectedViewport
+                ref={node => {
+                  this.viewport = node;
+                }}
+                compositionHeight={this.props.compositionHeight}
                 compositionWidth={this.props.compositionWidth}
-                getLayerDimensions={this._getLayerDimensions}
-                viewportScale={this.state.viewportScale}/>
+                wrapperHeight={this.state.viewportWrapperHeight}
+                wrapperOffsetLeft={this.state.viewportWrapperOffsetLeft}
+                wrapperOffsetTop={this.state.viewportWrapperOffsetTop}
+                wrapperWidth={this.state.viewportWrapperWidth}
+              />
+            </div>
+            <ViewBar
+              compositionHeight={this.props.compositionHeight}
+              compositionWidth={this.props.compositionWidth}
+              getLayerDimensions={this.getLayerDimensions}
+              viewportScale={this.state.viewportScale}
+            />
           </div>
         </div>
-        <Timeline maxHeight={this.state.timelineMaxHeight}
-            onResize={this._onResize}/>
+        <Timeline
+          maxHeight={this.state.timelineMaxHeight}
+          onResize={this.onResize}
+        />
         {(this.state.newDialogShown || this.state.editDialogShown) &&
-          <EditDialog onClose={this._onEditDialogClose}
-              reset={this.state.newDialogShown}/>}
+          <EditDialog
+            onClose={this.onEditDialogClose}
+            reset={this.state.newDialogShown}
+          />}
         {this.state.openDialogShown &&
-          <OpenDialog onClose={this._onOpenDialogClose}
-              user={this.props.user}/>}
+          <OpenDialog
+            onClose={this.onOpenDialogClose}
+            user={this.props.user}
+          />}
         {this.state.shareDialogShown &&
-          <Dialog className="sv-app-share-dialog" onClose={this._onShareDialogClose}>
+          <Dialog
+            className="sv-app-share-dialog"
+            onClose={this.onShareDialogClose}
+          >
             <h3>Share your project</h3>
-            <label>Use the following link to share your creation with the world:</label>
-            <input onClick={this._onShareInputClick}
-                readOnly
-                type="text"
-                value={`${window.location.origin}/viewer/?p=${this.props.slug}`}/>
+            <label htmlFor="link">
+              Use the following link to share your creation with the world:
+            </label>
+            <input
+              id="link"
+              onClick={this.onShareInputClick}
+              readOnly
+              type="text"
+              value={`${window.location.origin}/viewer/?p=${this.props.slug}`}
+            />
           </Dialog>}
       </div>
     );
   }
 });
 
-module.exports = connect(function(state) {
+module.exports = connect(state => {
   const changedAt = new Date(state.changedAt && state.changedAt.present);
   return {
     id: state.id,

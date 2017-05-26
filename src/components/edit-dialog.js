@@ -9,7 +9,6 @@ const {DEFAULT_NAME} = require('../constants');
 const getAspectRatio = require('../util/get-aspect-ratio');
 
 const EditDialog = React.createClass({
-
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
     height: React.PropTypes.number.isRequired,
@@ -19,7 +18,7 @@ const EditDialog = React.createClass({
     width: React.PropTypes.number.isRequired
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       aspectRatio: this.props.width / this.props.height,
       constrained: true,
@@ -29,12 +28,12 @@ const EditDialog = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-    this.refs.name.focus();
-    this.refs.name.select();
+  componentDidMount() {
+    this.name.focus();
+    this.name.select();
   },
 
-  _onSubmit: function(event) {
+  _onSubmit(event) {
     event.preventDefault();
     history.replaceState(null, null, '/');
     this.props.dispatch({
@@ -46,30 +45,32 @@ const EditDialog = React.createClass({
     this.props.onClose();
   },
 
-  _onNameChange: function(event) {
+  onNameChange(event) {
     this.setState({name: event.target.value});
   },
 
-  _onDimensionChange: function(event) {
+  onDimensionChange(event) {
     const key = event.target.name;
     let nextState = {[key]: event.target.value};
     if (nextState[key] && !isNaN(nextState[key])) {
-      const value = parseInt(nextState[key]);
+      const value = parseInt(nextState[key], 10);
       if (value) {
-        nextState = this._getConstrainedDimensions({[key]: value});
+        nextState = this.getConstrainedDimensions({[key]: value});
       }
     }
     this.setState(nextState);
   },
 
-  _onDimensionBlur: function(event) {
+  onDimensionBlur(event) {
     if (!event.target.value) {
-      const nextState = this._getConstrainedDimensions({[event.target.name]: 1});
+      const nextState = this.getConstrainedDimensions({
+        [event.target.name]: 1
+      });
       this.setState(nextState);
     }
   },
 
-  _onConstrainChange: function(constrained) {
+  onConstrainChange(constrained) {
     const nextState = {constrained};
     if (constrained) {
       nextState.aspectRatio = this.state.width / this.state.height;
@@ -77,48 +78,61 @@ const EditDialog = React.createClass({
     this.setState(nextState);
   },
 
-  _getConstrainedDimensions: function(dimensions) {
+  getConstrainedDimensions(dimensions) {
     if (!this.state.constrained) {
       return dimensions;
     }
-    const additional = 'width' in dimensions ?
-        {height: dimensions.width / this.state.aspectRatio} :
-        {width: dimensions.height * this.state.aspectRatio};
-    return Object.assign({}, dimensions, additional);
+    const additional = 'width' in dimensions
+      ? {height: dimensions.width / this.state.aspectRatio}
+      : {width: dimensions.height * this.state.aspectRatio};
+    return {...dimensions, ...additional};
   },
 
-  render: function() {
+  render() {
     return (
       <Dialog className="sv-edit-dialog" onClose={this.props.onClose}>
         <h3>{`${this.props.reset ? 'New' : 'Edit'} project`}</h3>
-        <form onSubmit={this._onSubmit}>
-          <label>Project name</label>
-          <input className="sv-edit-dialog-name"
-              onChange={this._onNameChange}
-              ref="name"
-              type="text"
-              value={this.state.name}/>
-          <label>Width</label>
+        <form onSubmit={this.onSubmit}>
+          <label htmlFor="name">Project name</label>
+          <input
+            ref={node => {
+              this.name = node;
+            }}
+            className="sv-edit-dialog-name"
+            id="name"
+            onChange={this.onNameChange}
+            type="text"
+            value={this.state.name}
+          />
+          <label htmlFor="width">Width</label>
           <div className="sv-edit-dialog-dimensions">
             <div className="sv-edit-dialog-dimensions-fields">
-              <input name="width"
-                  onBlur={this._onDimensionBlur}
-                  onChange={this._onDimensionChange}
-                  type="number"
-                  value={this.state.width}/>
-              <label>Height</label>
-              <input name="height"
-                  onBlur={this._onDimensionBlur}
-                  onChange={this._onDimensionChange}
-                  type="number"
-                  value={this.state.height}/>
+              <input
+                id="width"
+                name="width"
+                onBlur={this.onDimensionBlur}
+                onChange={this.onDimensionChange}
+                type="number"
+                value={this.state.width}
+              />
+              <label htmlFor="height">Height</label>
+              <input
+                name="height"
+                onBlur={this.onDimensionBlur}
+                onChange={this.onDimensionChange}
+                type="number"
+                value={this.state.height}
+              />
             </div>
             <div className="sv-edit-dialog-dimensions-constrain">
-              <Checkbox checked={this.state.constrained}
-                  label="Constrain dimensions to aspect ratio"
-                  onChange={this._onConstrainChange}/>
+              <Checkbox
+                checked={this.state.constrained}
+                label="Constrain dimensions to aspect ratio"
+                onChange={this.onConstrainChange}
+              />
               {this.state.constrained &&
-                <h6>{`Aspect ratio: ${getAspectRatio(1, 1 / this.state.aspectRatio)}`}</h6>}
+                <h6
+                >{`Aspect ratio: ${getAspectRatio(1, 1 / this.state.aspectRatio)}`}</h6>}
             </div>
           </div>
           <Button secondary type="submit">
@@ -131,10 +145,8 @@ const EditDialog = React.createClass({
   }
 });
 
-module.exports = connect(function(state) {
-  return {
-    name: state.name.present,
-    width: state.width,
-    height: state.height
-  };
-})(EditDialog);
+module.exports = connect(state => ({
+  name: state.name.present,
+  width: state.width,
+  height: state.height
+}))(EditDialog);

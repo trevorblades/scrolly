@@ -1,3 +1,2 @@
-module.exports = function(layer, parent, scale, offset) {
-  return (layer - parent) / scale + offset;
-};
+module.exports = (layer, parent, scale, offset) =>
+  (layer - parent) / scale + offset;

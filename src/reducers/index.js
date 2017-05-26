@@ -7,19 +7,17 @@ const layersReducer = require('./layers');
 
 const {DEFAULT_NAME} = require('../constants');
 
-const undoConfig = {filter: excludeAction([
-  'SET_PERCENT_PLAYED',
-  'SELECT_LAYER'
-])};
+const undoConfig = {
+  filter: excludeAction(['SET_PERCENT_PLAYED', 'SELECT_LAYER'])
+};
 
 function createLoadableReducer(key, defaultState = null) {
-  return function(state = defaultState, action) {
-    return action.type === 'LOAD_PROJECT' ? action[key] : state;
-  };
+  return (state = defaultState, action) =>
+    action.type === 'LOAD_PROJECT' ? action[key] : state;
 }
 
 function createUpdatableReducer(key, defaultState = null) {
-  return function(state = defaultState, action) {
+  return (state = defaultState, action) => {
     switch (action.type) {
       case 'LOAD_PROJECT':
       case 'UPDATE_PROJECT':
@@ -37,7 +35,7 @@ const combinedReducer = combineReducers({
   name: undoable(createUpdatableReducer('name', DEFAULT_NAME)),
   assets: undoable(assetsReducer, undoConfig),
   layers: undoable(layersReducer, undoConfig),
-  step: undoable(function(state = 1, action) {
+  step: undoable((state = 1, action) => {
     switch (action.type) {
       case 'SET_STEP':
         return action.value;
@@ -49,7 +47,7 @@ const combinedReducer = combineReducers({
   }, undoConfig),
   createdAt: createLoadableReducer('createdAt'),
   updatedAt: createLoadableReducer('updatedAt'),
-  changedAt: undoable(function(state = null, action) {
+  changedAt: undoable((state = null, action) => {
     switch (action.type) {
       case 'LOAD_PROJECT':
         return new Date(action.updatedAt).toISOString();
@@ -71,13 +69,13 @@ const combinedReducer = combineReducers({
   }),
   width: createUpdatableReducer('width', 1920),
   height: createUpdatableReducer('height', 1080),
-  percentPlayed: function(state = 0, action) {
+  percentPlayed(state = 0, action) {
     if (action.type === 'SET_PERCENT_PLAYED') {
       return action.value;
     }
     return state;
   },
-  selectedLayer: function(state = null, action) {
+  selectedLayer(state = null, action) {
     if (action.type === 'SELECT_LAYER') {
       return action.id;
     }
@@ -85,7 +83,7 @@ const combinedReducer = combineReducers({
   }
 });
 
-module.exports = function(state, action) {
+module.exports = (state, action) => {
   if (action.type === 'RESET_PROJECT') {
     return combinedReducer(undefined, action);
   }

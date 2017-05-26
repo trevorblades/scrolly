@@ -5,12 +5,11 @@ const Button = require('./button');
 const {API_URL, JSON_HEADERS} = require('../constants');
 
 const Login = React.createClass({
-
   propTypes: {
     onSuccess: React.PropTypes.func.isRequired
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       email: '',
       error: false,
@@ -21,7 +20,7 @@ const Login = React.createClass({
     };
   },
 
-  _onSubmit: function(event) {
+  onSubmit(event) {
     event.preventDefault();
 
     const body = {
@@ -54,47 +53,65 @@ const Login = React.createClass({
     this.setState({submitting: true});
   },
 
-  _onInputChange: function(event) {
+  onInputChange(event) {
     this.setState({[event.target.name]: event.target.value});
   },
 
-  _toggleSignUpForm: function() {
+  toggleSignUpForm() {
     this.setState({signingUp: !this.state.signingUp});
   },
 
-  render: function() {
+  render() {
+    let buttonText;
+    if (this.state.submitting) {
+      buttonText = 'Submitting...';
+    } else if (this.state.signingUp) {
+      buttonText = 'Create account';
+    } else {
+      buttonText = 'Log in';
+    }
+
     return (
       <div className="sv-login">
         <div className="sv-login-content">
-          <img src="/assets/logo.svg" title="Scrolly"/>
-          <form className={this.state.error ? 'sv-error' : null}
-              onSubmit={this._onSubmit}>
-            <input name="email"
-                onChange={this._onInputChange}
-                placeholder="Email"
-                type="text"
-                value={this.state.email}/>
-            <input name="password"
-                onChange={this._onInputChange}
-                placeholder="Password"
-                type="password"
-                value={this.state.password}/>
+          <img alt="Scrolly logo" src="/assets/logo.svg" title="Scrolly" />
+          <form
+            className={this.state.error ? 'sv-error' : null}
+            onSubmit={this.onSubmit}
+          >
+            <input
+              name="email"
+              onChange={this.onInputChange}
+              placeholder="Email"
+              type="text"
+              value={this.state.email}
+            />
+            <input
+              name="password"
+              onChange={this.onInputChange}
+              placeholder="Password"
+              type="password"
+              value={this.state.password}
+            />
             {this.state.signingUp &&
-              <input name="passwordConfirm"
-                  onChange={this._onInputChange}
-                  placeholder="Confirm password"
-                  type="password"
-                  value={this.state.passwordConfirm}/>}
-            <Button disabled={this.state.submitting}
-                large
-                secondary
-                type="submit">
-              {this.state.submitting ? 'Submitting...' :
-                  this.state.signingUp ? 'Create account' : 'Log in'}
+              <input
+                name="passwordConfirm"
+                onChange={this.onInputChange}
+                placeholder="Confirm password"
+                type="password"
+                value={this.state.passwordConfirm}
+              />}
+            <Button
+              disabled={this.state.submitting}
+              large
+              secondary
+              type="submit"
+            >
+              {buttonText}
             </Button>
           </form>
           <p>
-            <a onClick={this._toggleSignUpForm}>
+            <a onClick={this.toggleSignUpForm}>
               {`Click here to ${this.state.signingUp ? 'log in' : 'create an account'}`}
             </a>
           </p>

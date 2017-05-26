@@ -1,4 +1,4 @@
-module.exports = function(state, action) {
+module.exports = (state, action) => {
   switch (action.type) {
     case 'ADD_ASSET':
       return {

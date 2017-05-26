@@ -2,7 +2,6 @@ const React = require('react');
 const classNames = require('classnames');
 
 const Button = React.createClass({
-
   propTypes: {
     children: React.PropTypes.node,
     className: React.PropTypes.string,
@@ -14,29 +13,31 @@ const Button = React.createClass({
     type: React.PropTypes.string
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       type: 'button'
     };
   },
 
-  _onMouseDown: function(event) {
+  onMouseDown(event) {
     event.preventDefault();
     event.target.blur();
   },
 
-  render: function() {
+  render() {
     const buttonClassName = classNames('sv-button', this.props.className, {
       'sv-large': this.props.large,
       'sv-secondary': this.props.secondary
     });
     return (
-      <button className={buttonClassName}
-          disabled={this.props.disabled}
-          onClick={this.props.onClick}
-          onMouseDown={this._onMouseDown}
-          title={this.props.title}
-          type={this.props.type}>
+      <button
+        className={buttonClassName}
+        disabled={this.props.disabled}
+        onClick={this.props.onClick}
+        onMouseDown={this.onMouseDown}
+        title={this.props.title}
+        type={this.props.type}
+      >
         {this.props.children}
       </button>
     );

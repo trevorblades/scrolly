@@ -1,13 +1,22 @@
 const React = require('react');
 
 const Shape = props => {
-  const Shape = props.shape;
+  const Component = props.shape;
   return (
-    <svg fill={props.fill} stroke={props.stroke} strokeWidth={props.strokeWidth} style={Object.assign({
-      width: props.size,
-      height: props.size
-    }, props.style)} viewBox={`0 0 ${props.size} ${props.size}`}>
-      <Shape size={props.size} strokeWidth={props.strokeWidth}/>
+    <svg
+      fill={props.fill}
+      stroke={props.stroke}
+      strokeWidth={props.strokeWidth}
+      style={{
+        ...{
+          width: props.size,
+          height: props.size
+        },
+        ...props.style
+      }}
+      viewBox={`0 0 ${props.size} ${props.size}`}
+    >
+      <Component size={props.size} strokeWidth={props.strokeWidth} />
     </svg>
   );
 };

@@ -7,7 +7,6 @@ const Button = require('./button');
 const formatDate = require('../util/format-date');
 
 const Header = React.createClass({
-
   propTypes: {
     changedAt: React.PropTypes.string,
     dispatch: React.PropTypes.func.isRequired,
@@ -22,7 +21,7 @@ const Header = React.createClass({
     updatedAt: React.PropTypes.string
   },
 
-  render: function() {
+  render() {
     let changed = !!this.props.changedAt;
     let lastSaved = 'Save your project to share it';
     let savedStatus = !this.props.changedAt ? 'Nothing to save' : 'Not saved';
@@ -30,41 +29,48 @@ const Header = React.createClass({
       const updatedAt = new Date(this.props.updatedAt);
       lastSaved = `Last saved ${formatDate(updatedAt)}`;
       if (this.props.changedAt) {
-        changed = new Date(this.props.changedAt).getTime() !== updatedAt.getTime();
+        changed =
+          new Date(this.props.changedAt).getTime() !== updatedAt.getTime();
         savedStatus = changed ? 'Unsaved changes' : 'Saved';
       }
     }
 
-    const statusClassName = classNames('sv-header-controls-status',
-        `sv-${savedStatus.split(' ').join('-').toLowerCase()}`);
+    const statusClassName = classNames(
+      'sv-header-controls-status',
+      `sv-${savedStatus.split(' ').join('-').toLowerCase()}`
+    );
 
-    const navs = [
-      {
-        'New': this.props.onNewClick,
-        'Edit': this.props.onEditClick,
-        'Open': this.props.onOpenClick
+    const navs = {
+      file: {
+        New: this.props.onNewClick,
+        Edit: this.props.onEditClick,
+        Open: this.props.onOpenClick
       },
-      {
+      user: {
         'Log out': this.props.onLogOutClick
       }
-    ];
+    };
 
     return (
       <div className="sv-header">
-        <img className="sv-header-logo" src="/assets/logo.svg"/>
+        <img
+          alt="Scrolly logo"
+          className="sv-header-logo"
+          src="/assets/logo.svg"
+        />
         <div className="sv-header-navs">
-          {navs.map(function(nav, index) {
-            return (
-              <div className="sv-header-nav" key={index}>
-                {Object.keys(nav).map(function(key) {
-                  return <Button key={key} onClick={nav[key]}>{key}</Button>;
-                })}
-              </div>
-            );
-          })}
+          {Object.keys(navs).map(nav => (
+            <div key={nav} className="sv-header-nav">
+              {Object.keys(navs[nav]).map(key => (
+                <Button key={key} onClick={nav[key]}>{key}</Button>
+              ))}
+            </div>
+          ))}
         </div>
-        <div className={classNames('sv-header-name', {'sv-changed': changed})}
-            onClick={this.props.onEditClick}>
+        <div
+          className={classNames('sv-header-name', {'sv-changed': changed})}
+          onClick={this.props.onEditClick}
+        >
           {this.props.name}
         </div>
         <div className="sv-header-controls">
@@ -72,14 +78,20 @@ const Header = React.createClass({
             <span>{this.props.saving ? 'Saving project...' : savedStatus}</span>
             <span>{lastSaved}</span>
           </div>
-          <Button className="sv-header-controls-save"
-              disabled={!changed || this.props.saving}
-              onClick={this.props.onSaveClick}>
+          <Button
+            className="sv-header-controls-save"
+            disabled={!changed || this.props.saving}
+            onClick={this.props.onSaveClick}
+          >
             <span>Save</span>
-            <span dangerouslySetInnerHTML={{__html: `(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '&#8984;' : 'Ctrl'} + S)`}}/>
+            <span>
+              {`(${navigator.userAgent.indexOf('Mac OS X') !== -1 ? '⌘' : 'Ctrl'} + S)`}
+            </span>
           </Button>
-          <Button disabled={!this.props.updatedAt}
-              onClick={this.props.onShareClick}>
+          <Button
+            disabled={!this.props.updatedAt}
+            onClick={this.props.onShareClick}
+          >
             Share
           </Button>
         </div>
@@ -88,10 +100,15 @@ const Header = React.createClass({
   }
 });
 
-module.exports = connect(function(state) {
-  return {
+module.exports = connect(
+  state => ({
     changedAt: state.changedAt.present,
     name: state.name.present,
     updatedAt: state.updatedAt
-  };
-})(Header);
+  }),
+  null,
+  null,
+  {
+    withRef: true
+  }
+)(Header);

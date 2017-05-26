@@ -1,6 +1,7 @@
+/* eslint-disable react/no-danger */
 const React = require('react');
 
-const resetCaret = function(node) {
+const resetCaret = node => {
   const range = document.createRange();
   range.setStart(node, 1);
   range.collapse(true);
@@ -11,7 +12,6 @@ const resetCaret = function(node) {
 };
 
 const TextField = React.createClass({
-
   propTypes: {
     max: React.PropTypes.number,
     min: React.PropTypes.number,
@@ -27,45 +27,46 @@ const TextField = React.createClass({
     ]).isRequired
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       step: 1,
       type: 'text'
     };
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       editing: false,
       value: this.props.value
     };
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.value !== this.props.value) {
       this.setState({value: nextProps.value});
     }
   },
 
-  shouldComponentUpdate: function(nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     return !(this.state.editing && nextState.editing);
   },
 
-  _onBlur: function() {
+  onBlur() {
     this.setState({editing: false});
     this.props.onChange(this.state.value);
   },
 
-  _onDoubleClick: function(event) {
+  onDoubleClick(event) {
     const target = event.target;
-    this.setState({editing: true}, function() {
+    this.setState({editing: true}, () => {
       target.focus();
       document.execCommand('selectAll', false, null);
     });
   },
 
-  _onInput: function(event) {
-    let value = event.target.innerHTML;
+  onInput(event) {
+    const target = event.target;
+    let value = target.innerHTML;
 
     if (this.props.type === 'number') {
       if (!value) {
@@ -75,31 +76,37 @@ const TextField = React.createClass({
       }
 
       if (!value || (value && !this.state.value)) {
-        event.target.innerHTML = value;
+        target.innerHTML = value;
         resetCaret(event.target);
       }
     }
 
-    this.setState({value: value});
+    this.setState({value});
   },
 
-  _onKeyDown: function(event) {
-    if ([9, 27, 13].indexOf(event.keyCode) !== -1) { // tab, esc, or return key pressed
-      if (this.props.multiline && event.keyCode === 13 && !(event.metaKey || event.ctrlKey)) { // return key pressed on a mutliline field
+  _onKeyDown(event) {
+    if ([9, 27, 13].indexOf(event.keyCode) !== -1) {
+      // tab, esc, or return key pressed
+      if (
+        this.props.multiline &&
+        event.keyCode === 13 &&
+        !(event.metaKey || event.ctrlKey)
+      ) {
+        // return key pressed on a mutliline field
         return;
       }
-      return event.target.blur();
-    }
-
-    if (this.props.type === 'number') {
+      event.target.blur();
+    } else if (this.props.type === 'number') {
       const allowedKeys = [8, 37, 39, 46, 109, 110, 190]; // backspace, left, right, subtract, decimal point, delete, or period
       if (typeof this.props.min === 'undefined' || this.props.min < 0) {
         allowedKeys.push(189);
       }
-      const disallowed = allowedKeys.indexOf(event.keyCode) === -1 && // isn't an allowed character
-          (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && // isn't a top row number
-          (event.keyCode < 96 || event.keyCode > 105) && // isn't a numpad number
-          !event.metaKey && !event.ctrlKey;
+      const disallowed =
+        allowedKeys.indexOf(event.keyCode) === -1 && // isn't an allowed character
+        (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && // isn't a top row number
+        (event.keyCode < 96 || event.keyCode > 105) && // isn't a numpad number
+        !event.metaKey &&
+        !event.ctrlKey;
       const isUpOrDown = event.keyCode === 38 || event.keyCode === 40;
       if (isUpOrDown || disallowed) {
         event.preventDefault();
@@ -109,26 +116,28 @@ const TextField = React.createClass({
             direction *= 10;
           }
           let value = parseFloat(this.state.value);
-          value = value + this.props.step * direction;
+          value += this.props.step * direction;
           value = Math.round(value * 100) / 100;
-          this.setState({value: value}, resetCaret.bind(null, event.target));
+          this.setState({value}, resetCaret.bind(null, event.target));
         }
       }
     }
   },
 
-  render: function() {
+  render() {
     return (
-      <div className="sv-text-field"
-          contentEditable={this.state.editing}
-          dangerouslySetInnerHTML={{__html: this.state.value}}
-          onBlur={this._onBlur}
-          onDoubleClick={this._onDoubleClick}
-          onInput={this._onInput}
-          onKeyDown={this._onKeyDown}
-          spellCheck={false}
-          style={this.props.style}
-          title={this.props.title}/>
+      <div
+        className="sv-text-field"
+        contentEditable={this.state.editing}
+        dangerouslySetInnerHTML={{__html: this.state.value}}
+        onBlur={this.onBlur}
+        onDoubleClick={this.onDoubleClick}
+        onInput={this.onInput}
+        onKeyDown={this.onKeyDown}
+        spellCheck={false}
+        style={this.props.style}
+        title={this.props.title}
+      />
     );
   }
 });

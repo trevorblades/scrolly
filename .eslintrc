@@ -1,0 +1,4 @@
+extends:
+  - knoword/react
+env:
+  browser: true

@@ -19,7 +19,6 @@ const alignOptions = {
 };
 
 const ViewBar = React.createClass({
-
   propTypes: {
     compositionHeight: React.PropTypes.number.isRequired,
     compositionWidth: React.PropTypes.number.isRequired,
@@ -31,7 +30,7 @@ const ViewBar = React.createClass({
     viewportScale: React.PropTypes.number.isRequired
   },
 
-  _onAlignOptionClick: function(axis, amount) {
+  onAlignOptionClick(axis, amount) {
     let delta;
     let offset;
     const dimensions = this.props.getLayerDimensions(this.props.layer.id);
@@ -56,42 +55,57 @@ const ViewBar = React.createClass({
       );
     }
 
-    this.props.dispatch(setLayerProperties(this.props.layer.id, {
-      [axis]: typeof this.props.layer[axis] === 'object' ?
-          Object.assign({}, this.props.layer[axis], {
-            [this.props.percentPlayed]: value
-          }) : value
-    }));
+    this.props.dispatch(
+      setLayerProperties(this.props.layer.id, {
+        [axis]: typeof this.props.layer[axis] === 'object'
+          ? {
+              ...this.props.layer[axis],
+              ...{
+                [this.props.percentPlayed]: value
+              }
+            }
+          : value
+      })
+    );
   },
 
-  render: function() {
+  render() {
     const alignClassName = classNames('sv-view-bar-align', {
       'pl-disabled': !this.props.layer
     });
     return (
       <div className="sv-view-bar">
         <div className="sv-view-bar-info">
-          <span>{`Aspect ratio: ${getAspectRatio(this.props.compositionWidth, this.props.compositionHeight)}`}</span>
-          <span>{`Scale: ${Math.round(this.props.viewportScale * 1000) / 10}%`}</span>
+          <span
+          >{`Aspect ratio: ${getAspectRatio(this.props.compositionWidth, this.props.compositionHeight)}`}</span>
+          <span
+          >{`Scale: ${Math.round(this.props.viewportScale * 1000) / 10}%`}</span>
         </div>
         <div className={alignClassName}>
           {Object.keys(alignOptions).map(axis => {
             const direction = axis === 'x' ? 'horizontal' : 'vertical';
             return (
-              <div className="sv-view-bar-align-options" key={axis}>
+              <div key={axis} className="sv-view-bar-align-options">
                 {alignOptions[axis].map((position, index) => {
                   let iconName = `align${upperCaseFirst(position)}`;
                   if (position === 'center') {
                     iconName += upperCaseFirst(direction);
                   }
                   return (
-                    <Button key={position}
-                        onClick={!this.props.layer ? null :
-                            this._onAlignOptionClick.bind(null, axis, index / 2)}
-                        title={index % 2 ?
-                            `${upperCaseFirst(position)} ${direction}ly` :
-                            `Align ${position}`}>
-                      <Icon name={iconName}/>
+                    <Button
+                      key={position}
+                      onClick={
+                        !this.props.layer
+                          ? null
+                          : () => this.onAlignOptionClick(axis, index / 2)
+                      }
+                      title={
+                        index % 2
+                          ? `${upperCaseFirst(position)} ${direction}ly`
+                          : `Align ${position}`
+                      }
+                    >
+                      <Icon name={iconName} />
                     </Button>
                   );
                 })}
@@ -104,10 +118,8 @@ const ViewBar = React.createClass({
   }
 });
 
-module.exports = connect(function(state) {
-  return {
-    layer: state.layers.present.find(layer => layer.id === state.selectedLayer),
-    layers: state.layers.present,
-    percentPlayed: state.percentPlayed
-  };
-})(ViewBar);
+module.exports = connect(state => ({
+  layer: state.layers.present.find(layer => layer.id === state.selectedLayer),
+  layers: state.layers.present,
+  percentPlayed: state.percentPlayed
+}))(ViewBar);
