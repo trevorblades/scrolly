@@ -503,6 +503,7 @@ const TimelineLayer = React.createClass({
                 const addKeyframe = () => this.addKeyframe(key);
                 propertyActions.push(
                   {
+                    id: 'timer',
                     content: (
                       <Icon
                         className={animating ? 'sv-active' : null}
@@ -515,6 +516,7 @@ const TimelineLayer = React.createClass({
                     title: `${animating ? 'Disable' : 'Enable'} animation`
                   },
                   {
+                    id: 'add',
                     content: (
                       <Icon
                         className={highlighted ? 'sv-active' : null}
@@ -564,8 +566,14 @@ const TimelineLayer = React.createClass({
                 );
               } else {
                 propertyActions.push(
-                  {content: <Icon name="timer" />},
-                  {content: <Icon name="add" />}
+                  {
+                    id: 'timer',
+                    content: <Icon name="timer" />
+                  },
+                  {
+                    id: 'add',
+                    content: <Icon name="add" />
+                  }
                 );
               }
 
@@ -589,6 +597,7 @@ const TimelineLayer = React.createClass({
                 );
               }
               propertyActions.unshift({
+                id: 'property',
                 content: propertyField
               });
 

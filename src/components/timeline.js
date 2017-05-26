@@ -346,6 +346,7 @@ const Timeline = React.createClass({
 
     const menuActions = [
       {
+        id: 'scroll',
         content: (
           <div className="sv-timeline-header-menu-step">
             <TextField
@@ -359,6 +360,7 @@ const Timeline = React.createClass({
         title: 'Step amount (pixels scrolled for every percent played)'
       },
       {
+        id: 'snap',
         content: (
           <Icon
             name={this.state.snapToKeyframes ? 'keyframes' : 'wholeNumbers'}
