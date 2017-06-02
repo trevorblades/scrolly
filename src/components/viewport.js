@@ -48,6 +48,7 @@ function propsToDimensions(props) {
 const Viewport = React.createClass({
   propTypes: {
     assets: PropTypes.array.isRequired,
+    className: PropTypes.string,
     compositionHeight: PropTypes.number.isRequired,
     compositionWidth: PropTypes.number.isRequired,
     dispatch: PropTypes.func,
@@ -182,7 +183,7 @@ const Viewport = React.createClass({
   },
 
   render() {
-    const viewportClassName = classNames('sv-viewport', {
+    const viewportClassName = classNames('sv-viewport', this.props.className, {
       'sv-dragging': this.state.dragging
     });
     return (

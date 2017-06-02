@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import {ActionCreators} from 'redux-undo';
+import styled from 'styled-components';
 
 import ConnectedViewport from './connected-viewport';
 import Dialog from './dialog';
@@ -17,6 +18,48 @@ import {FILE_DRAG_TYPE, JSON_HEADERS} from '../constants';
 import isDragTypeFound from '../util/is-drag-type-found';
 import isInput from '../util/is-input';
 import layerPropType from '../util/layer-prop-type';
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
+const OuterWrapper = styled.div`
+  display: flex;
+  flex-grow: 1;
+  border-bottom: 1px solid black;
+  background-color: @gray-dark;
+`;
+
+const InnerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+`;
+
+const ViewportWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  box-sizing: content-box;
+  padding: @padding-largest;
+  overflow: hidden;
+  position: relative;
+`;
+
+const StyledViewport = styled(ConnectedViewport)`
+  box-shadow: @box-shadow-large;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
 
 function setTitle(name) {
   document.title = `${name} - Scrolly`;
@@ -232,8 +275,7 @@ const App = React.createClass({
 
   render() {
     return (
-      <div
-        className="sv-app"
+      <Wrapper
         onDragEnter={this.onDragEnter}
         onDragLeave={this.onDragLeave}
         onDragOver={this.onDragOver}
@@ -251,23 +293,23 @@ const App = React.createClass({
           onShareClick={this.onShareClick}
           saving={this.state.saving}
         />
-        <div className="sv-app-content">
+        <OuterWrapper>
           <Library
             assets={this.state.assets}
             dragging={this.state.dragging}
             onDragEnter={this.onDragEnter}
             onDrop={this.onLibraryDrop}
           />
-          <div className="sv-app-content-viewport">
-            <div
+          <InnerWrapper>
+            <ViewportWrapper
               ref={node => {
                 this.viewportWrapper = node;
               }}
               className="sv-app-content-viewport-wrapper"
               onClick={this.deselectLayer}
             >
-              <ConnectedViewport
-                ref={node => {
+              <StyledViewport
+                innerRef={node => {
                   this.viewport = node && node.getWrappedInstance();
                 }}
                 compositionHeight={this.props.compositionHeight}
@@ -277,15 +319,15 @@ const App = React.createClass({
                 wrapperOffsetTop={this.state.viewportWrapperOffsetTop}
                 wrapperWidth={this.state.viewportWrapperWidth}
               />
-            </div>
+            </ViewportWrapper>
             <ViewBar
               compositionHeight={this.props.compositionHeight}
               compositionWidth={this.props.compositionWidth}
               getLayerDimensions={this.getLayerDimensions}
               viewportScale={this.state.viewportScale}
             />
-          </div>
-        </div>
+          </InnerWrapper>
+        </OuterWrapper>
         <Timeline
           maxHeight={this.state.timelineMaxHeight}
           onResize={this.onResize}
@@ -301,10 +343,7 @@ const App = React.createClass({
             user={this.props.user}
           />}
         {this.state.shareDialogShown &&
-          <Dialog
-            className="sv-app-share-dialog"
-            onClose={this.onShareDialogClose}
-          >
+          <Dialog onClose={this.onShareDialogClose}>
             <h3>Share your project</h3>
             <label htmlFor="link">
               Use the following link to share your creation with the world:
@@ -314,10 +353,11 @@ const App = React.createClass({
               onClick={this.onShareInputClick}
               readOnly
               type="text"
+              style={{width: '100%'}}
               value={`${window.location.origin}/viewer/?p=${this.props.slug}`}
             />
           </Dialog>}
-      </div>
+      </Wrapper>
     );
   }
 });

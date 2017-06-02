@@ -1,10 +1,53 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import styled from 'styled-components';
 
 import Button from './button';
 import Logo from '../assets/logo.svg';
 
 import {JSON_HEADERS} from '../constants';
+import {
+  GRAY_DARK,
+  PADDING_BASE,
+  PADDING_LARGE,
+  PADDING_SMALL
+} from '../variables';
+
+const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: ${GRAY_DARK};
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
+const Content = styled.div`
+  width: 20rem;
+  p {
+    font-size: @font-size-small;
+    text-align: center;
+  }
+  svg, button {
+    display: block;
+    margin: 0 auto;
+  }
+  svg {
+    width: 25%;
+    margin-bottom: ${PADDING_LARGE};
+  }
+  input {
+    width: 100%;
+    margin-bottom: ${PADDING_SMALL};
+    border-color: ${props => props.error && '@brand-error'};
+  }
+  button {
+    margin-top: ${PADDING_BASE};
+  }
+`;
 
 const Login = React.createClass({
   propTypes: {
@@ -74,13 +117,10 @@ const Login = React.createClass({
     }
 
     return (
-      <div className="sv-login">
-        <div className="sv-login-content">
+      <Wrapper>
+        <Content error={this.state.error}>
           <Logo />
-          <form
-            className={this.state.error ? 'sv-error' : null}
-            onSubmit={this.onSubmit}
-          >
+          <form onSubmit={this.onSubmit}>
             <input
               name="email"
               onChange={this.onInputChange}
@@ -117,8 +157,8 @@ const Login = React.createClass({
               {`Click here to ${this.state.signingUp ? 'log in' : 'create an account'}`}
             </a>
           </p>
-        </div>
-      </div>
+        </Content>
+      </Wrapper>
     );
   }
 });
