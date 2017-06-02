@@ -302,7 +302,7 @@ const App = React.createClass({
           />
           <InnerWrapper>
             <ViewportWrapper
-              ref={node => {
+              innerRef={node => {
                 this.viewportWrapper = node;
               }}
               className="sv-app-content-viewport-wrapper"
